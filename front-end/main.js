@@ -1,17 +1,25 @@
 const form = document.querySelector('#form');
 
 // login details
-const name = document.querySelector('#name');
-const email = document.querySelector('#email');
-const password = document.querySelector('#password');
+const userNameField = document.querySelector('#name');
+const emailField = document.querySelector('#email');
+const passwordField = document.querySelector('#password');
 
 form.addEventListener('submit',validateAndSubmitForm)
 
 async function validateAndSubmitForm(e){
+    e.preventDefault();
     if(!form.checkValidity()) {
-        e.preventDefault();
+            form.classList.add('was-validated');
     }
-    form.classList.add('was-validated');
-    const response = await axios.post('http://localhost:3000',1);
-    console.log(reponse);
+    else {
+        let entry = {
+            userName:userNameField.value,
+            password:passwordField.value,
+            email:emailField.value
+        }
+        console.log(entry);
+    const response = await axios.post('http://localhost:3000/auth',entry);
+    console.log(response);
+    }
 }
