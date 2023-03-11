@@ -18,7 +18,7 @@ async function validateAndSubmitForm(e){
             password:passwordField.value,
             email:emailField.value
         }
-        console.log(entry);
+        //console.log(entry);
     const response = await axios.post('http://localhost:3000/auth',entry);
     console.log(response);
     }

@@ -2,7 +2,7 @@ const User = require('../models/user-details')
 
 exports.addUser = async (req,res,next) => {
     try{
-        console.log(req.body);
+        console.log(req.body,"!!!");
         const response = await User.create({
             name: req.body.userName,
             email: req.body.email,
