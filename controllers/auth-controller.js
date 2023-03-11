@@ -28,10 +28,19 @@ exports.addUser = async (req,res,next) => {
 }
 
 exports.login = async (req,res,next) => {
-    try{
-        
+    try{console.log(req.body);
+        if(User.findOne({where: {email:req.body.email}})){
+            const user = await User.findOne({where:{email:req.body.email}});
+            console.log(user.password, req.body.password)
+            if(user.password = req.body.password){
+                res.status(200).json({successMessage:"Login successful"});
+            }
+            else throw([401,"Invalid password"])
+        }
+        else throw([404,"No such user exists"])
     }
     catch(err) {
-        // do something with err
+        console.log(err);
+        res.status(err[0]).json({failMessage:err[1]});
     }
 }
