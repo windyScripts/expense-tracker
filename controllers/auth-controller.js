@@ -64,10 +64,6 @@ exports.login = async (req,res,next) => {
     }
 }
 
-exports.signUpRedirect = async (req,res,next) => {
-    return res.sendFile(path.join('..','front-end','signup','main.html'))
-}
-
 exports.onLogin = async (req,res,next) => {
    
 }

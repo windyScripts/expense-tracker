@@ -1,7 +1,7 @@
 let form = document.querySelector('#form');
 let formSubmit = document.querySelector('#formSubmit');
-let productName = document.querySelector('#productName');
-let productPrice = document.querySelector('#productPrice');
+let expenseName = document.querySelector('#expenseName');
+let expensePrice = document.querySelector('#expensePrice');
 let items = document.querySelector('#items');
 let totalValue = document.querySelector('#totalValue');
 let totalPrice = 0;
@@ -36,8 +36,8 @@ async function editEntry(e){
         console.log(name,price,id);
         const message = await axios.delete("http://localhost:3000/entry/"+id)
         console.log(message);
-        productName.value = name;
-        productPrice.value = price;
+        expenseName.value = name;
+        expensePrice.value = price;
         totalPrice -= price;
         updatePrice();
         items.removeChild(row);
@@ -87,8 +87,8 @@ updatePrice()
 
 async function addEntry(e){
     try{e.preventDefault();
-    let name = productName.value;
-    let price = productPrice.value;
+    let name = expenseName.value;
+    let price = expensePrice.value;
     console.log(typeof price);
     let id;
     let entry = {
@@ -112,8 +112,8 @@ async function addEntry(e){
         updatePrice()
         // empty fields
 
-        productName.value='';
-        productPrice.value='';
+        expenseName.value='';
+        expensePrice.value='';
 
     }catch(err) {console.log(err);}} 
 

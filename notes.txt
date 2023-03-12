@@ -1,4 +1,0 @@
-login stuff is incomplete
-controller for login
-
-auth: json response is causing errors.
