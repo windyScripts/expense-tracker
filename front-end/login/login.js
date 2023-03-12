@@ -12,8 +12,9 @@ async function validateLogin(e){
             form.classList.add('was-validated');
     }
     else {
-        // clearing previous message
+        // clearing previous error/success message
         feedback.textContent= '';
+
         let entry = {
             password:passwordField.value,
             email:emailField.value

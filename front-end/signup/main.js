@@ -1,12 +1,15 @@
 const form = document.querySelector('#form');
 
 // login details
+
 const userNameField = document.querySelector('#name');
 const emailField = document.querySelector('#email');
 const passwordField = document.querySelector('#password');
 const fail = document.querySelector('#failMessage');
 
-form.addEventListener('submit',validateAndSubmitForm)
+form.addEventListener('submit',validateAndSubmitForm);
+
+// frontend validation and handling response
 
 async function validateAndSubmitForm(e){
     e.preventDefault();
