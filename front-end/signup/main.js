@@ -21,12 +21,7 @@ async function validateAndSubmitForm(e){
         }
         //console.log(entry);
     const response = await axios.post('http://localhost:3000/auth/new',entry);
-    if(response.hasOwnProperty(failMessage)){
-        feedback.textContent=response.failMessage;
-    }
-    else if(response.hasOwnProperty(successMessage)){
-        feedback.textContent=response.successMessage;
-    }
+    feedback.textContent=response.data.message;
     console.log(response);
     }
 }

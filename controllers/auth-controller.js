@@ -11,36 +11,35 @@ exports.addUser = async (req,res,next) => {
     try{
         // console.log(req.body,"!!!");
         if(invalid([req.body.userName,req.body.email,req.body.password])) {
-            throw("Missing parameter")
+            res.status(401).json({message:"Missing details."})
         }
         const response = await User.create({
             name: req.body.userName,
             email: req.body.email,
             password: req.body.password,
-            successMessage:"Details valid"
         });
+        response.message = "Details valid";
         res.status(200).json(response);
     }
     catch(err){
         console.log(err);
-        res.send({failMessage:err});
+        res.send({message:err});
     }
 }
 
 exports.login = async (req,res,next) => {
     try{console.log(req.body);
-        if(User.findOne({where: {email:req.body.email}})){
-            const user = await User.findOne({where:{email:req.body.email}});
-            console.log(user.password, req.body.password)
-            if(user.password = req.body.password){
-                res.status(200).json({successMessage:"Login successful"});
+        const user = await User.findOne({where:{email:req.body.email}});
+        if(user){
+            console.log(user)
+            if(user.password === req.body.password){
+                res.status(200).json({message:"Login successful"});
             }
-            else throw([401,"Invalid password"])
+            else res.status(401).json({message:"Invalid password"})
         }
-        else throw([404,"No such user exists"])
+        else res.status(404).json({message:"No such user exists"})
     }
     catch(err) {
         console.log(err);
-        res.status(err[0]).json({failMessage:err[1]});
     }
 }

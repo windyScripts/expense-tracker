@@ -12,18 +12,20 @@ async function validateLogin(e){
             form.classList.add('was-validated');
     }
     else {
+        // clearing previous message
+        feedback.textContent= '';
         let entry = {
             password:passwordField.value,
             email:emailField.value
         }
         //console.log(entry);
+    try{
     const response = await axios.post('http://localhost:3000/auth/login',entry);
-    if(response.hasOwnProperty(failMessage)){
-        feedback.textContent=response.failMessage;
-    }
-    else if(response.hasOwnProperty(successMessage)){
-        feedback.textContent=response.successMessage;
-    }
-    console.log(response);
+    feedback.textContent=response.data.message;
+
+        }
+        catch(err) {
+            feedback.textContent=err.response.data.message;  
+        }
     }
 }
