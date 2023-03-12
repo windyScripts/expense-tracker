@@ -1,5 +1,5 @@
 const User = require('../models/user-details')
-//const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 
 function invalid(...params){
     //console.log("XZFSEAFASFSF",[...arguments],params)
@@ -43,11 +43,14 @@ exports.addUser = async (req,res,next) => {
 exports.login = async (req,res,next) => {
     try{console.log(req.body);
         const user = await User.findOne({where:{email:req.body.email}});
-        if(user){
+        if(user!==null){
             console.log(user)
-            bcrypt.compare(user.password, req.body.password, (err,res)=>{
-                if(!err){
+            bcrypt.compare(req.body.password, user.password, (err,result)=>{
+                if(result===true){
                     res.status(200).json({message:"Login successful"});
+                }
+                else if(err){
+                    throw new Error('Something went wrong');
                 }
                 else res.status(401).json({message:"Invalid password"})
 
