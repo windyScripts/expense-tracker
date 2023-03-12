@@ -23,10 +23,18 @@ async function validateLogin(e){
     try{
     const response = await axios.post('http://localhost:3000/auth/login',entry);
     feedback.textContent=response.data.message;
+    window.location.href="../tracker/tracker.html"
 
         }
         catch(err) {
             feedback.textContent=err.response.data.message;  
         }
     }
+}
+
+signUpButton.addEventListener('click',signUpRedirect);
+
+async function signUpRedirect(e){
+    e.preventDefault()
+    window.location.href="../signup/main.html"
 }

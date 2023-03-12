@@ -1,5 +1,6 @@
 const User = require('../models/user-details')
 const bcrypt = require('bcrypt')
+const path = require('path');
 
 function invalid(...params){
     //console.log("XZFSEAFASFSF",[...arguments],params)
@@ -61,4 +62,12 @@ exports.login = async (req,res,next) => {
     catch(err) {
         console.log(err);
     }
+}
+
+exports.signUpRedirect = async (req,res,next) => {
+    return res.sendFile(path.join('..','front-end','signup','main.html'))
+}
+
+exports.onLogin = async (req,res,next) => {
+   
 }
