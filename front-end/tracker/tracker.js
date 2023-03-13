@@ -8,6 +8,7 @@ const expenseCategory = document.querySelector('#expenseCategory')
 const categories = document.querySelectorAll('.expenseCategory')
 let totalPrice = 0;
 
+
 // Event listeners
 
 // add entry listener
@@ -46,7 +47,6 @@ async function editEntry(e){
         })
 
     //    console.log(name,price,category,categoryValue,id);
-
         const message = await axios.delete("http://localhost:3000/entry/"+id)
         console.log(message);
         expenseName.value = name;
@@ -81,6 +81,8 @@ async function deleteEntry(e){
 
 async function displayProducts(e){
 try{totalPrice = 0;
+let token = getToken();
+console.log(token, "!");
 let message = await axios.get("http://localhost:3000/entries")
 console.log(message);
 let arrayOfProducts = message.data;
@@ -174,4 +176,12 @@ return row;
 
 function updatePrice(){
     totalValue.textContent= "TOTAL VALUE: "+totalPrice;
+}
+
+function getToken(){
+    try{
+        return token = localStorage.getItem('token')
+    } catch(err) {
+        console.log(err);
+    }
 }

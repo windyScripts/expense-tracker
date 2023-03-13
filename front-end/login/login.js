@@ -23,6 +23,10 @@ async function validateLogin(e){
     try{
     const response = await axios.post('http://localhost:3000/auth/login',entry);
     feedback.textContent=response.data.message;
+    //console.log(response,response.data,response.data.token)
+    const token = response.data.token;
+    localStorage.setItem('token',token)
+    //console.log(localStorage.getItem('token'));
     window.location.href="../tracker/tracker.html"
 
         }

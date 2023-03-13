@@ -1,6 +1,14 @@
-const User = require('../models/user-details')
+const User = require('../models/user-model')
+
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken');
+
 const path = require('path');
+
+function generateAccessToken(id) {
+    let iat = new Date;
+    return jwt.sign({userId: id, date:iat.getTime()},'12345')
+}
 
 function invalid(...params){
     //console.log("XZFSEAFASFSF",[...arguments],params)
@@ -48,7 +56,7 @@ exports.login = async (req,res,next) => {
             console.log(user)
             bcrypt.compare(req.body.password, user.password, (err,result)=>{
                 if(result===true){
-                    res.status(200).json({message:"Login successful"});
+                    res.status(200).json({message:"Login successful",token:generateAccessToken(req.body.email)});
                 }
                 else if(err){
                     throw new Error('Something went wrong');
