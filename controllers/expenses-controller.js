@@ -11,10 +11,11 @@ exports.getExpenses = async (req,res,next) => {
 }
 
 exports.addExpense = async (req,res,next) => {
-    try { console.log(req);
+    try { console.log(req.body);
         const response = await Expenses.create({
             name: req.body.name,
-            price: req.body.price
+            price: req.body.price,
+            category: req.body.category
         });
         res.status(200).json(response);
     }

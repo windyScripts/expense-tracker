@@ -1,9 +1,11 @@
-let form = document.querySelector('#form');
-let formSubmit = document.querySelector('#formSubmit');
-let expenseName = document.querySelector('#expenseName');
-let expensePrice = document.querySelector('#expensePrice');
-let items = document.querySelector('#items');
-let totalValue = document.querySelector('#totalValue');
+const form = document.querySelector('#form');
+const formSubmit = document.querySelector('#formSubmit');
+const expenseName = document.querySelector('#expenseName');
+const expensePrice = document.querySelector('#expensePrice');
+const items = document.querySelector('#items');
+const totalValue = document.querySelector('#totalValue');
+const expenseCategory = document.querySelector('#expenseCategory')
+const categories = document.querySelectorAll('.expenseCategory')
 let totalPrice = 0;
 
 // Event listeners
@@ -32,12 +34,24 @@ async function editEntry(e){
         let row = e.target.parentNode.parentNode;
         let name = row.firstChild.textContent;
         let price = row.firstChild.nextSibling.textContent;
+        let category = row.firstChild.nextSibling.nextSibling.textContent;
+        // HAVE TO ADD CATEGORY.
         let id = row.id;
-        console.log(name,price,id);
+        let categoryValue ='0';
+        // console.log(categories[0].innerText);
+        categories.forEach(e=>{
+            if(e.innerText===category){
+                categoryValue = e.value;
+            }
+        })
+
+    //    console.log(name,price,category,categoryValue,id);
+
         const message = await axios.delete("http://localhost:3000/entry/"+id)
         console.log(message);
         expenseName.value = name;
         expensePrice.value = price;
+        expenseCategory.value = categoryValue;
         totalPrice -= price;
         updatePrice();
         items.removeChild(row);
@@ -73,7 +87,7 @@ let arrayOfProducts = message.data;
     console.log(arrayOfProducts);
     console.log(totalValue.target)
     arrayOfProducts.forEach(element => {
-        let newRow = createRow(element['name'],element['price'],element['id']);
+        let newRow = createRow(element['name'],element['price'],element['category'],element['id']);
         items.appendChild(newRow);  
         totalPrice+=parseInt(element['price']); 
           
@@ -89,21 +103,23 @@ async function addEntry(e){
     try{e.preventDefault();
     let name = expenseName.value;
     let price = expensePrice.value;
-    console.log(typeof price);
+    let category =  expenseCategory.options[expenseCategory.value].text// 
+    // console.log(typeof price);
     let id;
     let entry = {
         name,
-        price
+        price,
+        category
     }
-    //console.log(entry);
+    console.log(entry);
     let message = await axios.post("http://localhost:3000/entry",entry);
         console.log(message);
         
         // add value
 
         id = message.data.id;
-        console.log(id);
-        let newRow = createRow(name,price,id);
+        // console.log(id);
+        let newRow = createRow(name,price,category,id);
         items.appendChild(newRow);
 
         // update price
@@ -114,12 +130,13 @@ async function addEntry(e){
 
         expenseName.value='';
         expensePrice.value='';
+        expenseCategory.value='1';
 
     }catch(err) {console.log(err);}} 
 
 // create table row from name, price with id.
 
-function createRow(name,price,id){
+function createRow(name,price,category,id){
 let row = document.createElement('tr');
 row.className = 'item';
 
@@ -128,6 +145,9 @@ nameData.appendChild(document.createTextNode(name));
 
 let priceData = document.createElement('td');
 priceData.appendChild(document.createTextNode(price));
+
+let categoryData = document.createElement('td');
+categoryData.appendChild(document.createTextNode(category));
 
 let editButton = document.createElement('button');
 editButton.className = "btn btn-success edit";
@@ -144,6 +164,7 @@ deleteTab.appendChild(deleteButton);
 row.id = id;
 row.appendChild(nameData);
 row.appendChild(priceData);
+row.appendChild(categoryData);
 row.appendChild(editTab);
 row.appendChild(deleteTab);
 return row;

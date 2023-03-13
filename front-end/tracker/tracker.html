@@ -15,6 +15,15 @@
             <input type="number" id="expensePrice" placeholder="Price of expense">
             <label for="expensePrice"></label>
         </div>
+        <div class="form-floating ">
+            <select class="form-select-sm" name="expenseCategory" id="expenseCategory">
+                <option value="0" class="expenseCategory">option1</option>
+                <option value="1" class="expenseCategory">option2</option>
+                <option value="2" class="expenseCategory">option3</option>
+                <option value="3" class="expenseCategory">option4</option>
+            </select>
+            <label for="expensePrice"></label>
+        </div>
         <div class="">
             <input type="submit" class="btn btn-primary" id="formSubmit">
         </div>
@@ -22,7 +31,7 @@
     <h2 id="totalValue"></h2>
     <table class="table">
         <thead>
-            <th>Expense Description</th> <th>Expense amount</th><th>Edit</th><th>Delete</th>
+            <th>Expense Description</th> <th>Expense amount</th><th>Expense category</th><th>Edit</th><th>Delete</th>
         </thead>
             <tbody id="items">
                 
