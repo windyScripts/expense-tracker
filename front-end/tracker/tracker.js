@@ -47,7 +47,7 @@ async function editEntry(e){
         })
 
     //    console.log(name,price,category,categoryValue,id);
-        const message = await axios.delete("http://localhost:3000/entry/"+id)
+        const message = await axios.delete("http://localhost:3000/entry/"+id,{headers: {'Authorization':token}})
         console.log(message);
         expenseName.value = name;
         expensePrice.value = price;
@@ -67,7 +67,7 @@ async function deleteEntry(e){
                 console.log(e.target.parentNode.parentNode);
                 let row = e.target.parentNode.parentNode;
                 let id = row.id;
-                let message = await axios.delete("http://localhost:3000/entry/"+id)
+                let message = await axios.delete("http://localhost:3000/entry/"+id,{headers: {'Authorization':token}})
                 console.log(message);
                     let price = row.firstChild.nextSibling.textContent;
                     totalPrice -= price;
@@ -81,13 +81,12 @@ async function deleteEntry(e){
 
 async function displayProducts(e){
 try{totalPrice = 0;
-let token = getToken();
-console.log(token, "!");
-let message = await axios.get("http://localhost:3000/entries")
+let token = getToken(); //token works. Have to set header.
+let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
 console.log(message);
 let arrayOfProducts = message.data;
-    console.log(arrayOfProducts);
-    console.log(totalValue.target)
+//    console.log(arrayOfProducts);
+//    console.log(totalValue.target)
     arrayOfProducts.forEach(element => {
         let newRow = createRow(element['name'],element['price'],element['category'],element['id']);
         items.appendChild(newRow);  
@@ -106,15 +105,17 @@ async function addEntry(e){
     let name = expenseName.value;
     let price = expensePrice.value;
     let category =  expenseCategory.options[expenseCategory.value].text// 
-    // console.log(typeof price);
+    const token = getToken();
+     console.log(token);
     let id;
     let entry = {
         name,
         price,
-        category
+        category,
+        token
     }
     console.log(entry);
-    let message = await axios.post("http://localhost:3000/entry",entry);
+    let message = await axios.post("http://localhost:3000/entry",entry,{headers: {'Authorization':token}});
         console.log(message);
         
         // add value

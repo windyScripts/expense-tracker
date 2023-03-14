@@ -22,7 +22,7 @@ app.use(expensesRoutes);
 
 async function start(){
 const response = await sequelize.sync();
-console.log(response);
+//console.log(response);
 app.listen('3000');
 }
 

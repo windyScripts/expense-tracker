@@ -50,13 +50,13 @@ exports.addUser = async (req,res,next) => {
 // login
 
 exports.login = async (req,res,next) => {
-    try{console.log(req.body);
+    try{//console.log(req.body);
         const user = await User.findOne({where:{email:req.body.email}});
         if(user!==null){
             console.log(user)
             bcrypt.compare(req.body.password, user.password, (err,result)=>{
                 if(result===true){
-                    res.status(200).json({message:"Login successful",token:generateAccessToken(req.body.email)});
+                    res.status(200).json({message:"Login successful",token:generateAccessToken(user.id)});
                 }
                 else if(err){
                     throw new Error('Something went wrong');
@@ -72,6 +72,15 @@ exports.login = async (req,res,next) => {
     }
 }
 
-exports.onLogin = async (req,res,next) => {
-   
+exports.authorization = async(req,res,next) => {
+try{
+    const token = req.header('Authorization');
+    console.log(token, '12345');
+    const id = Number(jwt.verify(token, '12345').userId);
+    const user = await User.findByPk(id);
+    req.user = user;
+    next();
+} catch(err){
+    console.log(err);
+}
 }
