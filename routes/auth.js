@@ -10,6 +10,4 @@ router.post('/new',authRoutes.addUser);
 
 router.post('/login',authRoutes.login);
 
-
-
 module.exports = router;

@@ -7,11 +7,17 @@ const app = express();
 const sequelize = require('./util/database')
 const authRoutes = require('./routes/auth')
 const expensesRoutes = require('./routes/expenses')
+const premiumRoutes = require('./routes/premium')
+
 const User = require('./models/user-model');
 const Expense = require('./models/expenses-model');
+const Order = require('./models/orders-model');
 
  User.hasMany(Expense);
  Expense.belongsTo(User);
+
+ User.hasMany(Order);
+ Order.belongsTo(User);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}))
@@ -19,6 +25,7 @@ app.use(bodyParser.json());
 
 app.use('/auth',authRoutes);
 app.use(expensesRoutes);
+app.use('/premium',premiumRoutes);
 
 async function start(){
 const response = await sequelize.sync();

@@ -6,8 +6,37 @@ const items = document.querySelector('#items');
 const totalValue = document.querySelector('#totalValue');
 const expenseCategory = document.querySelector('#expenseCategory')
 const categories = document.querySelectorAll('.expenseCategory')
+const premium = document.querySelector('#premium');
 let totalPrice = 0;
 
+premium.addEventListener('click', createPaymentRequest);
+
+async function createPaymentRequest(e){
+e.preventDefault();
+console.log("Button press logged", process.env);
+const response = await axios.get('http://localhost:3000/premium/createorder',{headers:{"Authorization": getToken()}})
+console.log(response);
+let options = {
+    key:response.data.key_id,
+    order_id: response.data.order.id,
+    handler: async function (response) {
+        await axios.post('http://localhost:3000/premium/updatetrasactionstatus',{ // !!!!!!
+            order_id: options.order_id,
+            payment_id: response.razorpay_payment_id,
+        }, {headers:{'Authorization':getToken()}})
+
+        alert('You are a premium user now.')
+    }
+}
+const rzpl = new Razorpay(options);
+rzpl.open();
+e.preventDefault();
+rzpl.on('payment.failed',function(response){
+    console.log(response);
+    alert('Something went wrong')
+})
+
+}
 
 // Event listeners
 

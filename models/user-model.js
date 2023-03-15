@@ -20,7 +20,8 @@ const User = sequelize.define('user-details',{
         allowNull: false,
         autoIncrement: true,
         primaryKey: true
-    }
+    },
+    ispremiumuser: Sequelize.BOOLEAN
 });
 
 module.exports = User;
