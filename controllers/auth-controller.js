@@ -27,18 +27,17 @@ exports.addUser = async (req,res,next) => {
         const check = invalid(req.body.userName,req.body.email,req.body.password);
         console.log(check);
         if(check) {
-           res.status(401).json({message:"Missing details."})
-            return;
+            return res.status(401).json({message:"Missing details."})
         }
         const saltRounds = 10;
-        const password = bcrypt.hash(req.body.password,saltRounds, async (err,hash)=>{
+        const password = await bcrypt.hash(req.body.password,saltRounds, async (err,hash)=>{
             const response = await User.create({
                 name: req.body.userName,
                 email: req.body.email,
                 password: hash,
             });
-            response.message = "Details valid";
-            res.status(200).json(response);
+            console.log(response);
+            return res.status(200).json(response);
         })
 
     }

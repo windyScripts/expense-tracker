@@ -5,8 +5,8 @@ exports.premium = async (req,res,next) => {
     try{
         //console.log("!");
         let rzp = new Razorpay({
-            key_id: 'rzp_test_PFB7gF0skVAHJv',
-            key_secret: 'lY5EiZOtbJuRpFBRIWqqklpx'
+            key_id: 'rzp_test_7kOXEv2oaJcNkA',
+            key_secret: 'PWYtvEqy9J1NZ1Eyfbn9nknb'
         })
         
         const amount = 2500;
@@ -27,11 +27,19 @@ exports.premium = async (req,res,next) => {
 
 exports.updateTransactionStatus = async (req,res,next) => {
 try{
-    const { payment_id , order_id} = req.body;
+    const { payment_id , order_id, payment_status} = req.body;
     const order = await Order.findOne({where: {orderid: order_id}})
-    await order.update({ paymentid: payment_id, status: 'SUCCESSFUL'})
-    await req.user.update({ispremiumuser: true})
+if(payment_status==="SUCCESSFUL"){
+    const p1 = order.update({ paymentid: payment_id, status: 'SUCCESSFUL'})
+    const p2 = req.user.update({ispremiumuser: true})
+    await Promise.all([p1,p2])
     return res.status(202).json({success:true,message:"Transaction Successful"}) 
+}
+else if(payment_status==="FAILURE"){
+    await order.update({ paymentid: payment_id, status: 'FAILED'});
+    return res.status(403).json({success:false,message:"Transaction Failed"})
+}
+
 } catch(err) {
     console.log(err);
 }

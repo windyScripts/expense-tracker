@@ -1,9 +1,16 @@
 const Expenses = require('../models/expenses-model')
+const User = require('../models/user-model')
 
 exports.getExpenses = async (req,res,next) => {
    try {
     const products = await Expenses.findAll({where:{id:req.user.id}})
-    res.status(200).json(products);
+    const user = await User.findOne({where:{id:req.user.id}});
+    const premiumStatus = user.ispremiumuser;
+    console.log(premiumStatus);
+    res.status(200).json({
+        premiumStatus,
+        products
+    });
 }
    catch(err) {
     console.log(err);

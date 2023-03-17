@@ -9,21 +9,26 @@ const categories = document.querySelectorAll('.expenseCategory')
 const premium = document.querySelector('#premium');
 let totalPrice = 0;
 
-premium.addEventListener('click', createPaymentRequest);
+
 
 async function createPaymentRequest(e){
 e.preventDefault();
-console.log("Button press logged", process.env);
+console.log("Button press logged");
 const response = await axios.get('http://localhost:3000/premium/createorder',{headers:{"Authorization": getToken()}})
 console.log(response);
 let options = {
     key:response.data.key_id,
     order_id: response.data.order.id,
     handler: async function (response) {
-        await axios.post('http://localhost:3000/premium/updatetrasactionstatus',{ // !!!!!!
+        await axios.post('http://localhost:3000/premium/updatetransactionstatus',{ // !!!!!!
             order_id: options.order_id,
             payment_id: response.razorpay_payment_id,
+            payment_status: "SUCCESS"
         }, {headers:{'Authorization':getToken()}})
+
+        premium.classList.add('disabled','btn-warning');
+        premium.classList.remove('btn-success')
+        premium.textContent = "You are a premium user!"
 
         alert('You are a premium user now.')
     }
@@ -31,9 +36,14 @@ let options = {
 const rzpl = new Razorpay(options);
 rzpl.open();
 e.preventDefault();
-rzpl.on('payment.failed',function(response){
+rzpl.on('payment.failed', async function(response){
     console.log(response);
     alert('Something went wrong')
+    await axios.post('http://localhost:3000/premium/updatetransactionstatus',{ // !!!!!!
+    order_id: options.order_id,
+    payment_id: response.razorpay_payment_id,
+    payment_status: "FAILURE"
+}, {headers:{'Authorization':getToken()}})
 })
 
 }
@@ -55,6 +65,10 @@ items.addEventListener('click',deleteEntry);
 // edit entry listener
 
 items.addEventListener('click',editEntry);
+
+// add premium features
+
+premium.addEventListener('click', createPaymentRequest);
 
 // edit entry
 
@@ -113,7 +127,14 @@ try{totalPrice = 0;
 let token = getToken(); //token works. Have to set header.
 let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
 console.log(message);
-let arrayOfProducts = message.data;
+let arrayOfProducts = message.data.products;
+
+const premiumStatus = message.data.premiumStatus;
+if(premiumStatus){
+    premium.classList.add('disabled','btn-warning');
+    premium.classList.remove('btn-success')
+    premium.textContent = "You are a premium user!"
+}
 //    console.log(arrayOfProducts);
 //    console.log(totalValue.target)
     arrayOfProducts.forEach(element => {

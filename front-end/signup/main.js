@@ -1,4 +1,5 @@
 const form = document.querySelector('#form');
+const feedback = document.querySelector('#feedback')
 
 // login details
 
@@ -13,6 +14,7 @@ form.addEventListener('submit',validateAndSubmitForm);
 
 async function validateAndSubmitForm(e){
     e.preventDefault();
+    try{
     if(!form.checkValidity()) {
             form.classList.add('was-validated');
     }
@@ -24,7 +26,13 @@ async function validateAndSubmitForm(e){
         }
         //console.log(entry);
     const response = await axios.post('http://localhost:3000/auth/new',entry);
-    feedback.textContent=response.data.message;
-    console.log(response);
+    feedback.textContent="Success!";
+    setTimeout(() => {
+        feedback.textContent = '';
+    }, 2000);
+    }
+    }
+    catch(err){
+        console.log(err);
     }
 }
