@@ -14,19 +14,19 @@ let totalPrice = 0;
 async function createPaymentRequest(e){
 e.preventDefault();
 console.log("Button press logged");
-const response = await axios.get('http://localhost:3000/premium/createorder',{headers:{"Authorization": getToken()}})
-console.log(response);
+const response = await axios.get('http://localhost:3000/purchase/createorder',{headers:{"Authorization": getToken()}})
 let options = {
     key:response.data.key_id,
     order_id: response.data.order.id,
     handler: async function (response) {
-        await axios.post('http://localhost:3000/premium/updatetransactionstatus',{ // !!!!!!
+        const transactionResponse = await axios.post('http://localhost:3000/purchase/updatetransactionstatus',{ // !!!!!!
             order_id: options.order_id,
             payment_id: response.razorpay_payment_id,
             payment_status: "SUCCESS"
         }, {headers:{'Authorization':getToken()}})
 
-
+        //console.log("!!!!",transactionResponse.data.token,"!!!!");
+        localStorage.setItem('token',transactionResponse.data.token)
         premium.classList.add('disabled','btn-warning');
         premium.classList.remove('btn-success')
         premium.textContent = "You are a premium user!"
@@ -40,7 +40,7 @@ e.preventDefault();
 rzpl.on('payment.failed', async function(response){
     console.log(response);
     alert('Something went wrong')
-    await axios.post('http://localhost:3000/premium/updatetransactionstatus',{ // !!!!!!
+    await axios.post('http://localhost:3000/purchase/updatetransactionstatus',{ // !!!!!!
     order_id: options.order_id,
     payment_id: response.razorpay_payment_id,
     payment_status: "FAILURE"

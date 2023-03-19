@@ -7,6 +7,7 @@ const app = express();
 const sequelize = require('./util/database')
 const authRoutes = require('./routes/auth')
 const expensesRoutes = require('./routes/expenses')
+const purchaseRoutes = require('./routes/purchase')
 const premiumRoutes = require('./routes/premium')
 
 const User = require('./models/user-model');
@@ -25,7 +26,8 @@ app.use(bodyParser.json());
 
 app.use('/auth',authRoutes);
 app.use(expensesRoutes);
-app.use('/premium',premiumRoutes);
+app.use('/purchase',purchaseRoutes);
+
 
 async function start(){
 const response = await sequelize.sync();

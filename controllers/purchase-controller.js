@@ -34,11 +34,11 @@ exports.premium = async (req,res,next) => {
 exports.updateTransactionStatus = async (req,res,next) => {
 try{
     const { payment_id , order_id, payment_status} = req.body;
+    //console.log(payment_status,"!!!ZZZZ");
     const order = await Order.findOne({where: {orderid: order_id}})
-if(payment_status==="SUCCESSFUL"){
-    const p1 = order.update({ paymentid: payment_id, status: 'SUCCESSFUL'})
+if(payment_status==="SUCCESS"){
+    const p1 = order.update({ paymentid: payment_id, status: 'SUCCESS'})
     const p2 = req.user.update({ispremiumuser: true})
-    
     await Promise.all([p1,p2])
     return res.status(202).json({success:true,message:"Transaction Successful",token:generateAccessToken(req.user.id)}) 
 }
@@ -48,6 +48,7 @@ else if(payment_status==="FAILURE"){
 }
 
 } catch(err) {
-    console.log(err);
+    console.log("!AC",err);
+
 }
 }

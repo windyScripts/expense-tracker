@@ -22,7 +22,7 @@ async function validateLogin(e){
         //console.log(entry);
     try{
     const response = await axios.post('http://localhost:3000/auth/login',entry);
-    feedback.textContent=response.data.message;
+    feedback.textContent="Login success!";
     //console.log(response,response.data,response.data.token)
     const token = response.data.token;
     localStorage.setItem('token',token)
@@ -31,7 +31,7 @@ async function validateLogin(e){
 
         }
         catch(err) {
-            feedback.textContent=err.response.data.message;  
+            feedback.textContent="Login failed!";  
         }
     }
 }
