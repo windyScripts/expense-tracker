@@ -57,7 +57,7 @@ formSubmit.addEventListener('click',addEntry);
 
 // show entries on window load listener
 
-window.addEventListener('DOMContentLoaded',displayProducts);
+window.addEventListener('DOMContentLoaded',onDOMContentLoad);
 
 // delete entry listener
 
@@ -80,7 +80,6 @@ async function editEntry(e){
         let name = row.firstChild.textContent;
         let price = row.firstChild.nextSibling.textContent;
         let category = row.firstChild.nextSibling.nextSibling.textContent;
-        // HAVE TO ADD CATEGORY.
         let id = row.id;
         let categoryValue ='0';
         // console.log(categories[0].innerText);
@@ -123,7 +122,7 @@ async function deleteEntry(e){
 
 // display Products and total value.
 
-async function displayProducts(e){
+async function onDOMContentLoad(e){
 try{totalPrice = 0;
 let token = getToken(); //token works. Have to set header.
 let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
@@ -135,6 +134,14 @@ if(premiumStatus){
     premium.classList.add('disabled','btn-warning');
     premium.classList.remove('btn-success')
     premium.textContent = "You are a premium user!"
+    const inputElement = document.createElement('input');
+    inputElement.type = 'button';
+    inputElement.value = 'Show Leaderboard';
+    inputElement.onclick = async() => {
+        const token = getToken();
+        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/leaderboard')
+    }
+
 }
 //    console.log(arrayOfProducts);
 //    console.log(totalValue.target)
