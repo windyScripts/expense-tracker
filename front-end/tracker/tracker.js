@@ -137,11 +137,18 @@ if(premiumStatus){
     const inputElement = document.createElement('input');
     inputElement.type = 'button';
     inputElement.value = 'Show Leaderboard';
+    inputElement.id = 'showLeaderboard';
+    inputElement.className = 'btn btn-outline-secondary col-2';
+
     inputElement.onclick = async() => {
         const token = getToken();
-        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/leaderboard')
-    }
+        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/leaderboard');
+        console.log(userLeaderBoardArray);
 
+
+}
+document.querySelector('#leaderboardContainer').appendChild(inputElement);
+console.log(inputElement);
 }
 //    console.log(arrayOfProducts);
 //    console.log(totalValue.target)

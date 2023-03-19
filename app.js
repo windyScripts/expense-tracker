@@ -27,6 +27,7 @@ app.use(bodyParser.json());
 app.use('/auth',authRoutes);
 app.use(expensesRoutes);
 app.use('/purchase',purchaseRoutes);
+app.use('/premium',premiumRoutes);
 
 
 async function start(){
