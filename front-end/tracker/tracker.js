@@ -26,6 +26,7 @@ let options = {
             payment_status: "SUCCESS"
         }, {headers:{'Authorization':getToken()}})
 
+
         premium.classList.add('disabled','btn-warning');
         premium.classList.remove('btn-success')
         premium.textContent = "You are a premium user!"
