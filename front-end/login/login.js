@@ -3,6 +3,7 @@ const emailField = document.querySelector("#email");
 const passwordField = document.querySelector("#password");
 const signUpButton = document.querySelector('#toSignUp');
 const feedback = document.querySelector('#failMessage');
+const forgotPasswordButton = document.querySelector('#toForgotEmail')
 
 form.addEventListener('submit',validateLogin)
 
@@ -38,7 +39,12 @@ async function validateLogin(e){
 
 signUpButton.addEventListener('click',signUpRedirect);
 
-async function signUpRedirect(e){
-    e.preventDefault()
+function signUpRedirect(e){
     window.location.href="../signup/main.html"
+}
+
+forgotPasswordButton.addEventListener('click',forgotPasswordRedirect);
+
+function forgotPasswordRedirect(e){
+    window.location.href="../forgot-password/forgot-password.html"
 }

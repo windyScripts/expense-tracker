@@ -9,9 +9,18 @@ const categories = document.querySelectorAll('.expenseCategory')
 const premium = document.querySelector('#premium');
 const leaderboardTableBody = document.querySelector('#leaderboard')
 const leaderboardTable = document.querySelector('#leaderboardTable')
+const logOutButton = document.querySelector('#logout')
 let totalPrice = 0;
 
+logOutButton.addEventListener('click', logOutUser);
 
+async function logOutUser(e) {
+    e.preventDefault();
+    localStorage.removeItem('token');
+    console.log("token removed!");
+    window.location.href="../login/login.html"
+
+}
 
 async function createPaymentRequest(e){
 e.preventDefault();
@@ -29,11 +38,10 @@ let options = {
 
         //console.log("!!!!",transactionResponse.data.token,"!!!!");
         localStorage.setItem('token',transactionResponse.data.token)
-        premium.classList.add('disabled','btn-warning');
-        premium.classList.remove('btn-success')
-        premium.textContent = "You are a premium user!"
 
-        alert('You are a premium user now.')
+        window.location.reload();
+        
+        
     }
 }
 const rzpl = new Razorpay(options);
@@ -134,7 +142,6 @@ let arrayOfProducts = message.data.products;
 const premiumStatus = message.data.premiumStatus;
 console.log(typeof premiumStatus, premiumStatus)
 if(premiumStatus===true){
-    leaderboardTable.toggleAttribute('hidden');
     premium.classList.add('disabled','btn-warning');
     premium.classList.remove('btn-success')
     premium.textContent = "You are a premium user!"
@@ -142,24 +149,32 @@ if(premiumStatus===true){
     inputElement.type = 'button';
     inputElement.value = 'Show Leaderboard';
     inputElement.id = 'showLeaderboard';
-    inputElement.className = 'btn btn-outline-secondary col-2';
+    inputElement.className = 'btn btn-outline-secondary col-3';
 
     inputElement.onclick = async() => {
         const token = getToken();
-        const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
-        console.log(userLeaderBoardObject.data);
-        Object.keys(userLeaderBoardObject.data).forEach(e => {
-            const row = document.createElement('tr');
-            const nameData = document.createElement('td');
-            const expenseData = document.createElement('td');
-            nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
-            expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
-            row.appendChild(nameData);
-            row.appendChild(expenseData);
-            leaderboardTableBody.appendChild(row);
-        })
-
-
+        leaderboardTable.toggleAttribute('hidden');
+        if(leaderboardTable.hasAttribute('hidden')){
+            document.querySelector('#showLeaderboard').value="Show Leaderboard";
+            document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
+            leaderboardTableBody.innerHTML="";
+        }
+        else{
+            document.querySelector('#showLeaderboard').value="Hide Leaderboard";
+            document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
+            const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
+            console.log(userLeaderBoardObject.data);
+            Object.keys(userLeaderBoardObject.data).forEach(e => {
+                const row = document.createElement('tr');
+                const nameData = document.createElement('td');
+                const expenseData = document.createElement('td');
+                nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
+                expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
+                row.appendChild(nameData);
+                row.appendChild(expenseData);
+                leaderboardTableBody.appendChild(row);
+            })
+        }
 }
 document.querySelector('#leaderboardContainer').appendChild(inputElement);
 console.log(inputElement);

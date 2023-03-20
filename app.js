@@ -4,11 +4,13 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
-const sequelize = require('./util/database')
 const authRoutes = require('./routes/auth')
 const expensesRoutes = require('./routes/expenses')
 const purchaseRoutes = require('./routes/purchase')
 const premiumRoutes = require('./routes/premium')
+const passwordRoutes = require('./routes/password')
+
+const sequelize = require('./util/database')
 
 const User = require('./models/user-model');
 const Expense = require('./models/expenses-model');
@@ -28,6 +30,7 @@ app.use('/auth',authRoutes);
 app.use(expensesRoutes);
 app.use('/purchase',purchaseRoutes);
 app.use('/premium',premiumRoutes);
+app.use('/password',passwordRoutes);
 
 
 async function start(){
