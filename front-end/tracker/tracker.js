@@ -240,8 +240,10 @@ return row;
 
 // update price
 
-function updatePrice(){
+async function updatePrice(){
     totalValue.textContent= "TOTAL VALUE: "+totalPrice;
+    const response = await axios.post('http://localhost:3000/update',{totalPrice},{headers:{'Authorization':getToken()}})
+    console.log(response);
 }
 
 function getToken(){

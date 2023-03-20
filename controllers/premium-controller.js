@@ -14,7 +14,6 @@ exports.showLeaderboards = async (req,res,next) => {
         attributes: ['Id','name',[sequelize.fn('sum', sequelize.col('price')), 'total_cost' ]],
         group: ['user-details.id'],
         order: [['total_cost','DESC']]
-
     });
     res.status(200).json(userLeaderBoard);
 }

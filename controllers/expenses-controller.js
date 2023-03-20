@@ -3,7 +3,8 @@ const User = require('../models/user-model')
 
 exports.getExpenses = async (req,res,next) => {
    try {
-    const products = await Expenses.findAll({where:{id:req.user.id}})
+    const products = await Expenses.findAll({where:{userDetailId:req.user.id}})
+    console.log(products);
     const user = await User.findOne({where:{id:req.user.id}});
     const premiumStatus = user.ispremiumuser;
     console.log(premiumStatus);
@@ -40,5 +41,23 @@ exports.deleteExpense = async (req,res,next) => {
     }
     catch(err) {
      console.log(err);
+    }
+}
+
+exports.updateUserTotalExpense = async (req,res,next) => {
+    try{
+        //console.log("!!!!!!",req.user.id,req.body);
+        const user = req.user;
+        const response = await User.update({
+            totalExpense: req.body.totalPrice
+        },
+        {
+            where: {id: user.id}
+        })
+        res.status(200).json(response);
+
+    }
+    catch(err) {
+
     }
 }

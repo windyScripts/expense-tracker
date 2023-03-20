@@ -21,7 +21,11 @@ const User = sequelize.define('user-details',{
         autoIncrement: true,
         primaryKey: true
     },
-    ispremiumuser: Sequelize.BOOLEAN
+    ispremiumuser: Sequelize.BOOLEAN,
+    totalExpense: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+    }
 });
 
 module.exports = User;
