@@ -7,6 +7,8 @@ const totalValue = document.querySelector('#totalValue');
 const expenseCategory = document.querySelector('#expenseCategory')
 const categories = document.querySelectorAll('.expenseCategory')
 const premium = document.querySelector('#premium');
+const leaderboardTableBody = document.querySelector('#leaderboard')
+const leaderboardTable = document.querySelector('#leaderboardTable')
 let totalPrice = 0;
 
 
@@ -130,7 +132,9 @@ console.log(message);
 let arrayOfProducts = message.data.products;
 
 const premiumStatus = message.data.premiumStatus;
-if(premiumStatus){
+console.log(typeof premiumStatus, premiumStatus)
+if(premiumStatus===true){
+    leaderboardTable.toggleAttribute('hidden');
     premium.classList.add('disabled','btn-warning');
     premium.classList.remove('btn-success')
     premium.textContent = "You are a premium user!"
@@ -142,8 +146,18 @@ if(premiumStatus){
 
     inputElement.onclick = async() => {
         const token = getToken();
-        const userLeaderBoardArray = await axios.get('http://localhost:3000/premium/leaderboard');
-        console.log(userLeaderBoardArray);
+        const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
+        console.log(userLeaderBoardObject.data);
+        Object.keys(userLeaderBoardObject.data).forEach(e => {
+            const row = document.createElement('tr');
+            const nameData = document.createElement('td');
+            const expenseData = document.createElement('td');
+            nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
+            expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
+            row.appendChild(nameData);
+            row.appendChild(expenseData);
+            leaderboardTableBody.appendChild(row);
+        })
 
 
 }
@@ -242,8 +256,6 @@ return row;
 
 async function updatePrice(){
     totalValue.textContent= "TOTAL VALUE: "+totalPrice;
-    const response = await axios.post('http://localhost:3000/update',{totalPrice},{headers:{'Authorization':getToken()}})
-    console.log(response);
 }
 
 function getToken(){

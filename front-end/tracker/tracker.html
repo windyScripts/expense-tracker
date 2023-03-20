@@ -30,12 +30,12 @@
         </div>
     </form>
     <h2 id="totalValue"></h2>
-    <table class="table">
+    <table class="table table-hover">
         <thead>
             <th>Expense Description</th> <th>Expense amount</th><th>Expense category</th><th>Edit</th><th>Delete</th>
         </thead>
             <tbody id="items">
-                
+
             </tbody>
     </table>
     <div class="row container-fluid d-flex justify-content-end">
@@ -43,7 +43,14 @@
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Read further -->
     </div>
     <div class="row container-fluid d-flex justify-content-end" id="leaderboardContainer">
+<table class="table table-hover" id="leaderboardTable" hidden>
+    <thead>
+        <th>Username</th><th>Expense</th>
+    </thead>
+    <tbody id="leaderboard">
 
+    </tbody>
+</table>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./tracker.js"></script>
