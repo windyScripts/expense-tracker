@@ -11,8 +11,8 @@ exports.premium = async (req,res,next) => {
     try{
         //console.log("!");
         let rzp = new Razorpay({
-            key_id: 'rzp_test_7kOXEv2oaJcNkA',
-            key_secret: 'PWYtvEqy9J1NZ1Eyfbn9nknb'
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
         })
         
         const amount = 2500;

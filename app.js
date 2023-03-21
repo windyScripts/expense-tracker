@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
+
+
 const authRoutes = require('./routes/auth')
 const expensesRoutes = require('./routes/expenses')
 const purchaseRoutes = require('./routes/purchase')
