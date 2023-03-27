@@ -4,6 +4,7 @@ const passwordController = require('../controllers/password-controller')
 const authController = require('../controllers/auth-controller')
 
 router.post('/forgotpassword', passwordController.forgotPassword)
-router.get('resetpassword/:reqId',passwordController.getPasswordUpdateForm)
+router.get('/resetpassword/:reqId',passwordController.getPasswordUpdateForm)
+router.get('/updatepassword/:resetpasswordid',passwordController.setPassword)
+
 module.exports = router;
-router.get('updatepassword/:resetpasswordid',passwordController.setPassword)

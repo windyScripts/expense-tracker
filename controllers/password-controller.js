@@ -31,16 +31,12 @@ exports.forgotPassword = async (req,res,next) => {
             isActive: true,
             id: reqId
         })
-        // On clicking this link the user should be redirected to a new window where they can update their password.
         const response = await transactionalEmailApi.sendTransacEmail({
             sender,
             to:receiver,
-            subject: 'Reset password for your account',
-            textContent: 'This is my message',
-            htmlContent:`
-            <h1>Reset Password</h1>
-            <p>please use the following link to reset your password: {{params.passwordURL}} </p>
-            `,
+            subject: 'Sending with SendGrid is Fun',
+            textContent: 'and easy to do anywhere, even with Node.js',
+            htmlContent: `<a href="{{params.passwordURL}}">Reset password</a>`,
             params: {
                 passwordURL: 'http://localhost:3000/password/resetpassword/'+reqId
             }
@@ -59,9 +55,8 @@ exports.forgotPassword = async (req,res,next) => {
 exports.getPasswordUpdateForm = async (req,res,next) => {
     try{
         const id= req.params.reqId;
-        const req = PasswordRequests.findOne({where: {id:id}})
-        console.log(req);
-        if(req&&req.isActive) 
+        const passwordRequest = await PasswordRequests.findOne({where: {id:id}})
+        if(passwordRequest&&passwordRequest.isActive) 
         {return res.status(200).send(`<html>
         <script>
             function formsubmitted(e){
@@ -77,8 +72,7 @@ exports.getPasswordUpdateForm = async (req,res,next) => {
     </html>`
     )
     }
-
-    else throw new Error('Reset link expired/invalid');
+    else res.status(401).json({message:'Reset link expired/invalid'});
     }
     catch(err){
         console.log(err);

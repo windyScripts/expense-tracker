@@ -18,21 +18,12 @@ const Order = require('./models/orders-model');
 const passwordRequest = require('./models/password-requests-model');
 
  User.hasMany(Expense);
- Expense.belongsTo(User,{
-    foreignKey:'userid',
-    targetKey:'id'
- });
+ Expense.belongsTo(User);
 
- User.hasMany(Order, {
-    foreignKey:'userid',
-    sourceKey:'id'
- });
+ User.hasMany(Order);
  Order.belongsTo(User);
 
- User.hasMany(passwordRequest,{
-    foreignKey:'userid',
-    sourceKey:'id'
- });
+ User.hasMany(passwordRequest);
  passwordRequest.belongsTo(User);
 
 app.use(cors());
