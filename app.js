@@ -4,8 +4,6 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
-
-
 const authRoutes = require('./routes/auth')
 const expensesRoutes = require('./routes/expenses')
 const purchaseRoutes = require('./routes/purchase')
@@ -17,12 +15,25 @@ const sequelize = require('./util/database')
 const User = require('./models/user-model');
 const Expense = require('./models/expenses-model');
 const Order = require('./models/orders-model');
+const passwordRequest = require('./models/password-requests-model');
 
  User.hasMany(Expense);
- Expense.belongsTo(User);
+ Expense.belongsTo(User,{
+    foreignKey:'userid',
+    targetKey:'id'
+ });
 
- User.hasMany(Order);
+ User.hasMany(Order, {
+    foreignKey:'userid',
+    sourceKey:'id'
+ });
  Order.belongsTo(User);
+
+ User.hasMany(passwordRequest,{
+    foreignKey:'userid',
+    sourceKey:'id'
+ });
+ passwordRequest.belongsTo(User);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}))
@@ -37,7 +48,7 @@ app.use('/password',passwordRoutes);
 
 async function start(){
 const response = await sequelize.sync();
-//console.log(response);
+console.log('Database connected. :)')
 app.listen('3000');
 }
 

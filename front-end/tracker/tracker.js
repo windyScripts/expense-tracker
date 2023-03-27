@@ -135,6 +135,7 @@ async function deleteEntry(e){
 async function onDOMContentLoad(e){
 try{totalPrice = 0;
 let token = getToken(); //token works. Have to set header.
+console.log(token);
 let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
 console.log(message);
 let arrayOfProducts = message.data.products;
