@@ -26,6 +26,9 @@ async function validateAndSubmitForm(e){
         }
         //console.log(entry);
     const response = await axios.post('http://localhost:3000/auth/new',entry);
+    userNameField.value = '';
+    passwordField.value = '';
+    emailField.value = '';
     feedback.textContent="Success!";
     setTimeout(() => {
         feedback.textContent = '';

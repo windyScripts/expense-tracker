@@ -10,6 +10,9 @@ const premium = document.querySelector('#premium');
 const leaderboardTableBody = document.querySelector('#leaderboard')
 const leaderboardTable = document.querySelector('#leaderboardTable')
 const logOutButton = document.querySelector('#logout')
+const leaderboardButton = document.querySelector('#showLeaderboard');
+const premiumFeatures = document.querySelector('#premiumFeature')
+
 let totalPrice = 0;
 
 logOutButton.addEventListener('click', logOutUser);
@@ -139,6 +142,7 @@ console.log(token);
 let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
 console.log(message);
 let arrayOfProducts = message.data.products;
+console.log(arrayOfProducts);
 
 const premiumStatus = message.data.premiumStatus;
 console.log(typeof premiumStatus, premiumStatus)
@@ -146,13 +150,8 @@ if(premiumStatus===true){
     premium.classList.add('disabled','btn-warning');
     premium.classList.remove('btn-success')
     premium.textContent = "You are a premium user!"
-    const inputElement = document.createElement('input');
-    inputElement.type = 'button';
-    inputElement.value = 'Show Leaderboard';
-    inputElement.id = 'showLeaderboard';
-    inputElement.className = 'btn btn-outline-secondary col-3';
-
-    inputElement.onclick = async() => {
+    premiumFeatures.toggleAttribute('hidden');
+    leaderboardButton.onclick = async() => {
         const token = getToken();
         leaderboardTable.toggleAttribute('hidden');
         if(leaderboardTable.hasAttribute('hidden')){
@@ -166,6 +165,7 @@ if(premiumStatus===true){
             const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
             console.log(userLeaderBoardObject.data);
             Object.keys(userLeaderBoardObject.data).forEach(e => {
+                console.log(e);
                 const row = document.createElement('tr');
                 const nameData = document.createElement('td');
                 const expenseData = document.createElement('td');
@@ -177,13 +177,12 @@ if(premiumStatus===true){
             })
         }
 }
-document.querySelector('#leaderboardContainer').appendChild(inputElement);
-console.log(inputElement);
+//console.log(inputElement);
 }
 //    console.log(arrayOfProducts);
 //    console.log(totalValue.target)
     arrayOfProducts.forEach(element => {
-        let newRow = createRow(element['name'],element['price'],element['category'],element['id']);
+        let newRow = createRow(element['date'],element['name'],element['price'],element['category'],element['id']);
         items.appendChild(newRow);  
         totalPrice+=parseInt(element['price']); 
           
@@ -234,9 +233,12 @@ async function addEntry(e){
 
 // create table row from name, price with id.
 
-function createRow(name,price,category,id){
+function createRow(date,name,price,category,id){
 let row = document.createElement('tr');
 row.className = 'item';
+
+let dateData = document.createElement('td');
+dateData.appendChild(document.createTextNode(date));
 
 let nameData = document.createElement('td');
 nameData.appendChild(document.createTextNode(name));
@@ -260,6 +262,8 @@ let deleteTab = document.createElement('td');
 deleteTab.appendChild(deleteButton);
 
 row.id = id;
+
+row.appendChild(dateData);
 row.appendChild(nameData);
 row.appendChild(priceData);
 row.appendChild(categoryData);

@@ -22,13 +22,10 @@ const Expenses = sequelize.define('values', {
         allowNull: false
     },
     date:{
-        type:Sequelize.DATE,
+        type:Sequelize.DATEONLY,
+        defaultValue: Sequelize.NOW,
         allowNull:false
     },
-    income:{
-        type:Sequelize.INTEGER,
-        allowNull:false
-    }
 });
 
 module.exports = Expenses;

@@ -5,7 +5,7 @@
 </head>
 <body class="container">
     <header>
-        <h1 class="text-center text-dark">Product page</h1>
+        <h1 class="text-center text-dark">Day to Day Expenses</h1>
         <div class="row container-fluid d-flex justify-content-end">
             <button class="btn btn-outline-danger col-2" id="logout">Log out</button>
         </div>
@@ -36,7 +36,7 @@
     <h2 id="totalValue"></h2>
     <table class="table table-hover">
         <thead>
-            <th>Expense Description</th> <th>Expense amount</th><th>Expense category</th><th>Edit</th><th>Delete</th>
+            <th>Date</th><th>Expense Description</th> <th>Expense amount</th><th>Expense category</th><th>Edit</th><th>Delete</th>
         </thead>
             <tbody id="items">
 
@@ -46,15 +46,23 @@
         <button class="btn btn-success col-2" id="premium">Buy Premium</button>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script> <!-- Read further -->
     </div>
+    <div hidden id="premiumFeature">
+    <div class="row container-fluid d-flex justify-content-end">
+        <button class="btn btn-light col-2" id="showLeaderboard">Show Leaderboard</button>
+    </div>
+    <div class="row container-fluid d-flex justify-content-end">
+        <button class="btn btn-dark col-2" id="pdfDownload">Download PDF</button>
+    </div>
     <div class="row container-fluid d-flex justify-content-end" id="leaderboardContainer">
 <table class="table table-hover" id="leaderboardTable" hidden>
     <thead>
         <th>Username</th><th>Expense</th>
     </thead>
     <tbody id="leaderboard">
-
+        
     </tbody>
 </table>
+    </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="./tracker.js"></script>
