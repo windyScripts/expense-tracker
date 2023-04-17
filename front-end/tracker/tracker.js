@@ -12,6 +12,23 @@ const leaderboardTable = document.querySelector('#leaderboardTable')
 const logOutButton = document.querySelector('#logout')
 const leaderboardButton = document.querySelector('#showLeaderboard');
 const premiumFeatures = document.querySelector('#premiumFeature')
+const pdfButton = document.querySelector('#pdfDownload')
+
+pdfButton.addEventListener('click',getPDFLink);
+
+async function getPDFLink(e){
+    e.preventDefault();
+
+    const response = await axios.get('http://localhost:3000/premium/download',{headers:{"Authorization": getToken()}, params: { start_date: '2023-04-06', end_date: '2023-04-06' }})
+    if(response.status === 200){
+    const a = document.createElement('a');
+    a.href = response.data.fileUrl;
+    a.download = 'myexpense.csv';
+    a.click();
+} else {
+    throw new Error(response.data.message);
+}
+}
 
 let totalPrice = 0;
 
@@ -133,6 +150,7 @@ async function deleteEntry(e){
     }} catch(err) {console.log(err);}
 }
 
+
 // display Products and total value.
 
 async function onDOMContentLoad(e){
@@ -147,37 +165,7 @@ console.log(arrayOfProducts);
 const premiumStatus = message.data.premiumStatus;
 console.log(typeof premiumStatus, premiumStatus)
 if(premiumStatus===true){
-    premium.classList.add('disabled','btn-warning');
-    premium.classList.remove('btn-success')
-    premium.textContent = "You are a premium user!"
-    premiumFeatures.toggleAttribute('hidden');
-    leaderboardButton.onclick = async() => {
-        const token = getToken();
-        leaderboardTable.toggleAttribute('hidden');
-        if(leaderboardTable.hasAttribute('hidden')){
-            document.querySelector('#showLeaderboard').value="Show Leaderboard";
-            document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
-            leaderboardTableBody.innerHTML="";
-        }
-        else{
-            document.querySelector('#showLeaderboard').value="Hide Leaderboard";
-            document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
-            const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
-            console.log(userLeaderBoardObject.data);
-            Object.keys(userLeaderBoardObject.data).forEach(e => {
-                console.log(e);
-                const row = document.createElement('tr');
-                const nameData = document.createElement('td');
-                const expenseData = document.createElement('td');
-                nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
-                expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
-                row.appendChild(nameData);
-                row.appendChild(expenseData);
-                leaderboardTableBody.appendChild(row);
-            })
-        }
-}
-//console.log(inputElement);
+    unlockPremium()
 }
 //    console.log(arrayOfProducts);
 //    console.log(totalValue.target)
@@ -187,6 +175,40 @@ if(premiumStatus===true){
         totalPrice+=parseInt(element['price']); 
           
     });
+
+async function unlockPremium(){
+          premium.classList.add('disabled','btn-warning');
+        premium.classList.remove('btn-success')
+        premium.textContent = "You are a premium user!"
+        premiumFeatures.toggleAttribute('hidden');
+        leaderboardButton.onclick = async() => {
+            const token = getToken();
+            leaderboardTable.toggleAttribute('hidden');
+            if(leaderboardTable.hasAttribute('hidden')){
+                document.querySelector('#showLeaderboard').value="Show Leaderboard";
+                document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
+                leaderboardTableBody.innerHTML="";
+            }
+            else{
+                document.querySelector('#showLeaderboard').value="Hide Leaderboard";
+                document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
+                const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
+                console.log(userLeaderBoardObject.data);
+                Object.keys(userLeaderBoardObject.data).forEach(e => {
+                    console.log(e);
+                    const row = document.createElement('tr');
+                    const nameData = document.createElement('td');
+                    const expenseData = document.createElement('td');
+                    nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
+                    expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
+                    row.appendChild(nameData);
+                    row.appendChild(expenseData);
+                    leaderboardTableBody.appendChild(row);
+                })
+            }
+    }
+    //console.log(inputElement);  
+    }
 
 updatePrice()
 } catch(err) {console.log(err);}

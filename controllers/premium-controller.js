@@ -1,10 +1,10 @@
-const pdfkit = require('pdfkit');
-const blobStream = require('blob-stream')
-
-
 const User = require('../models/user-model');
 const Expenses = require('../models/expenses-model');
+
 const sequelize = require('sequelize');
+const Op = sequelize.Op;
+
+const AWS = require('aws-sdk');
 
 exports.showLeaderboards = async (req,res,next) => {
  try{
@@ -21,10 +21,8 @@ exports.showLeaderboards = async (req,res,next) => {
 
 exports.getPDFLink = async (req,res,next) => {
     try{
-        const doc = new PDFDocument();
-        const stream = doc.pipe(blobStream());
-        let startDate = req.query.start_date;
-        let endDate = req.query.end_date;
+        const startDate = req.query.start_date;
+        const endDate = req.query.end_date;
         const expenseData = await Expenses.findAll({
             where: {
                 userid: req.user.id,
@@ -33,25 +31,48 @@ exports.getPDFLink = async (req,res,next) => {
                 }
             }
         })
-        const columnWidths = [100, 50, 100,100];
         const tableData = [];
-        const tableHeaders = ['Date','Category','Expense Nane','Amount']
+       tableData.push(['Date','Category','Expense Nane','Amount'])
         expenseData.forEach(e => {
-            tableData.push([e.date,e.category, e.name,e.priceW]);
+            tableData.push([e.date,e.category, e.name,e.price]);
         })
-        doc.font('Helvetica-Bold').fontSize(14).text(`Expenses for the duration from ${startDate} till ${endDate}` ,{ align: 'center' });
-        doc.moveDown();
-        doc.table(tableData, {
-            headers: tableHeaders,
-            columnWidths: columnWidths
-        })
-        doc.end();
-        stream.on('finish',() => {
-            const url = stream.toBlob('application/pdf')
-        })
-        res.status(200).json({URL: url})
+        const stringifiedExpenses = JSON.stringify(tableData);
+        const userId = req.user.id
+        const fileName = `${userId}/${new Date()}`;
+        const fileUrl = await uploadtoS3(stringifiedExpenses, fileName);
+        res.status(200).json({ fileUrl , success: true });
     }
     catch(err){
-        console.log(err);
+        res.status(500).json({fileUrl:'',success:false,message:err})
+    }
+}
+
+async function uploadtoS3 (data, fileName) {
+    try{
+    let s3Bucket = new AWS.S3({
+        accessKeyId: process.env.IAM_USER_KEY,
+        secretAccessKey: process.env.IAM_USER_SECRET,
+    })
+
+    var params = {
+        Bucket: process.env.BUCKET_NAME,
+        Key:fileName,
+        Body: data,
+        ACL: 'public-read'
+    }
+        return new Promise((resolve,reject)=> {
+            s3Bucket.upload(params, (err, s3response) =>{
+                if(err){
+                    console.log('Something went wrong', err)
+                    reject(err);
+                }else {
+                    console.log('Success');
+                    resolve(s3response.Location);
+                }
+            })
+        }) 
+    }
+    catch(err){
+        return new Promise((resolve,reject) => reject(err))
     }
 }
