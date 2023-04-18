@@ -14,16 +14,20 @@ const leaderboardButton = document.querySelector('#showLeaderboard');
 const premiumFeatures = document.querySelector('#premiumFeature')
 const pdfButton = document.querySelector('#pdfDownload')
 
+
 pdfButton.addEventListener('click',getPDFLink);
 
 async function getPDFLink(e){
     e.preventDefault();
 
-    const response = await axios.get('http://localhost:3000/premium/download',{headers:{"Authorization": getToken()}, params: { start_date: '2023-04-06', end_date: '2023-04-06' }})
+    const startDate = document.querySelector('#startDate').value;
+    const endDate = document.querySelector('#endDate').value;
+    const response = await axios.get('http://localhost:3000/premium/download',{headers:{"Authorization": getToken()}, params: { start_date: startDate, end_date: endDate }})
     if(response.status === 200){
     const a = document.createElement('a');
     a.href = response.data.fileUrl;
     a.download = 'myexpense.csv';
+    console.log(response);
     a.click();
 } else {
     throw new Error(response.data.message);
@@ -172,8 +176,7 @@ if(premiumStatus===true){
     arrayOfProducts.forEach(element => {
         let newRow = createRow(element['date'],element['name'],element['price'],element['category'],element['id']);
         items.appendChild(newRow);  
-        totalPrice+=parseInt(element['price']); 
-          
+        totalPrice+=parseInt(element['price']);     
     });
 
 async function unlockPremium(){

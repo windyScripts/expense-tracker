@@ -1,5 +1,6 @@
 const User = require('../models/user-model');
 const Expenses = require('../models/expenses-model');
+const Downloads = require('../models/downloads-model');
 
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
@@ -38,8 +39,12 @@ exports.getPDFLink = async (req,res,next) => {
         })
         const stringifiedExpenses = JSON.stringify(tableData);
         const userId = req.user.id
-        const fileName = `${userId}/${new Date()}`;
+        const timeStamp = new Date();
+        const fileName = `${userId}/${timeStamp}`;
         const fileUrl = await uploadtoS3(stringifiedExpenses, fileName);
+        await Downloads.create({
+            url: fileUrl
+        })
         res.status(200).json({ fileUrl , success: true });
     }
     catch(err){
