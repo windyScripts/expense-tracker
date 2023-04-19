@@ -7,7 +7,7 @@ const Op = sequelize.Op;
 
 const AWS = require('aws-sdk');
 
-exports.showLeaderboards = async (req,res,next) => {
+/* exports.showLeaderboards = async (req,res,next) => {
  try{
     const userLeaderBoard = await User.findAll({
         attributes: ['name','totalExpense'],
@@ -18,7 +18,7 @@ exports.showLeaderboards = async (req,res,next) => {
  catch(err) {
     console.log(err);
  }
-}
+} */
 
 exports.getPDFLink = async (req,res,next) => {
     try{

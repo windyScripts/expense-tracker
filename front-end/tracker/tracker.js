@@ -22,7 +22,7 @@ async function getPDFLink(e){
 
     const startDate = document.querySelector('#startDate').value;
     const endDate = document.querySelector('#endDate').value;
-    const response = await axios.get('http://localhost:3000/premium/download',{headers:{"Authorization": getToken()}, params: { start_date: startDate, end_date: endDate }})
+    const response = await axios.get('http://localhost:3000/download',{headers:{"Authorization": getToken()}, params: { start_date: startDate, end_date: endDate }})
     if(response.status === 200){
     const a = document.createElement('a');
     a.href = response.data.fileUrl;

@@ -1,5 +1,5 @@
 const Razorpay = require('razorpay');
-const Order = require('../models/orders-model');
+const Order = require('../models/purchases-model');
 const jwt = require('jsonwebtoken');
 
 function generateAccessToken(id) {
