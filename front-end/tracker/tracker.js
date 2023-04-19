@@ -7,10 +7,10 @@ const totalValue = document.querySelector('#totalValue');
 const expenseCategory = document.querySelector('#expenseCategory')
 const categories = document.querySelectorAll('.expenseCategory')
 const premium = document.querySelector('#premium');
-const leaderboardTableBody = document.querySelector('#leaderboard')
-const leaderboardTable = document.querySelector('#leaderboardTable')
+/* const leaderboardTableBody = document.querySelector('#leaderboard')
+const leaderboardTable = document.querySelector('#leaderboardTable') */
 const logOutButton = document.querySelector('#logout')
-const leaderboardButton = document.querySelector('#showLeaderboard');
+/* const leaderboardButton = document.querySelector('#showLeaderboard'); */
 const premiumFeatures = document.querySelector('#premiumFeature')
 const pdfButton = document.querySelector('#pdfDownload')
 
@@ -184,7 +184,7 @@ async function unlockPremium(){
         premium.classList.remove('btn-success')
         premium.textContent = "You are a premium user!"
         premiumFeatures.toggleAttribute('hidden');
-        leaderboardButton.onclick = async() => {
+        /* leaderboardButton.onclick = async() => {
             const token = getToken();
             leaderboardTable.toggleAttribute('hidden');
             if(leaderboardTable.hasAttribute('hidden')){
@@ -209,7 +209,7 @@ async function unlockPremium(){
                     leaderboardTableBody.appendChild(row);
                 })
             }
-    }
+    } */
     //console.log(inputElement);  
     }
 
