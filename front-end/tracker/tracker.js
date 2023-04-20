@@ -34,7 +34,7 @@ async function changeExpensePage(e){
 
 if(e.target.id==='expensesBack' || e.target.id==='expensesForward'){
 
-const targetPageNumber = e.target.textContent;
+const targetPageNumber = parseInt(e.target.textContent);
 
 const expensesPerPage = getItemsPerPage();
 console.log(expensesPerPage)
@@ -49,7 +49,9 @@ const numberOfPages = response.data.numberOfPages;
 
 displayEntriesFromArray(currentPageExpenses);
 
-configureButtons(numberOfPages, targetPageNumber)
+//console.log("!", numberOfPages, targetPageNumber);
+
+configureButtons(numberOfPages, targetPageNumber);
 
 }
 
@@ -266,8 +268,6 @@ function configureButtons(numberOfPages, currentPage){
 
     const nextPageButton = document.querySelector('#expensesForward')
 
-    nextPageButton.setAttribute('data-total-pages',numberOfPages);
-
     if(currentPage >= numberOfPages){
 
     nextPageButton.setAttribute('disabled','');
@@ -276,7 +276,10 @@ function configureButtons(numberOfPages, currentPage){
 
 } else {
 
+
 nextPageButton.innerText = currentPage+1;
+
+nextPageButton.disabled = false;
 
 }
     
@@ -288,7 +291,7 @@ nextPageButton.innerText = currentPage+1;
     
     const previousPageButton = document.querySelector('#expensesBack')
     
-    if(numberOfPages<2){
+    if(numberOfPages<2||currentPage===1){
 
     previousPageButton.setAttribute('disabled','')
 
@@ -298,6 +301,8 @@ nextPageButton.innerText = currentPage+1;
     else{
         //previousPageButton.setAttribute('data-total-pages',numberOfPages);
         previousPageButton.innerText = currentPage - 1;  
+    
+        previousPageButton.disabled = false;
     }
 
 }
@@ -305,10 +310,14 @@ nextPageButton.innerText = currentPage+1;
 // create rows of data from an array
 
     function displayEntriesFromArray(arrayOfExpenses){
+        const items = document.querySelector('#items');
+        items.innerHTML = '';
 
         arrayOfExpenses.forEach(element => {
         
-            const items = document.querySelector('#items');
+            
+
+            
 
             createRow(element['date'],element['name'],element['price'],element['category'],element['id'],items);
                      

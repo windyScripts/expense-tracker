@@ -43,7 +43,7 @@ app.use('/password',passwordRoutes);
 async function start(){
 await sequelize.sync();
 console.log('Database connected. :)')
-app.listen('3000');
+app.listen(process.env.PORT || 3000);
 }
 
 start();

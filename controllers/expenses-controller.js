@@ -15,16 +15,16 @@ const expensesPerPage = parseInt(req.query.items);
 
 const numberOfPages = Math.ceil(numberOfExpenses/expensesPerPage);
 
-expensesOffset = (numberOfPages - targetPageNumber) * expensesPerPage;
+expensesOffset = numberOfExpenses - (numberOfPages - targetPageNumber) * expensesPerPage;
 
-console.log(expensesOffset);
+console.log(expensesOffset, targetPageNumber, expensesPerPage);
 
 const currentPageExpensesReversed = await Expenses.findAll({
             limit: expensesPerPage,
             where: {
                 userId:req.user.id,
                 id: {
-                    [Op.lt] : expensesOffset
+                    [Op.lte] : expensesOffset
                 }
             },
 
