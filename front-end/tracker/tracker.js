@@ -3,43 +3,51 @@ const form = document.querySelector('#form');
 const formSubmit = document.querySelector('#formSubmit');
 
 const expenseName = document.querySelector('#expenseName');
-
 const expensePrice = document.querySelector('#expensePrice');
-
 const totalValue = document.querySelector('#totalValue');
-
 const expenseCategory = document.querySelector('#expenseCategory')
-
 const categories = document.querySelectorAll('.expenseCategory')
-
 const premium = document.querySelector('#premium');
 /* const leaderboardTableBody = document.querySelector('#leaderboard')
 const leaderboardTable = document.querySelector('#leaderboardTable') */
 const logOutButton = document.querySelector('#logout')
 /* const leaderboardButton = document.querySelector('#showLeaderboard'); */
 const premiumFeatures = document.querySelector('#premiumFeature')
-
 const pdfButton = document.querySelector('#pdfDownload')
-
 const paginationButtons = document.querySelector('#pagination');
-
 paginationButtons.addEventListener('click',changeExpensePage)
+const expensesPerPageForm = document.querySelector('#expensesPerPageForm')
+
+expensesPerPageForm.addEventListener('submit',changeDisplayNumber);
+
+async function changeDisplayNumber(e){
+    e.preventDefault();
+
+    const newDisplayNumber = document.querySelector('#expensesPerPageSelect').value;
+    console.log(newDisplayNumber);
+    localStorage.setItem('displayNumber',newDisplayNumber);
+    refreshDisplay(newDisplayNumber)
+
+}
 
 async function changeExpensePage(e){
 
 if(e.target.id==='expensesBack' || e.target.id==='expensesForward'){
 
-const targetPageNumber = e.innerText;
+const targetPageNumber = e.target.textContent;
 
-const response = axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()}})
+const expensesPerPage = getItemsPerPage();
+console.log(expensesPerPage)
 
-const currentPageEntries = response.data.currentPageEntries;
+const response = await axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()},params: {items: expensesPerPage} })
+
+const currentPageExpenses = response.data.currentPageExpenses;
 
 const numberOfPages = response.data.numberOfPages;
 
 // load expenses and change button configuration
 
-displayEntriesFromArray(currentPageEntries);
+displayEntriesFromArray(currentPageExpenses);
 
 configureButtons(numberOfPages, targetPageNumber)
 
@@ -199,68 +207,9 @@ async function onDOMContentLoad(e){
 
 try{totalPrice = 0;
 
-let token = getToken(); //token works. Have to set header.
+const expensesPerPage = getItemsPerPage();
 
-console.log(token);
-
-let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
-
-console.log(message);
-
-let arrayOfExpenses = message.data.currentPageExpenses;
-// Need to create buttons with the number of items, and create the offset for loading.
-
-const numberOfPages = message.data.numberOfPages;
-
-const startingPage = numberOfPages;
-
-configureButtons(numberOfPages,startingPage)
-
-const premiumStatus = message.data.premiumStatus;
-
-if(premiumStatus===true){
-
-    unlockPremium()
-
-displayEntriesFromArray(arrayOfExpenses);
-
-}
-
-async function unlockPremium(){
-    premium.classList.add('disabled','btn-warning');
-  premium.classList.remove('btn-success')
-  premium.textContent = "You are a premium user!"
-  premiumFeatures.toggleAttribute('hidden');
-  /* leaderboardButton.onclick = async() => {
-      const token = getToken();
-      leaderboardTable.toggleAttribute('hidden');
-      if(leaderboardTable.hasAttribute('hidden')){
-          document.querySelector('#showLeaderboard').value="Show Leaderboard";
-          document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
-          leaderboardTableBody.innerHTML="";
-      }
-      else{
-          document.querySelector('#showLeaderboard').value="Hide Leaderboard";
-          document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
-          const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
-          console.log(userLeaderBoardObject.data);
-          Object.keys(userLeaderBoardObject.data).forEach(e => {
-              console.log(e);
-              const row = document.createElement('tr');
-              const nameData = document.createElement('td');
-              const expenseData = document.createElement('td');
-              nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
-              expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
-              row.appendChild(nameData);
-              row.appendChild(expenseData);
-              leaderboardTableBody.appendChild(row);
-          })
-      }
-} */
-//console.log(inputElement);  
-}
-
-
+refreshDisplay(expensesPerPage)
 
 } catch(err) {console.log(err);}
 }
@@ -287,10 +236,17 @@ async function addEntry(e){
         
         // add value
 
-        id = message.data.id;
+        id = message.data[0].id;
+        const date = new Date(message.data[0].date);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1);
+        if(month.length==1) month = '0'+month;
+        const day = date.getDate();
+        const dateString = `${year}-${month}-${day}`;
         // console.log(id);
-        let newRow = createRow(name,price,category,id);
-        items.appendChild(newRow);
+        const items = document.querySelector('#items');
+        createRow(dateString,name,price,category,id, items);
+        
 
         // update price
 
@@ -309,23 +265,35 @@ async function addEntry(e){
 function configureButtons(numberOfPages, currentPage){
 
     const nextPageButton = document.querySelector('#expensesForward')
+
     nextPageButton.setAttribute('data-total-pages',numberOfPages);
+
     if(currentPage >= numberOfPages){
+
     nextPageButton.setAttribute('disabled','');
+
     nextPageButton.innerText = '-';
+
 } else {
+
 nextPageButton.innerText = currentPage+1;
+
 }
     
     const currentPageButton = document.querySelector('#currentExpenses')
     //currentPageButton.setAttribute('data-total-pages',numberOfPages);
     currentPageButton.setAttribute('disabled','');
+
     currentPageButton.innerText = currentPage;
     
     const previousPageButton = document.querySelector('#expensesBack')
+    
     if(numberOfPages<2){
+
     previousPageButton.setAttribute('disabled','')
+
     previousPageButton.innerText = '-';
+
     }
     else{
         //previousPageButton.setAttribute('data-total-pages',numberOfPages);
@@ -340,27 +308,18 @@ nextPageButton.innerText = currentPage+1;
 
         arrayOfExpenses.forEach(element => {
         
-            let newRow = createRow(element['date'],element['name'],element['price'],element['category'],element['id']);
-                
             const items = document.querySelector('#items');
-             
-            while(items.childElementCount>9){
-                items.removeChild(items.firstChild)
-            }
 
-            items.appendChild(newRow);  
-                
-            totalPrice+=parseInt(element['price']); 
+            createRow(element['date'],element['name'],element['price'],element['category'],element['id'],items);
+                     
 
-        });
-        
-        updatePrice()
-        
+        });        
         }
 
 // create table row from name, price with id.
 
-function createRow(date,name,price,category,id){
+function createRow(date,name,price,category,id,parent){
+
 let row = document.createElement('tr');
 row.className = 'item';
 
@@ -396,7 +355,20 @@ row.appendChild(priceData);
 row.appendChild(categoryData);
 row.appendChild(editTab);
 row.appendChild(deleteTab);
-return row;
+
+while(parent.childElementCount>(getItemsPerPage()-1)){
+    parent.removeChild(items.firstChild)
+}
+
+parent.appendChild(row);
+
+totalPrice+=parseInt(price);
+updatePrice();
+
+}
+
+function getItemsPerPage(){
+    return localStorage.getItem('displayNumber')??document.querySelector('#expensesPerPageSelect').value;
 }
 
 // update price
@@ -411,4 +383,68 @@ function getToken(){
     } catch(err) {
         console.log(err);
     }
+}
+
+async function refreshDisplay(expensesPerPage){
+    let token = getToken(); //token works. Have to set header.
+    
+    let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token},params: {items: expensesPerPage} }) // ?
+    
+    console.log(message);
+    
+    let arrayOfExpenses = message.data.currentPageExpenses;
+    // Need to create buttons with the number of items, and create the offset for loading.
+    
+    const numberOfPages = message.data.numberOfPages;
+    
+    const startingPage = numberOfPages;
+
+    console.log(numberOfPages,startingPage);
+    
+    configureButtons(numberOfPages,startingPage)
+
+    const premiumStatus = message.data.premiumStatus;
+
+if(premiumStatus===true){
+
+    unlockPremium()
+
+displayEntriesFromArray(arrayOfExpenses);
+
+}
+
+}
+
+async function unlockPremium(){
+    premium.classList.add('disabled','btn-warning');
+  premium.classList.remove('btn-success')
+  premium.textContent = "You are a premium user!"
+  premiumFeatures.toggleAttribute('hidden');
+  /* leaderboardButton.onclick = async() => {
+      const token = getToken();
+      leaderboardTable.toggleAttribute('hidden');
+      if(leaderboardTable.hasAttribute('hidden')){
+          document.querySelector('#showLeaderboard').value="Show Leaderboard";
+          document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
+          leaderboardTableBody.innerHTML="";
+      }
+      else{
+          document.querySelector('#showLeaderboard').value="Hide Leaderboard";
+          document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
+          const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
+          console.log(userLeaderBoardObject.data);
+          Object.keys(userLeaderBoardObject.data).forEach(e => {
+              console.log(e);
+              const row = document.createElement('tr');
+              const nameData = document.createElement('td');
+              const expenseData = document.createElement('td');
+              nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
+              expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
+              row.appendChild(nameData);
+              row.appendChild(expenseData);
+              leaderboardTableBody.appendChild(row);
+          })
+      }
+} */
+//console.log(inputElement);  
 }

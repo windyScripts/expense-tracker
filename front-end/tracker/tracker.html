@@ -33,7 +33,18 @@
             <input type="submit" class="btn btn-primary" id="formSubmit">
         </div>
     </form>
-    <h2 id="totalValue"></h2>
+    <div class="row">
+        <h2 id="totalValue" class="col-6"></h2>
+        <form action="" id="expensesPerPageForm"class="form col-6">
+            <select name="values" id="expensesPerPageSelect" class="form-select-sm">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <input class="btn btn-light btn-sm" type="submit" value="set rows">
+        </form>
+    </div>
     <table class="table table-hover">
         <thead>
             <th>Date</th><th>Expense Description</th> <th>Expense amount</th><th>Expense category</th><th>Edit</th><th>Delete</th>

@@ -1,21 +1,25 @@
 const Expenses = require('../models/expenses-model')
 const User = require('../models/user-model')
 const sequelize = require('../util/database');
-const Op = sequelize.Op;
-
-const expensesPerPage = 10;
+//const Op = sequelize.Op;
+const { Op } = require('sequelize');
 
 exports.getPageOfExpenses = async (req,res,next) => {
 try{
-targetPageNumber = req.params.pageNumber;
+
+targetPageNumber = parseInt(req.params.pageNumber);
 
 const numberOfExpenses = await Expenses.count({where:{userId:req.user.id}})
 
-const numberOfPages = Math.floor(numberOfExpenses/expensesPerPage);
+const expensesPerPage = parseInt(req.query.items);
+
+const numberOfPages = Math.ceil(numberOfExpenses/expensesPerPage);
 
 expensesOffset = (numberOfPages - targetPageNumber) * expensesPerPage;
 
-const currentPageExpenses = await Expenses.findAll({
+console.log(expensesOffset);
+
+const currentPageExpensesReversed = await Expenses.findAll({
             limit: expensesPerPage,
             where: {
                 userId:req.user.id,
@@ -27,6 +31,8 @@ const currentPageExpenses = await Expenses.findAll({
             order: [ [ 'id', 'DESC' ]]
           
         })
+
+const currentPageExpenses = currentPageExpensesReversed.reverse();
 
 res.status(200).json({
     currentPageExpenses,
@@ -47,6 +53,9 @@ exports.getButtonsAndLastPage = async (req,res,next) => {
     
         const promiseOne = Expenses.count({where:{userId:req.user.id}})
         
+        const expensesPerPage = parseInt(req.query.items);
+        console.log(expensesPerPage);
+
         const promiseTwo = Expenses.findAll({
             limit: expensesPerPage,
             where: {
@@ -58,12 +67,16 @@ exports.getButtonsAndLastPage = async (req,res,next) => {
         
         const promiseThree = User.findOne({where:{id:req.user.id}});
         
-        const [numberOfExpenses, currentPageExpenses, user] = await Promise.all([promiseOne, promiseTwo, promiseThree])
+        const [numberOfExpenses, currentPageExpensesReversed, user] = await Promise.all([promiseOne, promiseTwo, promiseThree])
     
         const premiumStatus = user.ispremiumuser;
         
         const numberOfPages = Math.ceil(numberOfExpenses/expensesPerPage);
         
+        console.log(numberOfPages,numberOfExpenses,expensesPerPage)
+
+        const currentPageExpenses = currentPageExpensesReversed.reverse()
+
         res.status(200).json({
             premiumStatus,
             currentPageExpenses,
