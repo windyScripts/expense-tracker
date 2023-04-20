@@ -1,23 +1,78 @@
 const Expenses = require('../models/expenses-model')
 const User = require('../models/user-model')
 const sequelize = require('../util/database');
+const Op = sequelize.Op;
 
+const expensesPerPage = 10;
 
-exports.getExpenses = async (req,res,next) => {
-   try {
-    const products = await Expenses.findAll({where:{userId:req.user.id}})
-    console.log(products);
-    const user = await User.findOne({where:{id:req.user.id}});
-    const premiumStatus = user.ispremiumuser;
-    console.log(premiumStatus);
-    res.status(200).json({
-        premiumStatus,
-        products
-    });
+exports.getPageOfExpenses = async (req,res,next) => {
+try{
+targetPageNumber = req.params.pageNumber;
+
+const numberOfExpenses = await Expenses.count({where:{userId:req.user.id}})
+
+const numberOfPages = Math.floor(numberOfExpenses/expensesPerPage);
+
+expensesOffset = (numberOfPages - targetPageNumber) * expensesPerPage;
+
+const currentPageExpenses = await Expenses.findAll({
+            limit: expensesPerPage,
+            where: {
+                userId:req.user.id,
+                id: {
+                    [Op.lt] : expensesOffset
+                }
+            },
+
+            order: [ [ 'id', 'DESC' ]]
+          
+        })
+
+res.status(200).json({
+    currentPageExpenses,
+    numberOfPages
+});
+
+    }catch(err){
+
+        console.log(err);
+
+    }        
+
 }
-   catch(err) {
-    console.log(err);
-   }
+
+exports.getButtonsAndLastPage = async (req,res,next) => {
+    try {
+        
+    
+        const promiseOne = Expenses.count({where:{userId:req.user.id}})
+        
+        const promiseTwo = Expenses.findAll({
+            limit: expensesPerPage,
+            where: {
+                userId:req.user.id
+            },
+            order: [ [ 'id', 'DESC' ]]
+          
+        })
+        
+        const promiseThree = User.findOne({where:{id:req.user.id}});
+        
+        const [numberOfExpenses, currentPageExpenses, user] = await Promise.all([promiseOne, promiseTwo, promiseThree])
+    
+        const premiumStatus = user.ispremiumuser;
+        
+        const numberOfPages = Math.ceil(numberOfExpenses/expensesPerPage);
+        
+        res.status(200).json({
+            premiumStatus,
+            currentPageExpenses,
+            numberOfPages
+        });
+    }
+       catch(err) {
+        console.log(err);
+       }
 }
 
 exports.addExpense = async (req,res,next) => {

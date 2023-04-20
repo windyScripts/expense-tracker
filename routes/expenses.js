@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const authController = require('../controllers/user-controller')
+const userController = require('../controllers/user-controller')
 const expensesController = require('../controllers/expenses-controller');
 const premiumController = require('../controllers/downloads-controller')
 
-router.get('/entries', authController.authorization ,expensesController.getExpenses);
-router.post('/entry', authController.authorization ,expensesController.addExpense);
-router.delete('/entry/:eId',authController.authorization ,expensesController.deleteExpense);
-router.get('/download',authController.authorization, premiumController.getPDFLink)
+router.get('/entries', userController.authorization ,expensesController.getButtonsAndLastPage);
+router.post('/entry', userController.authorization ,expensesController.addExpense);
+router.delete('/entry/:eId',userController.authorization ,expensesController.deleteExpense);
+router.get('/download',userController.authorization, premiumController.getPDFLink)
+router.get('/entries/:pageNumber', userController.authorization, expensesController.getPageOfExpenses)
 
 module.exports = router;

@@ -1,19 +1,51 @@
 const form = document.querySelector('#form');
+
 const formSubmit = document.querySelector('#formSubmit');
+
 const expenseName = document.querySelector('#expenseName');
+
 const expensePrice = document.querySelector('#expensePrice');
-const items = document.querySelector('#items');
+
 const totalValue = document.querySelector('#totalValue');
+
 const expenseCategory = document.querySelector('#expenseCategory')
+
 const categories = document.querySelectorAll('.expenseCategory')
+
 const premium = document.querySelector('#premium');
 /* const leaderboardTableBody = document.querySelector('#leaderboard')
 const leaderboardTable = document.querySelector('#leaderboardTable') */
 const logOutButton = document.querySelector('#logout')
 /* const leaderboardButton = document.querySelector('#showLeaderboard'); */
 const premiumFeatures = document.querySelector('#premiumFeature')
+
 const pdfButton = document.querySelector('#pdfDownload')
 
+const paginationButtons = document.querySelector('#pagination');
+
+paginationButtons.addEventListener('click',changeExpensePage)
+
+async function changeExpensePage(e){
+
+if(e.target.id==='expensesBack' || e.target.id==='expensesForward'){
+
+const targetPageNumber = e.innerText;
+
+const response = axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()}})
+
+const currentPageEntries = response.data.currentPageEntries;
+
+const numberOfPages = response.data.numberOfPages;
+
+// load expenses and change button configuration
+
+displayEntriesFromArray(currentPageEntries);
+
+configureButtons(numberOfPages, targetPageNumber)
+
+}
+
+}
 
 pdfButton.addEventListener('click',getPDFLink);
 
@@ -21,15 +53,21 @@ async function getPDFLink(e){
     e.preventDefault();
 
     const startDate = document.querySelector('#startDate').value;
+
     const endDate = document.querySelector('#endDate').value;
+
     const response = await axios.get('http://localhost:3000/download',{headers:{"Authorization": getToken()}, params: { start_date: startDate, end_date: endDate }})
+
     if(response.status === 200){
+
     const a = document.createElement('a');
     a.href = response.data.fileUrl;
     a.download = 'myexpense.csv';
     console.log(response);
     a.click();
-} else {
+} 
+
+else {
     throw new Error(response.data.message);
 }
 }
@@ -158,62 +196,72 @@ async function deleteEntry(e){
 // display Products and total value.
 
 async function onDOMContentLoad(e){
+
 try{totalPrice = 0;
+
 let token = getToken(); //token works. Have to set header.
+
 console.log(token);
+
 let message = await axios.get("http://localhost:3000/entries", {headers: {'Authorization':token}}) // ?
+
 console.log(message);
-let arrayOfProducts = message.data.products;
-console.log(arrayOfProducts);
+
+let arrayOfExpenses = message.data.currentPageExpenses;
+// Need to create buttons with the number of items, and create the offset for loading.
+
+const numberOfPages = message.data.numberOfPages;
+
+const startingPage = numberOfPages;
+
+configureButtons(numberOfPages,startingPage)
 
 const premiumStatus = message.data.premiumStatus;
-console.log(typeof premiumStatus, premiumStatus)
+
 if(premiumStatus===true){
+
     unlockPremium()
+
+displayEntriesFromArray(arrayOfExpenses);
+
 }
-//    console.log(arrayOfProducts);
-//    console.log(totalValue.target)
-    arrayOfProducts.forEach(element => {
-        let newRow = createRow(element['date'],element['name'],element['price'],element['category'],element['id']);
-        items.appendChild(newRow);  
-        totalPrice+=parseInt(element['price']);     
-    });
 
 async function unlockPremium(){
-          premium.classList.add('disabled','btn-warning');
-        premium.classList.remove('btn-success')
-        premium.textContent = "You are a premium user!"
-        premiumFeatures.toggleAttribute('hidden');
-        /* leaderboardButton.onclick = async() => {
-            const token = getToken();
-            leaderboardTable.toggleAttribute('hidden');
-            if(leaderboardTable.hasAttribute('hidden')){
-                document.querySelector('#showLeaderboard').value="Show Leaderboard";
-                document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
-                leaderboardTableBody.innerHTML="";
-            }
-            else{
-                document.querySelector('#showLeaderboard').value="Hide Leaderboard";
-                document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
-                const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
-                console.log(userLeaderBoardObject.data);
-                Object.keys(userLeaderBoardObject.data).forEach(e => {
-                    console.log(e);
-                    const row = document.createElement('tr');
-                    const nameData = document.createElement('td');
-                    const expenseData = document.createElement('td');
-                    nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
-                    expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
-                    row.appendChild(nameData);
-                    row.appendChild(expenseData);
-                    leaderboardTableBody.appendChild(row);
-                })
-            }
-    } */
-    //console.log(inputElement);  
-    }
+    premium.classList.add('disabled','btn-warning');
+  premium.classList.remove('btn-success')
+  premium.textContent = "You are a premium user!"
+  premiumFeatures.toggleAttribute('hidden');
+  /* leaderboardButton.onclick = async() => {
+      const token = getToken();
+      leaderboardTable.toggleAttribute('hidden');
+      if(leaderboardTable.hasAttribute('hidden')){
+          document.querySelector('#showLeaderboard').value="Show Leaderboard";
+          document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
+          leaderboardTableBody.innerHTML="";
+      }
+      else{
+          document.querySelector('#showLeaderboard').value="Hide Leaderboard";
+          document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
+          const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
+          console.log(userLeaderBoardObject.data);
+          Object.keys(userLeaderBoardObject.data).forEach(e => {
+              console.log(e);
+              const row = document.createElement('tr');
+              const nameData = document.createElement('td');
+              const expenseData = document.createElement('td');
+              nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
+              expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
+              row.appendChild(nameData);
+              row.appendChild(expenseData);
+              leaderboardTableBody.appendChild(row);
+          })
+      }
+} */
+//console.log(inputElement);  
+}
 
-updatePrice()
+
+
 } catch(err) {console.log(err);}
 }
 
@@ -255,6 +303,60 @@ async function addEntry(e){
         expenseCategory.value='1';
 
     }catch(err) {console.log(err);}} 
+
+// configure pagination buttons
+
+function configureButtons(numberOfPages, currentPage){
+
+    const nextPageButton = document.querySelector('#expensesForward')
+    nextPageButton.setAttribute('data-total-pages',numberOfPages);
+    if(currentPage >= numberOfPages){
+    nextPageButton.setAttribute('disabled','');
+    nextPageButton.innerText = '-';
+} else {
+nextPageButton.innerText = currentPage+1;
+}
+    
+    const currentPageButton = document.querySelector('#currentExpenses')
+    //currentPageButton.setAttribute('data-total-pages',numberOfPages);
+    currentPageButton.setAttribute('disabled','');
+    currentPageButton.innerText = currentPage;
+    
+    const previousPageButton = document.querySelector('#expensesBack')
+    if(numberOfPages<2){
+    previousPageButton.setAttribute('disabled','')
+    previousPageButton.innerText = '-';
+    }
+    else{
+        //previousPageButton.setAttribute('data-total-pages',numberOfPages);
+        previousPageButton.innerText = currentPage - 1;  
+    }
+
+}
+
+// create rows of data from an array
+
+    function displayEntriesFromArray(arrayOfExpenses){
+
+        arrayOfExpenses.forEach(element => {
+        
+            let newRow = createRow(element['date'],element['name'],element['price'],element['category'],element['id']);
+                
+            const items = document.querySelector('#items');
+             
+            while(items.childElementCount>9){
+                items.removeChild(items.firstChild)
+            }
+
+            items.appendChild(newRow);  
+                
+            totalPrice+=parseInt(element['price']); 
+
+        });
+        
+        updatePrice()
+        
+        }
 
 // create table row from name, price with id.
 
