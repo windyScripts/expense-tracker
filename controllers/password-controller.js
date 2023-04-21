@@ -16,8 +16,8 @@ exports.forgotPassword = async (req,res,next) => {
         const transactionalEmailApi = new Sib.TransactionalEmailsApi();
 
         const sender = {
-            name: 'Rubrik',
-            email: 'arvnd2life+sendinblue@gmail.com'
+            name: process.env.EMAIL_SENDER_NAME,
+            email: process.env.EMAIL_SENDER_ADDRESS
         }
         
         const receiver = [{email:req.body.email}];
