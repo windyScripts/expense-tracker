@@ -1,26 +1,10 @@
-const User = require('../models/user-model');
 const Expenses = require('../models/expenses-model');
 const Downloads = require('../models/downloads-model');
 
-const sequelize = require('sequelize');
-const Op = sequelize.Op;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 const S3 = require('../services/S3-services')
-
-//const AWS = require('aws-sdk');
-
-/* exports.showLeaderboards = async (req,res,next) => {
- try{
-    const userLeaderBoard = await User.findAll({
-        attributes: ['name','totalExpense'],
-        order: [['totalExpense','DESC']]
-    });
-    res.status(200).json(userLeaderBoard);
-}
- catch(err) {
-    console.log(err);
- }
-} */
 
 exports.getPDFLink = async (req,res,next) => {
     try{
@@ -53,33 +37,3 @@ exports.getPDFLink = async (req,res,next) => {
         res.status(500).json({fileUrl:'',success:false,message:err})
     }
 }
-
-/* async function uploadtoS3 (data, fileName) {
-    try{
-    let s3Bucket = new AWS.S3({
-        accessKeyId: process.env.IAM_USER_KEY,
-        secretAccessKey: process.env.IAM_USER_SECRET,
-    })
-
-    var params = {
-        Bucket: process.env.BUCKET_NAME,
-        Key:fileName,
-        Body: data,
-        ACL: 'public-read'
-    }
-        return new Promise((resolve,reject)=> {
-            s3Bucket.upload(params, (err, s3response) =>{
-                if(err){
-                    console.log('Something went wrong', err)
-                    reject(err);
-                }else {
-                    console.log('Success');
-                    resolve(s3response.Location);
-                }
-            })
-        }) 
-    }
-    catch(err){
-        return new Promise((resolve,reject) => reject(err))
-    }
-} */

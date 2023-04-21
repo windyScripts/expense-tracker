@@ -141,13 +141,24 @@ formSubmit.addEventListener('click',addEntry);
 
 window.addEventListener('DOMContentLoaded',onDOMContentLoad);
 
-// delete entry listener
+// functions related to entry listener
 
-items.addEventListener('click',deleteEntry);
+items.addEventListener('click',entryFunctions);
 
-// edit entry listener
 
-items.addEventListener('click',editEntry);
+function entryFunctions(e){
+    try{
+        if(e.target.classList.contains('edit')){
+            editEntry(e);
+        }
+        else if(e.target.classList.contains('delete')){
+            deleteEntry(e);
+        }
+    }
+    catch(err){
+        console.log(err);
+    }
+}
 
 // add premium features
 
@@ -157,11 +168,11 @@ premium.addEventListener('click', createPaymentRequest);
 
 async function editEntry(e){
     try{
-        if(e.target.classList.contains('edit')){
-        let row = e.target.parentNode.parentNode;
-        let name = row.firstChild.textContent;
-        let price = row.firstChild.nextSibling.textContent;
-        let category = row.firstChild.nextSibling.nextSibling.textContent;
+                let row = e.target.parentNode.parentNode;
+        let date = row.firstChild.textContent
+        let name = row.firstChild.nextSibling.textContent;
+        let price = row.firstChild.nextSibling.nextSibling.textContent;
+        let category = row.firstChild.nextSibling.nextSibling.nextSibling.textContent;
         let id = row.id;
         let categoryValue ='0';
         // console.log(categories[0].innerText);
@@ -171,7 +182,7 @@ async function editEntry(e){
             }
         })
 
-    //    console.log(name,price,category,categoryValue,id);
+        console.log(name,price,category,categoryValue,id);
         const message = await axios.delete("http://localhost:3000/entry/"+id,{headers: {'Authorization':token}})
         console.log(message);
         expenseName.value = name;
@@ -180,14 +191,13 @@ async function editEntry(e){
         totalPrice -= price;
         updatePrice();
         items.removeChild(row);
-}} catch(error) {console.log(error)}
+} catch(error) {console.log(error)}
 }
 
 // delete entry
 
 async function deleteEntry(e){
     try{
-        if(e.target.classList.contains('delete')){
             if(confirm('Are you sure?')){
                 console.log(e.target.parentNode.parentNode);
                 let row = e.target.parentNode.parentNode;
@@ -199,7 +209,7 @@ async function deleteEntry(e){
                     updatePrice()
                     items.removeChild(row);
         }
-    }} catch(err) {console.log(err);}
+    } catch(err) {console.log(err);}
 }
 
 
@@ -377,7 +387,7 @@ updatePrice();
 }
 
 function getItemsPerPage(){
-    return localStorage.getItem('displayNumber')??document.querySelector('#expensesPerPageSelect').value;
+    return localStorage.getItem('displayNumber')||document.querySelector('#expensesPerPageSelect').value;
 }
 
 // update price

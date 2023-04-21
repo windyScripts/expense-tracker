@@ -1,8 +1,10 @@
 const Expenses = require('../models/expenses-model')
 const User = require('../models/user-model')
-const sequelize = require('../util/database');
-//const Op = sequelize.Op;
-const { Op } = require('sequelize');
+
+const sequelize = require('../util/database')
+
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
 exports.getPageOfExpenses = async (req,res,next) => {
 try{
@@ -89,8 +91,9 @@ exports.getButtonsAndLastPage = async (req,res,next) => {
 }
 
 exports.addExpense = async (req,res,next) => {
-    try { //console.log(req.body,req.user);
+    try {
         const t = await sequelize.transaction();
+
         const expenseCreationPromise = Expenses.create({
             name: req.body.name,
             price: req.body.price,
