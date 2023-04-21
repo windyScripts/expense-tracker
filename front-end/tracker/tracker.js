@@ -183,13 +183,32 @@ async function editEntry(e){
         })
 
         console.log(name,price,category,categoryValue,id);
-        const message = await axios.delete("http://localhost:3000/entry/"+id,{headers: {'Authorization':token}})
-        console.log(message);
         expenseName.value = name;
         expensePrice.value = price;
         expenseCategory.value = categoryValue;
-        totalPrice -= price;
-        updatePrice();
+        formSubmit.removeEventListener('click',addEntry)
+        formSubmit.addEventListener('click', patchExpense)
+        async function patchExpense(e) {
+            formSubmit.addEventListener('click',addEntry)
+            formSubmit.removeEventListener('click', patchExpense)
+            e.preventDefault();
+            let name = expenseName.value;
+            let price = expensePrice.value;
+            let category =  expenseCategory.options[expenseCategory.value].text// 
+            const token = getToken();
+            let entry = {
+                name,
+                price,
+                category,
+            }
+            const message = await axios.patch("http://localhost:3000/entry/"+id, entry,{headers: {'Authorization':token}})
+            expenseName.value = '';
+        expensePrice.value = '';
+        expenseCategory.value = '0';
+        }
+
+        
+
         items.removeChild(row);
 } catch(error) {console.log(error)}
 }
@@ -204,9 +223,6 @@ async function deleteEntry(e){
                 let id = row.id;
                 let message = await axios.delete("http://localhost:3000/entry/"+id,{headers: {'Authorization':token}})
                 console.log(message);
-                    let price = row.firstChild.nextSibling.textContent;
-                    totalPrice -= price;
-                    updatePrice()
                     items.removeChild(row);
         }
     } catch(err) {console.log(err);}
@@ -262,8 +278,6 @@ async function addEntry(e){
 
         // update price
 
-        totalPrice += parseInt(price);
-        updatePrice()
         // empty fields
 
         expenseName.value='';
@@ -381,19 +395,10 @@ while(parent.childElementCount>(getItemsPerPage()-1)){
 
 parent.appendChild(row);
 
-totalPrice+=parseInt(price);
-updatePrice();
-
 }
 
 function getItemsPerPage(){
     return localStorage.getItem('displayNumber')||document.querySelector('#expensesPerPageSelect').value;
-}
-
-// update price
-
-async function updatePrice(){
-    totalValue.textContent= "TOTAL VALUE: "+totalPrice;
 }
 
 function getToken(){

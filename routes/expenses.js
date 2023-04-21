@@ -11,4 +11,6 @@ router.delete('/entry/:eId',userController.authorization ,expensesController.del
 router.get('/download',userController.authorization, premiumController.getPDFLink)
 router.get('/entries/:pageNumber', userController.authorization, expensesController.getPageOfExpenses)
 
+router.patch('/entry/:eId', userController.authorization , expensesController.patchExpense);
+
 module.exports = router;

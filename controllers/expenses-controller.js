@@ -17,9 +17,9 @@ const expensesPerPage = parseInt(req.query.items);
 
 const numberOfPages = Math.ceil(numberOfExpenses/expensesPerPage);
 
-expensesOffset = numberOfExpenses - (numberOfPages - targetPageNumber) * expensesPerPage;
+const expensesOffset = numberOfExpenses - (numberOfPages - targetPageNumber) * expensesPerPage;
 
-console.log(expensesOffset, targetPageNumber, expensesPerPage);
+console.log(expensesOffset, targetPageNumber, expensesPerPage, numberOfPages, numberOfExpenses);
 
 const currentPageExpensesReversed = await Expenses.findAll({
             limit: expensesPerPage,
@@ -33,9 +33,7 @@ const currentPageExpensesReversed = await Expenses.findAll({
             order: [ [ 'id', 'DESC' ]]
           
         })
-
 const currentPageExpenses = currentPageExpensesReversed.reverse();
-
 res.status(200).json({
     currentPageExpenses,
     numberOfPages
@@ -141,4 +139,35 @@ exports.deleteExpense = async (req,res,next) => {
      console.log(err);
      await t.rollback();
     }
+}
+
+exports.patchExpense = async function(req,res,next){
+try{
+    console.log(req.body);
+    if(req.body.name.length===0||!Number(req.body.price)) {
+        res.status(400).json({message: "invalid data"})
+    }
+    const t = await sequelize.transaction();
+    const id = req.params.eId;
+    const expense = await Expenses.findOne({where : {id:id,userId:req.user.id}})
+        const updatedExpense = Number(req.user.totalExpense)- Number(expense.price)+Number(req.body.price)
+        const userTotalExpenseUpdationPromise = User.update({
+            totalExpense: updatedExpense,
+            transaction: t
+        },
+        {
+            where: {id: req.user.id}
+        })
+    expense.category = req.body.category;
+    expense.price = parseInt(req.body.price);
+    expense.name = req.body.name;
+    const expenseChangePromise = expense.save();
+    const message = await Promise.all([expenseChangePromise, userTotalExpenseUpdationPromise])    
+    await t.commit();
+    res.status(200).json(message);
+}
+catch(err){
+    console.log(err);
+    await t.rollback();
+}
 }
