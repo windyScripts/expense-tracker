@@ -169,10 +169,10 @@ premium.addEventListener('click', createPaymentRequest);
 async function editEntry(e){
     try{
                 let row = e.target.parentNode.parentNode;
-        let date = row.firstChild.textContent
-        let name = row.firstChild.nextSibling.textContent;
-        let price = row.firstChild.nextSibling.nextSibling.textContent;
-        let category = row.firstChild.nextSibling.nextSibling.nextSibling.textContent;
+        let date = row.children[0].innerText
+        let name = row.children[1].innerText;
+        let price = row.children[2].innerText;
+        let category = row.children[3].innerText;
         let id = row.id;
         let categoryValue ='0';
         // console.log(categories[0].innerText);
