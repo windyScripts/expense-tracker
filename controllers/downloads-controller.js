@@ -5,7 +5,9 @@ const Downloads = require('../models/downloads-model');
 const sequelize = require('sequelize');
 const Op = sequelize.Op;
 
-const AWS = require('aws-sdk');
+const S3 = require('../services/S3-services')
+
+//const AWS = require('aws-sdk');
 
 /* exports.showLeaderboards = async (req,res,next) => {
  try{
@@ -41,7 +43,7 @@ exports.getPDFLink = async (req,res,next) => {
         const userId = req.user.id
         const timeStamp = new Date();
         const fileName = `${userId}/${timeStamp}`;
-        const fileUrl = await uploadtoS3(stringifiedExpenses, fileName);
+        const fileUrl = await S3.uploadtoS3(stringifiedExpenses, fileName);
         await Downloads.create({
             url: fileUrl
         })
@@ -52,7 +54,7 @@ exports.getPDFLink = async (req,res,next) => {
     }
 }
 
-async function uploadtoS3 (data, fileName) {
+/* async function uploadtoS3 (data, fileName) {
     try{
     let s3Bucket = new AWS.S3({
         accessKeyId: process.env.IAM_USER_KEY,
@@ -80,4 +82,4 @@ async function uploadtoS3 (data, fileName) {
     catch(err){
         return new Promise((resolve,reject) => reject(err))
     }
-}
+} */
