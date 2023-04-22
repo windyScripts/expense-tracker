@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "expense tracker for tracking expenses",
   "main": "app.js",
+  "node": "18.15.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",

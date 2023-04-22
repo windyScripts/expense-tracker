@@ -1,3 +1,4 @@
+
 const fs = require('fs');
 const path = require('path');
 
@@ -7,7 +8,9 @@ const app = express();
 
 const morgan = require('morgan');
 
-const authRoutes = require('./routes/auth')
+require('dotenv').config()
+
+const authRoutes = require('./routes/user')
 const expensesRoutes = require('./routes/expenses')
 const purchaseRoutes = require('./routes/purchase')
 const passwordRoutes = require('./routes/password')
@@ -61,7 +64,7 @@ app.use('/password',passwordRoutes);
 
 async function start(){
 await sequelize.sync();
-console.log('Database connected. :)',environment)
+console.log('Database connected. :)')
 app.listen(process.env.PORT || 3000);
 }
 
