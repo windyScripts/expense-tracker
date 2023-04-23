@@ -118,8 +118,8 @@ exports.getButtonsAndLastPage = async (req,res,next) => {
 }
 
 exports.addExpense = async (req,res,next) => {
+    const t = await sequelize.transaction();
     try {
-        const t = await sequelize.transaction();
 
         const expenseCreationPromise = Expenses.create({
             name: req.body.name,
@@ -147,8 +147,8 @@ exports.addExpense = async (req,res,next) => {
 }
 
 exports.deleteExpense = async (req,res,next) => {
+    const t = await sequelize.transaction();
     try {
-        const t = await sequelize.transaction();
         const id = req.params.eId;
         const expense = await Expenses.findOne({where : {id:id,userId:req.user.id}})
         const updatedExpense = Number(req.user.totalExpense)- Number(expense.price)
@@ -171,12 +171,12 @@ exports.deleteExpense = async (req,res,next) => {
 }
 
 exports.patchExpense = async function(req,res,next){
+    const t = await sequelize.transaction();
 try{
     console.log(req.body);
     if(req.body.name.length===0||!Number(req.body.price)) {
         res.status(400).json({message: "invalid data"})
     }
-    const t = await sequelize.transaction();
     const id = req.params.eId;
     const expense = await Expenses.findOne({where : {id:id,userId:req.user.id}})
         const updatedExpense = Number(req.user.totalExpense)- Number(expense.price)+Number(req.body.price)
