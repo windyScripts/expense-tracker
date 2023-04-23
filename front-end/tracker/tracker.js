@@ -241,7 +241,11 @@ async function deleteEntry(e){
 
 async function onDOMContentLoad(e){
 
-try{totalPrice = 0;
+try{
+
+document.querySelector('#expensesPerPageSelect').value = localStorage.getItem('displayNumber')||10;
+    
+totalPrice = 0;
 
 const expensesPerPage = getItemsPerPage();
 
