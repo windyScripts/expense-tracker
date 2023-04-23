@@ -1,3 +1,5 @@
+
+
 const form = document.querySelector('#form');
 
 const formSubmit = document.querySelector('#formSubmit');
@@ -34,12 +36,18 @@ async function changeExpensePage(e){
 
 if(e.target.id==='expensesBack' || e.target.id==='expensesForward'){
 
+    const expenseContainer = document.querySelector('tbody#items')
+
 const targetPageNumber = parseInt(e.target.textContent);
 
 const expensesPerPage = getItemsPerPage();
 console.log(expensesPerPage)
 
-const response = await axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()},params: {items: expensesPerPage} })
+const relativePagePosition = e.target.id;
+
+const id = (e.target.id==='expensesBack'?expenseContainer.firstElementChild.id:expenseContainer.lastElementChild.id)
+
+const response = await axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()},params: {items: expensesPerPage, relativePagePosition, id} })
 
 const currentPageExpenses = response.data.currentPageExpenses;
 

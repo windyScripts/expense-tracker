@@ -11,6 +11,8 @@ try{
 
 targetPageNumber = parseInt(req.params.pageNumber);
 
+relativePagePosition = req.query.relativePagePosition;
+
 const numberOfExpenses = await Expenses.count({where:{userId:req.user.id}})
 
 const expensesPerPage = parseInt(req.query.items);
@@ -21,19 +23,46 @@ const expensesOffset = numberOfExpenses - (numberOfPages - targetPageNumber) * e
 
 console.log(expensesOffset, targetPageNumber, expensesPerPage, numberOfPages, numberOfExpenses);
 
-const currentPageExpensesReversed = await Expenses.findAll({
+console.log(req.query);
+
+let id;
+
+let order;
+
+if(relativePagePosition==='expensesBack'){
+
+id = {
+    [Op.lt] : req.query.id
+}
+
+order = [ [ 'id', 'DESC' ]]
+
+
+} else if(relativePagePosition==='expensesForward'){
+
+id = {
+    [Op.gt] : req.query.id
+}
+
+order = [ [ 'id', 'ASC' ]]
+
+}else{
+    
+return res.status(400).json({message:"invalid id"})
+
+}
+
+const unsortedCurrentPageExpenses = await Expenses.findAll({
             limit: expensesPerPage,
             where: {
                 userId:req.user.id,
-                id: {
-                    [Op.lte] : expensesOffset
-                }
+                id: id
             },
 
-            order: [ [ 'id', 'DESC' ]]
+            order: order
           
         })
-const currentPageExpenses = currentPageExpensesReversed.reverse();
+const currentPageExpenses = (relativePagePosition==='expensesBack')?unsortedCurrentPageExpenses.reverse():unsortedCurrentPageExpenses;
 res.status(200).json({
     currentPageExpenses,
     numberOfPages
