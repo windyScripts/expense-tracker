@@ -11,6 +11,7 @@ exports.getPDFLink = async (req, res) => {
   try {
     const startDate = req.query.start_date;
     const endDate = req.query.end_date;
+    if(endDate<startDate) return res.status(400).json({message:"Bad dates"})
     const expenseData = await Expenses.findAll({
       where: {
         userid: req.user.id,

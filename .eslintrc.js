@@ -21,28 +21,10 @@ module.exports = {
     alert: 'readonly'
   },
   rules: {
-    // Disable base rules to avoid conflicts with @typescript-eslint
-    'brace-style': 'off',
-    'comma-dangle': 'off',
-    indent: 'off',
-    'key-spacing': 'off',
-    'keyword-spacing': 'off',
-    'no-unused-vars': 'off',
-    'object-curly-spacing': 'off',
-    'padding-line-between-statements': 'off',
-    semi: 'off',
-    'space-before-blocks': 'off',
-    'space-infix-ops': 'off',
-
     // Basic rules
     indent: ['error', 2, {
       SwitchCase: 1,
       flatTernaryExpressions: false,
-      ignoredNodes: [
-        'PropertyDefinition[decorators]',
-        'TSUnionType',
-        'FunctionExpression[params]:has(Identifier[decorators])',
-      ],
     }],
     'max-len': ['warn', 120],
     'no-unused-vars': 'error',
@@ -101,15 +83,6 @@ module.exports = {
         'sibling',
         'index',
       ],
-      groups: [
-        'builtin',
-        'external',
-        'internal',
-        'parent',
-        'sibling',
-        'index',
-        'object',
-      ],
       'newlines-between': 'always',
       alphabetize: { order: 'asc', caseInsensitive: true },
     }],
@@ -117,7 +90,7 @@ module.exports = {
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        extensions: ['.js', '.jsx'],
       },
     },
   },
