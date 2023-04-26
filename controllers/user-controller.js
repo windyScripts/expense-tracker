@@ -27,7 +27,7 @@ exports.addUser = async (req, res) => {
     }
     const saltRounds = 10;
     bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
-      const response = await User.create(req.body.userName, req.body.email, hash);
+      const response = await User.create({ name: req.body.userName, email: req.body.email, password: hash });
       console.log(response);
       return res.status(200).json(response);
     });

@@ -18,8 +18,6 @@ exports.getPageOfExpenses = async (req, res) => {
 
     const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
 
-    const expensesOffset = numberOfExpenses - (numberOfPages - targetPageNumber) * expensesPerPage;
-
     let id;
 
     let order;
@@ -104,13 +102,11 @@ exports.addExpense = async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       userId: req.user.id,
-      transaction: t,
-    });
+    }, t);
     const updatedExpense = Number(req.user.totalExpense) + Number(req.body.price);
     const userTotalExpenseUpdationPromise = User.update(req.user, {
       totalExpense: updatedExpense,
-      transaction: t,
-    });
+    }, t);
     const message = await Promise.all([expenseCreationPromise, userTotalExpenseUpdationPromise]);
     await t.commit();
     res.status(200).json(message);
@@ -128,9 +124,8 @@ exports.deleteExpense = async (req, res) => {
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price);
     const userTotalExpenseUpdationPromise = User.update(req.user, {
       totalExpense: updatedExpense,
-      transaction: t,
-    });
-    const expenseDeletionPromise = Expenses.destroy({ where: { id, userId: req.user.id }}, { transaction: t });
+    }, t);
+    const expenseDeletionPromise = Expenses.destroy({ where: { id, userId: req.user.id }}, t);
     const message = await Promise.all([userTotalExpenseUpdationPromise, expenseDeletionPromise]);
     await t.commit();
     res.status(200).json(message);
@@ -152,12 +147,12 @@ exports.patchExpense = async function(req, res) {
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price) + Number(req.body.price);
     const userTotalExpenseUpdationPromise = User.update(req.user, {
       totalExpense: updatedExpense,
-      transaction: t,
-    });
+    }, t,
+    );
     expense.category = req.body.category;
     expense.price = parseInt(req.body.price);
     expense.name = req.body.name;
-    const expenseChangePromise = Expenses.save(expense);
+    const expenseChangePromise = Expenses.save(expense, t);
     const message = await Promise.all([expenseChangePromise, userTotalExpenseUpdationPromise]);
     await t.commit();
     res.status(200).json(message);

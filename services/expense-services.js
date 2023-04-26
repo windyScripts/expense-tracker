@@ -1,16 +1,18 @@
 const Expenses = require('../models/expenses-model');
 
-exports.findOne = function(params) {
+exports.findOne = async function(params) {
   try {
     return new Promise((resolve, reject) => {
-      Expenses.findOne(params).then(data => resolve(data)).catch(err => reject(err));
+      Expenses.findOne(params).then(data => {
+        resolve(data);
+      }).catch(err => reject(err));
     });
   } catch (err) {
     return new Promise((resolve, reject) => reject(err));
   }
 };
 
-exports.findAll = function(params) {
+exports.findAll = async function(params) {
   try {
     return new Promise((resolve, reject) => {
       Expenses.findAll(params).then(data => resolve(data)).catch(err => reject(err));
@@ -20,7 +22,7 @@ exports.findAll = function(params) {
   }
 };
 
-exports.count = function(params) {
+exports.count = async function(params) {
   try {
     return new Promise((resolve, reject) => {
       Expenses.count(params).then(data => resolve(data)).catch(err => reject(err));
@@ -30,12 +32,41 @@ exports.count = function(params) {
   }
 };
 
-exports.save = function(expense) {
+exports.save = async function(expense, transaction = null) {
   try {
     return new Promise((resolve, reject) => {
-      expense.save().then(data => resolve(data)).catch(err => reject(err));
+      expense.save({ transaction }).then(data => {
+        resolve(data);
+      });
     });
   } catch (err) {
+    if (transaction) await transaction.rollback();
+    return new Promise((resolve, reject) => reject(err));
+  }
+};
+
+exports.create = async function(params, transaction = null) {
+  try {
+    return new Promise((resolve, reject) => {
+      Expenses.create(params, { transaction }).then(data => {
+        resolve(data);
+      });
+    });
+  } catch (err) {
+    if (transaction) await transaction.rollback();
+    return new Promise((resolve, reject) => reject(err));
+  }
+};
+
+exports.destroy = async function(params, transaction = null) {
+  try {
+    return new Promise((resolve, reject) => {
+      Expenses.destroy(params, { transaction }).then(data => {
+        resolve(data);
+      });
+    });
+  } catch (err) {
+    if (transaction) await transaction.rollback();
     return new Promise((resolve, reject) => reject(err));
   }
 };

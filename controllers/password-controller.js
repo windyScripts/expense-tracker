@@ -19,7 +19,7 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ where: { email: req.body.email }});
 
     if (user) {
-      await PasswordRequests.create(user.id, true, reqId);
+      await PasswordRequests.create({ userId: user.id, isActive: true, id: reqId });
 
       const subject = 'Sending with SendGrid is Fun';
       const textContent = 'and easy to do anywhere, even with Node.js';
