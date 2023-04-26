@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
-const Downloads = require('../models/downloads-model');
-const Expenses = require('../models/expenses-model');
+const Downloads = require('../services/downloads-services');
+const Expenses = require('../services/expense-services');
 
 const Op = Sequelize.Op;
 
@@ -11,7 +11,7 @@ exports.getPDFLink = async (req, res) => {
   try {
     const startDate = req.query.start_date;
     const endDate = req.query.end_date;
-    if(endDate<startDate) return res.status(400).json({message:"Bad dates"})
+    if (endDate < startDate) return res.status(400).json({ message: 'Bad dates' });
     const expenseData = await Expenses.findAll({
       where: {
         userid: req.user.id,

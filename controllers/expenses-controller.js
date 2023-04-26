@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 
-const Expenses = require('../models/expenses-model');
-const User = require('../models/user-model');
+const Expenses = require('../services/expense-services');
+const User = require('../services/user-services');
 const sequelize = require('../util/database');
 
 const Op = Sequelize.Op;
@@ -84,8 +84,6 @@ exports.getButtonsAndLastPage = async (req, res) => {
 
     const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
 
-    console.log(numberOfPages, numberOfExpenses, expensesPerPage);
-
     const currentPageExpenses = currentPageExpensesReversed.reverse();
 
     res.status(200).json({
@@ -109,12 +107,9 @@ exports.addExpense = async (req, res) => {
       transaction: t,
     });
     const updatedExpense = Number(req.user.totalExpense) + Number(req.body.price);
-    const userTotalExpenseUpdationPromise = User.update({
+    const userTotalExpenseUpdationPromise = User.update(req.user, {
       totalExpense: updatedExpense,
       transaction: t,
-    },
-    {
-      where: { id: req.user.id },
     });
     const message = await Promise.all([expenseCreationPromise, userTotalExpenseUpdationPromise]);
     await t.commit();
@@ -131,12 +126,9 @@ exports.deleteExpense = async (req, res) => {
     const id = req.params.eId;
     const expense = await Expenses.findOne({ where: { id, userId: req.user.id }});
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price);
-    const userTotalExpenseUpdationPromise = User.update({
+    const userTotalExpenseUpdationPromise = User.update(req.user, {
       totalExpense: updatedExpense,
       transaction: t,
-    },
-    {
-      where: { id: req.user.id },
     });
     const expenseDeletionPromise = Expenses.destroy({ where: { id, userId: req.user.id }}, { transaction: t });
     const message = await Promise.all([userTotalExpenseUpdationPromise, expenseDeletionPromise]);
@@ -158,17 +150,14 @@ exports.patchExpense = async function(req, res) {
     const id = req.params.eId;
     const expense = await Expenses.findOne({ where: { id, userId: req.user.id }});
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price) + Number(req.body.price);
-    const userTotalExpenseUpdationPromise = User.update({
+    const userTotalExpenseUpdationPromise = User.update(req.user, {
       totalExpense: updatedExpense,
       transaction: t,
-    },
-    {
-      where: { id: req.user.id },
     });
     expense.category = req.body.category;
     expense.price = parseInt(req.body.price);
     expense.name = req.body.name;
-    const expenseChangePromise = expense.save();
+    const expenseChangePromise = Expenses.save(expense);
     const message = await Promise.all([expenseChangePromise, userTotalExpenseUpdationPromise]);
     await t.commit();
     res.status(200).json(message);

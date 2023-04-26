@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
-const Razorpay = require('razorpay');
 
-const Order = require('../models/purchases-model');
+const Order = require('../services/order-services');
+const rzp = require('../services/Rzp-services');
 
 function generateAccessToken(id) {
   const iat = new Date;
@@ -10,22 +10,9 @@ function generateAccessToken(id) {
 
 exports.premium = async (req, res) => {
   try {
-    //console.log("!");
-    const rzp = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
-
     const amount = 2500;
-
-    rzp.orders.create({ amount, currency: 'INR' }, async (err, order) => {
-      if (err) {
-        throw new Error(JSON.stringify(err));
-      }
-      const response = await req.user.createOrder({ orderid: order.id, status: 'PENDING' });
-      console.log(order, response);
-      return res.status(201).json({ order, key_id: rzp.key_id });
-    });
+    const response = await rzp.createOrder(amount);
+    return res.status(201).json(response);
   } catch (err) {
     console.log(err);
   }
@@ -34,7 +21,6 @@ exports.premium = async (req, res) => {
 exports.updateTransactionStatus = async (req, res) => {
   try {
     const { payment_id, order_id, payment_status } = req.body;
-    //console.log(payment_status,"!!!ZZZZ");
     const order = await Order.findOne({ where: { orderid: order_id }});
     if (payment_status === 'SUCCESS') {
       const p1 = order.update({ paymentid: payment_id, status: 'SUCCESS' });

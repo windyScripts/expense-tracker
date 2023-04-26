@@ -2,9 +2,9 @@
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 
-const PasswordRequests = require('../models/password-requests-model');
-const User = require('../models/user-model');
+const PasswordRequests = require('../services/password-services');
 const Sib = require('../services/Sib-services');
+const User = require('../services/user-services');
 
 exports.forgotPassword = async (req, res) => {
   try {
@@ -19,11 +19,7 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ where: { email: req.body.email }});
 
     if (user) {
-      await PasswordRequests.create({
-        userId: user.id,
-        isActive: true,
-        id: reqId,
-      });
+      await PasswordRequests.create(user.id, true, reqId);
 
       const subject = 'Sending with SendGrid is Fun';
       const textContent = 'and easy to do anywhere, even with Node.js';
@@ -78,8 +74,8 @@ exports.setPassword = async (req, res) => {
     }});
     if (user) {
       bcrypt.hash(newpassword, 10, (err, hash) => {
-        const p1 = user.update({ password: hash });
-        const p2 = passwordRequest.update({ isActive: false });
+        const p1 = User.update(user, { password: hash });
+        const p2 = PasswordRequests.update(passwordRequest, { isActive: false });
         Promise.all([p1, p2]).then(_ => {
           res.status(201).json({ message: 'Successfully updated new password' });
         });
