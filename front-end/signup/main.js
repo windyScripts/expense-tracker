@@ -1,5 +1,5 @@
 const form = document.querySelector('#form');
-const feedback = document.querySelector('#feedback')
+const feedback = document.querySelector('#feedback');
 
 // login details
 
@@ -10,38 +10,36 @@ const fail = document.querySelector('#failMessage');
 
 // login redirect
 
-const toLoginButton = document.querySelector('#toLogin')
-toLoginButton.addEventListener('click',loginRedirect)
+const toLoginButton = document.querySelector('#toLogin');
+toLoginButton.addEventListener('click', loginRedirect);
 
-function loginRedirect(e){
-    window.location.href="../login/login.html"
+function loginRedirect(e) {
+  window.location.href = '../login/login.html';
 }
 
 // frontend validation and handling response
 
-form.addEventListener('submit',validateAndSubmitForm);
+form.addEventListener('submit', validateAndSubmitForm);
 
-async function validateAndSubmitForm(e){
-    e.preventDefault();
-    try{
-    if(!form.checkValidity()) {
-            form.classList.add('was-validated');
+async function validateAndSubmitForm(e) {
+  e.preventDefault();
+  try {
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+    } else {
+      const entry = {
+        userName: userNameField.value,
+        password: passwordField.value,
+        email: emailField.value,
+      };
+      //console.log(entry);
+      const response = await axios.post('http://localhost:3000/auth/new', entry);
+      userNameField.value = '';
+      passwordField.value = '';
+      emailField.value = '';
+      feedback.textContent = 'Success!';
     }
-    else {
-        let entry = {
-            userName:userNameField.value,
-            password:passwordField.value,
-            email:emailField.value
-        }
-        //console.log(entry);
-    const response = await axios.post('http://localhost:3000/auth/new',entry);
-    userNameField.value = '';
-    passwordField.value = '';
-    emailField.value = '';
-    feedback.textContent="Success!";
-    }
-    }
-    catch(err){
-        console.log(err);
-    }
+  } catch (err) {
+    console.log(err);
+  }
 }
