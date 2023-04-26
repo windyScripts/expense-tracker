@@ -7,7 +7,7 @@ const Op = Sequelize.Op;
 
 const S3 = require('../services/S3-services');
 
-exports.getPDFLink = async (req, res, next) => {
+exports.getPDFLink = async (req, res) => {
   try {
     const startDate = req.query.start_date;
     const endDate = req.query.end_date;

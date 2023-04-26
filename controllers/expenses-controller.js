@@ -6,11 +6,11 @@ const sequelize = require('../util/database');
 
 const Op = Sequelize.Op;
 
-exports.getPageOfExpenses = async (req, res, next) => {
+exports.getPageOfExpenses = async (req, res) => {
   try {
-    targetPageNumber = parseInt(req.params.pageNumber);
+    const targetPageNumber = parseInt(req.params.pageNumber);
 
-    relativePagePosition = req.query.relativePagePosition;
+    const relativePagePosition = req.query.relativePagePosition;
 
     const numberOfExpenses = await Expenses.count({ where: { userId: req.user.id }});
 
@@ -19,10 +19,6 @@ exports.getPageOfExpenses = async (req, res, next) => {
     const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
 
     const expensesOffset = numberOfExpenses - (numberOfPages - targetPageNumber) * expensesPerPage;
-
-    console.log(expensesOffset, targetPageNumber, expensesPerPage, numberOfPages, numberOfExpenses);
-
-    console.log(req.query);
 
     let id;
 
@@ -64,7 +60,7 @@ exports.getPageOfExpenses = async (req, res, next) => {
   }
 };
 
-exports.getButtonsAndLastPage = async (req, res, next) => {
+exports.getButtonsAndLastPage = async (req, res) => {
   try {
     const promiseOne = Expenses.count({ where: { userId: req.user.id }});
 
@@ -102,7 +98,7 @@ exports.getButtonsAndLastPage = async (req, res, next) => {
   }
 };
 
-exports.addExpense = async (req, res, next) => {
+exports.addExpense = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const expenseCreationPromise = Expenses.create({
@@ -129,7 +125,7 @@ exports.addExpense = async (req, res, next) => {
   }
 };
 
-exports.deleteExpense = async (req, res, next) => {
+exports.deleteExpense = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const id = req.params.eId;
@@ -152,7 +148,7 @@ exports.deleteExpense = async (req, res, next) => {
   }
 };
 
-exports.patchExpense = async function(req, res, next) {
+exports.patchExpense = async function(req, res) {
   const t = await sequelize.transaction();
   try {
     console.log(req.body);

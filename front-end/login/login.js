@@ -36,12 +36,12 @@ async function validateLogin(e) {
 
 signUpButton.addEventListener('click', signUpRedirect);
 
-function signUpRedirect(e) {
+function signUpRedirect() {
   window.location.href = '../signup/main.html';
 }
 
 forgotPasswordButton.addEventListener('click', forgotPasswordRedirect);
 
-function forgotPasswordRedirect(e) {
+function forgotPasswordRedirect() {
   window.location.href = '../forgot-password/forgot-password.html';
 }

@@ -20,6 +20,6 @@ async function onEmailSubmit(e) {
   }
 }
 
-function loginRedirect(e) {
+function loginRedirect() {
   window.location.href = '../login/login.html';
 }

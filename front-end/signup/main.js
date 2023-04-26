@@ -6,14 +6,13 @@ const feedback = document.querySelector('#feedback');
 const userNameField = document.querySelector('#name');
 const emailField = document.querySelector('#email');
 const passwordField = document.querySelector('#password');
-const fail = document.querySelector('#failMessage');
 
 // login redirect
 
 const toLoginButton = document.querySelector('#toLogin');
 toLoginButton.addEventListener('click', loginRedirect);
 
-function loginRedirect(e) {
+function loginRedirect() {
   window.location.href = '../login/login.html';
 }
 

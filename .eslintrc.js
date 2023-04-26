@@ -7,10 +7,18 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  ignorePatterns: ['.github', 'dist'],
+  ignorePatterns: ['.eslintrc.js'],
   root: true,
   env: {
     node: true,
+  },
+  globals: {
+    document: 'readonly',
+    Promise: 'readonly',
+    axios: 'readonly',
+    window: 'readonly',
+    localStorage: 'readonly',
+    alert: 'readonly'
   },
   rules: {
     // Disable base rules to avoid conflicts with @typescript-eslint

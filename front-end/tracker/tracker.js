@@ -1,10 +1,7 @@
-const form = document.querySelector('#form');
-
 const formSubmit = document.querySelector('#formSubmit');
 
 const expenseName = document.querySelector('#expenseName');
 const expensePrice = document.querySelector('#expensePrice');
-const totalValue = document.querySelector('#totalValue');
 const expenseCategory = document.querySelector('#expenseCategory');
 const categories = document.querySelectorAll('.expenseCategory');
 const premium = document.querySelector('#premium');
@@ -70,8 +67,6 @@ async function getPDFLink(e) {
   }
 }
 
-let totalPrice = 0;
-
 logOutButton.addEventListener('click', logOutUser);
 
 async function logOutUser(e) {
@@ -94,7 +89,6 @@ async function createPaymentRequest(e) {
         payment_status: 'SUCCESS',
       }, { headers: { Authorization: getToken() }});
 
-      //console.log("!!!!",transactionResponse.data.token,"!!!!");
       localStorage.setItem('token', transactionResponse.data.token);
 
       window.location.reload();
@@ -140,13 +134,11 @@ function entryFunctions(e) {
 async function editEntry(e) {
   try {
     const row = e.target.parentNode.parentNode;
-    const date = row.children[0].innerText;
     const name = row.children[1].innerText;
     const price = row.children[2].innerText;
     const category = row.children[3].innerText;
     const id = row.id;
     let categoryValue = '0';
-    // console.log(categories[0].innerText);
     categories.forEach(e => {
       if (e.innerText === category) {
         categoryValue = e.value;
@@ -245,11 +237,8 @@ async function addEntry(e) {
     if (month.length == 1) month = '0' + month;
     const day = date.getDate();
     const dateString = `${year}-${month}-${day}`;
-    // console.log(id);
     const items = document.querySelector('#items');
     createRow(dateString, name, price, category, id, items);
-
-    // update price
 
     // empty fields
 
@@ -277,7 +266,6 @@ function configureButtons(numberOfPages, currentPage) {
   }
 
   const currentPageButton = document.querySelector('#currentExpenses');
-  //currentPageButton.setAttribute('data-total-pages',numberOfPages);
   currentPageButton.setAttribute('disabled', '');
 
   currentPageButton.innerText = currentPage;
@@ -289,7 +277,6 @@ function configureButtons(numberOfPages, currentPage) {
 
     previousPageButton.innerText = '-';
   } else {
-    //previousPageButton.setAttribute('data-total-pages',numberOfPages);
     previousPageButton.innerText = currentPage - 1;
 
     previousPageButton.disabled = false;
@@ -373,7 +360,6 @@ async function refreshDisplay(expensesPerPage) {
   console.log(message);
 
   const arrayOfExpenses = message.data.currentPageExpenses;
-  // Need to create buttons with the number of items, and create the offset for loading.
 
   const numberOfPages = message.data.numberOfPages;
   const startingPage = numberOfPages;

@@ -36,8 +36,8 @@ Order.belongsTo(User);
 User.hasMany(passwordRequest);
 passwordRequest.belongsTo(User);
 
-/* User.hasMany(Purchases);
-Purchases.belongsTo(User); */
+User.hasMany(Purchases);
+Purchases.belongsTo(User);
 if (environment === 'production') {
   const helmet = require('helmet');
   app.use(helmet());

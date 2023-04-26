@@ -10,7 +10,6 @@ function generateAccessToken(id) {
 }
 
 function invalid(...params) {
-  //console.log("XZFSEAFASFSF",[...arguments],params)
   for (let i = 0; i < params.length; i++) {
     console.log(params[i]);
     if (params[i].length < 1 || params[i] == undefined) return true;
@@ -20,16 +19,14 @@ function invalid(...params) {
 
 // New user registration
 
-exports.addUser = async (req, res, next) => {
+exports.addUser = async (req, res) => {
   try {
-    //console.log(req.body,"!!!!!ZZZZZZZZZZ");
     const check = invalid(req.body.userName, req.body.email, req.body.password);
-    console.log(check);
     if (check) {
       return res.status(401).json({ message: 'Missing details.' });
     }
     const saltRounds = 10;
-    const password = await bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
+    bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
       const response = await User.create({
         name: req.body.userName,
         email: req.body.email,
@@ -45,7 +42,7 @@ exports.addUser = async (req, res, next) => {
 
 // login
 
-exports.login = async (req, res, next) => {
+exports.login = async (req, res) => {
   try {//console.log(req.body);
     const user = await User.findOne({ where: { email: req.body.email }});
     if (user !== null) {

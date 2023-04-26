@@ -6,7 +6,7 @@ const PasswordRequests = require('../models/password-requests-model');
 const User = require('../models/user-model');
 const Sib = require('../services/Sib-services');
 
-exports.forgotPassword = async (req, res, next) => {
+exports.forgotPassword = async (req, res) => {
   try {
     const sender = {
       name: process.env.EMAIL_SENDER_NAME,
@@ -25,14 +25,14 @@ exports.forgotPassword = async (req, res, next) => {
         id: reqId,
       });
 
-      subject = 'Sending with SendGrid is Fun';
-      textContent = 'and easy to do anywhere, even with Node.js';
-      htmlContent = '<a href="{{params.passwordURL}}">Reset password</a>';
-      params = {
+      const subject = 'Sending with SendGrid is Fun';
+      const textContent = 'and easy to do anywhere, even with Node.js';
+      const htmlContent = '<a href="{{params.passwordURL}}">Reset password</a>';
+      const params = {
         passwordURL: 'http://localhost:3000/password/resetpassword/' + reqId,
       };
 
-      const response = await Sib.sendEmail(sender, receiver, subject, textContent, htmlContent, params);
+      await Sib.sendEmail(sender, receiver, subject, textContent, htmlContent, params);
       return res.status(200).json({ message: 'Email sent successfully' });
     } else throw new Error('That email does not exist in records');
   } catch (err) {
@@ -40,7 +40,7 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-exports.getPasswordUpdateForm = async (req, res, next) => {
+exports.getPasswordUpdateForm = async (req, res) => {
   try {
     const id = req.params.reqId;
     const passwordRequest = await PasswordRequests.findOne({ where: { id }});
@@ -65,7 +65,7 @@ exports.getPasswordUpdateForm = async (req, res, next) => {
   }
 };
 
-exports.setPassword = async (req, res, next) => {
+exports.setPassword = async (req, res) => {
   try {
     // store password, make isActive for request false.
     const { newpassword } = req.query;
@@ -78,14 +78,14 @@ exports.setPassword = async (req, res, next) => {
     }});
     if (user) {
       bcrypt.hash(newpassword, 10, (err, hash) => {
-        p1 = user.update({ password: hash });
-        p2 = passwordRequest.update({ isActive: false });
-        Promise.all([p1, p2]).then(result => {
+        const p1 = user.update({ password: hash });
+        const p2 = passwordRequest.update({ isActive: false });
+        Promise.all([p1, p2]).then(_ => {
           res.status(201).json({ message: 'Successfully updated new password' });
         });
       });
     } else return res.status(404).json({ error: 'No user Exists', success: false });
   } catch (err) {
-    return res.status(403).json({ error, success: false });
+    return res.status(403).json({ error: err, success: false });
   }
 };
