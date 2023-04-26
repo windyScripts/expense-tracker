@@ -8,7 +8,6 @@ const Op = Sequelize.Op;
 
 exports.getPageOfExpenses = async (req, res) => {
   try {
-    const targetPageNumber = parseInt(req.params.pageNumber);
 
     const relativePagePosition = req.query.relativePagePosition;
 
