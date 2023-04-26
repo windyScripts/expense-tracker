@@ -1,19 +1,13 @@
-const Sib = require('sib-api-v3-sdk');
+const Sib = require('../services/Sib-services')
+
 const { v4 :uuidv4 } = require('uuid');
 const bcrypt = require('bcrypt');
 
 const User = require('../models/user-model')
 const PasswordRequests = require('../models/password-requests-model');
 
-require('dotenv').config();
-
-const client = Sib.ApiClient.instance;
-const apiKey = client.authentications['api-key']
-apiKey.apiKey = process.env.SIB_SMTP_API_KEY
-
 exports.forgotPassword = async (req,res,next) => {
     try{
-        const transactionalEmailApi = new Sib.TransactionalEmailsApi();
 
         const sender = {
             name: process.env.EMAIL_SENDER_NAME,
@@ -24,25 +18,23 @@ exports.forgotPassword = async (req,res,next) => {
         
         const reqId = uuidv4();
         const user = await User.findOne({where:{email:req.body.email}})
-        //console.log(reqId)
+
         if(user){
         await PasswordRequests.create({
             userId: user.id,
             isActive: true,
             id: reqId
         })
-        const response = await transactionalEmailApi.sendTransacEmail({
-            sender,
-            to:receiver,
-            subject: 'Sending with SendGrid is Fun',
-            textContent: 'and easy to do anywhere, even with Node.js',
-            htmlContent: `<a href="{{params.passwordURL}}">Reset password</a>`,
-            params: {
-                passwordURL: 'http://localhost:3000/password/resetpassword/'+reqId
-            }
-        })
-        console.log("Messsage sent successfully");
-        res.status(200).json({message:"Email sent successfully"})
+
+        subject= 'Sending with SendGrid is Fun';
+        textContent= 'and easy to do anywhere, even with Node.js';
+        htmlContent= `<a href="{{params.passwordURL}}">Reset password</a>`;
+        params= {
+            passwordURL: 'http://localhost:3000/password/resetpassword/'+reqId
+        }
+
+        const response = await Sib.sendEmail(sender,receiver,subject,textContent,htmlContent,params)
+        return res.status(200).json({message:"Email sent successfully"})
 
     }
     else throw new Error('That email does not exist in records');
@@ -72,7 +64,7 @@ exports.getPasswordUpdateForm = async (req,res,next) => {
     </html>`
     )
     }
-    else res.status(401).json({message:'Reset link expired/invalid'});
+    else return res.status(401).json({message:'Reset link expired/invalid'});
     }
     catch(err){
         console.log(err);

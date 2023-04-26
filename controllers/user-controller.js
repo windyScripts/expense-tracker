@@ -3,8 +3,6 @@ const User = require('../models/user-model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 
-const path = require('path');
-
 function generateAccessToken(id) {
     let iat = new Date;
     return jwt.sign({userId: id, date:iat.getTime()},'12345')
@@ -71,21 +69,3 @@ exports.login = async (req,res,next) => {
     }
 }
 
-exports.authorization = async(req,res,next) => {
-    if(req.header('Authorization')===undefined) {
-        return res.status(400).json({message: "Bad Request"})
-    }
-try{
-    const token = req.header('Authorization');
-    console.log(token, '12345');
-    const id = Number(jwt.verify(token, '12345').userId);
-    const user = await User.findByPk(id);
-    if(user === null) {
-        return res.status(401).json({message: "Unauthorized"})
-    }
-    req.user = user;
-    next();
-} catch(err){
-    console.log(err);
-}
-}

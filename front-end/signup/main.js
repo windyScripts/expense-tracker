@@ -8,9 +8,18 @@ const emailField = document.querySelector('#email');
 const passwordField = document.querySelector('#password');
 const fail = document.querySelector('#failMessage');
 
-form.addEventListener('submit',validateAndSubmitForm);
+// login redirect
+
+const toLoginButton = document.querySelector('#toLogin')
+toLoginButton.addEventListener('click',loginRedirect)
+
+function loginRedirect(e){
+    window.location.href="../login/login.html"
+}
 
 // frontend validation and handling response
+
+form.addEventListener('submit',validateAndSubmitForm);
 
 async function validateAndSubmitForm(e){
     e.preventDefault();
@@ -30,9 +39,6 @@ async function validateAndSubmitForm(e){
     passwordField.value = '';
     emailField.value = '';
     feedback.textContent="Success!";
-    setTimeout(() => {
-        feedback.textContent = '';
-    }, 2000);
     }
     }
     catch(err){

@@ -1,5 +1,3 @@
-
-
 const form = document.querySelector('#form');
 
 const formSubmit = document.querySelector('#formSubmit');
@@ -10,10 +8,9 @@ const totalValue = document.querySelector('#totalValue');
 const expenseCategory = document.querySelector('#expenseCategory')
 const categories = document.querySelectorAll('.expenseCategory')
 const premium = document.querySelector('#premium');
-/* const leaderboardTableBody = document.querySelector('#leaderboard')
-const leaderboardTable = document.querySelector('#leaderboardTable') */
+
 const logOutButton = document.querySelector('#logout')
-/* const leaderboardButton = document.querySelector('#showLeaderboard'); */
+
 const premiumFeatures = document.querySelector('#premiumFeature')
 const pdfButton = document.querySelector('#pdfDownload')
 const paginationButtons = document.querySelector('#pagination');
@@ -36,28 +33,19 @@ async function changeExpensePage(e){
 
 if(e.target.id==='expensesBack' || e.target.id==='expensesForward'){
 
-    const expenseContainer = document.querySelector('tbody#items')
-
 const targetPageNumber = parseInt(e.target.textContent);
 
 const expensesPerPage = getItemsPerPage();
 console.log(expensesPerPage)
 
-const relativePagePosition = e.target.id;
-
-const id = (e.target.id==='expensesBack'?expenseContainer.firstElementChild.id:expenseContainer.lastElementChild.id)
-
-const response = await axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()},params: {items: expensesPerPage, relativePagePosition, id} })
+const response = await axios.get('http://localhost:3000/entries/'+targetPageNumber,{headers:{"Authorization": getToken()},params: {items: expensesPerPage} })
 
 const currentPageExpenses = response.data.currentPageExpenses;
-
 const numberOfPages = response.data.numberOfPages;
 
 // load expenses and change button configuration
 
 displayEntriesFromArray(currentPageExpenses);
-
-//console.log("!", numberOfPages, targetPageNumber);
 
 configureButtons(numberOfPages, targetPageNumber);
 
@@ -104,7 +92,6 @@ async function logOutUser(e) {
 
 async function createPaymentRequest(e){
 e.preventDefault();
-console.log("Button press logged");
 const response = await axios.get('http://localhost:3000/purchase/createorder',{headers:{"Authorization": getToken()}})
 let options = {
     key:response.data.key_id,
@@ -128,7 +115,6 @@ const rzpl = new Razorpay(options);
 rzpl.open();
 e.preventDefault();
 rzpl.on('payment.failed', async function(response){
-    console.log(response);
     alert('Something went wrong')
     await axios.post('http://localhost:3000/purchase/updatetransactionstatus',{ // !!!!!!
     order_id: options.order_id,
@@ -141,17 +127,13 @@ rzpl.on('payment.failed', async function(response){
 
 // Event listeners
 
-// add entry listener
-
 formSubmit.addEventListener('click',addEntry);
-
-// show entries on window load listener
 
 window.addEventListener('DOMContentLoaded',onDOMContentLoad);
 
-// functions related to entry listener
-
 items.addEventListener('click',entryFunctions);
+
+premium.addEventListener('click', createPaymentRequest);
 
 
 function entryFunctions(e){
@@ -167,10 +149,6 @@ function entryFunctions(e){
         console.log(err);
     }
 }
-
-// add premium features
-
-premium.addEventListener('click', createPaymentRequest);
 
 // edit entry
 
@@ -241,11 +219,7 @@ async function deleteEntry(e){
 
 async function onDOMContentLoad(e){
 
-try{
-
-document.querySelector('#expensesPerPageSelect').value = localStorage.getItem('displayNumber')||10;
-    
-totalPrice = 0;
+try{totalPrice = 0;
 
 const expensesPerPage = getItemsPerPage();
 
@@ -432,15 +406,11 @@ async function refreshDisplay(expensesPerPage){
     // Need to create buttons with the number of items, and create the offset for loading.
     
     const numberOfPages = message.data.numberOfPages;
-    
     const startingPage = numberOfPages;
 
-    console.log(numberOfPages,startingPage);
-    
     configureButtons(numberOfPages,startingPage)
 
     const premiumStatus = message.data.premiumStatus;
-
 if(premiumStatus===true){
 
     unlockPremium()
@@ -455,32 +425,5 @@ async function unlockPremium(){
     premium.classList.add('disabled','btn-warning');
   premium.classList.remove('btn-success')
   premium.textContent = "You are a premium user!"
-  premiumFeatures.toggleAttribute('hidden');
-  /* leaderboardButton.onclick = async() => {
-      const token = getToken();
-      leaderboardTable.toggleAttribute('hidden');
-      if(leaderboardTable.hasAttribute('hidden')){
-          document.querySelector('#showLeaderboard').value="Show Leaderboard";
-          document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
-          leaderboardTableBody.innerHTML="";
-      }
-      else{
-          document.querySelector('#showLeaderboard').value="Hide Leaderboard";
-          document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
-          const userLeaderBoardObject = await axios.get('http://localhost:3000/premium/leaderboard');
-          console.log(userLeaderBoardObject.data);
-          Object.keys(userLeaderBoardObject.data).forEach(e => {
-              console.log(e);
-              const row = document.createElement('tr');
-              const nameData = document.createElement('td');
-              const expenseData = document.createElement('td');
-              nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
-              expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
-              row.appendChild(nameData);
-              row.appendChild(expenseData);
-              leaderboardTableBody.appendChild(row);
-          })
-      }
-} */
-//console.log(inputElement);  
+  premiumFeatures.toggleAttribute('hidden');  
 }

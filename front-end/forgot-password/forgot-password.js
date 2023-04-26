@@ -8,10 +8,18 @@ toLoginButton.addEventListener('click',loginRedirect)
 
 async function onEmailSubmit(e) {
     e.preventDefault();
-    console.log("function started");
-    const email = emailField.value;
-    console.log(email);
-    const response = await axios.post('http://localhost:3000/password/forgotpassword',{email})
+    if(!form.checkValidity()) {
+            form.classList.add('was-validated');
+    }
+    else{
+        const email = emailField.value;
+        const response = await axios.post('http://localhost:3000/password/forgotpassword',{email})
+        if(response.status===200){
+            const emailValidFeedback = document.querySelector('#feedback')
+            emailValidFeedback.textContent = "Request submitted."
+        }
+        
+    }
 }
 
 function loginRedirect(e){
