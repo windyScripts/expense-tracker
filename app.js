@@ -59,6 +59,10 @@ app.use(expensesRoutes);
 app.use('/purchase', purchaseRoutes);
 app.use('/password', passwordRoutes);
 
+app.use((req,res) => {
+  res.sendFile(path.join(__dirname,public,login,login.html))
+})
+
 async function start() {
   await sequelize.sync();
   console.log('Database connected. :)');
