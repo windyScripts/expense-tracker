@@ -8,7 +8,6 @@ const Op = Sequelize.Op;
 
 exports.getPageOfExpenses = async (req, res) => {
   try {
-
     const relativePagePosition = req.query.relativePagePosition;
 
     const numberOfExpenses = await Expenses.count({ where: { userId: req.user.id }});
