@@ -1,3 +1,8 @@
+const scheme = "http";
+const hostName = "3.106.130.199"
+const port = 3000;
+const domain = `${scheme}://${hostName}:${port}`
+
 const form = document.querySelector('#form');
 const emailField = document.querySelector('#email');
 const passwordField = document.querySelector('#password');
@@ -21,7 +26,7 @@ async function validateLogin(e) {
     };
     //console.log(entry);
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', entry);
+      const response = await axios.post(domain+'/auth/login', entry);
       feedback.textContent = 'Login success!';
       //console.log(response,response.data,response.data.token)
       const token = response.data.token;

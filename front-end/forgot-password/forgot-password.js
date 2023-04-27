@@ -1,3 +1,8 @@
+const scheme = "http";
+const hostName = "3.106.130.199"
+const port = 3000;
+const domain = `${scheme}://${hostName}:${port}`
+
 const form = document.querySelector('#form');
 const emailField = document.querySelector('#email');
 const toLoginButton = document.querySelector('#toLogin');
@@ -12,7 +17,7 @@ async function onEmailSubmit(e) {
     form.classList.add('was-validated');
   } else {
     const email = emailField.value;
-    const response = await axios.post('http://localhost:3000/password/forgotpassword', { email });
+    const response = await axios.post(domain+'/password/forgotpassword', { email });
     if (response.status === 200) {
       const emailValidFeedback = document.querySelector('#feedback');
       emailValidFeedback.textContent = 'Request submitted.';

@@ -1,3 +1,8 @@
+const scheme = "http";
+const hostName = "3.106.130.199"
+const port = 3000;
+const domain = `${scheme}://${hostName}:${port}`
+
 const formSubmit = document.querySelector('#formSubmit');
 
 const expenseName = document.querySelector('#expenseName');
@@ -32,7 +37,7 @@ async function changeExpensePage(e) {
     const expensesPerPage = getItemsPerPage();
     console.log(expensesPerPage);
 
-    const response = await axios.get('http://localhost:3000/entries/' + targetPageNumber, { headers: { Authorization: getToken() }, params: { items: expensesPerPage }});
+    const response = await axios.get(domain+'/entries/' + targetPageNumber, { headers: { Authorization: getToken() }, params: { items: expensesPerPage }});
 
     const currentPageExpenses = response.data.currentPageExpenses;
     const numberOfPages = response.data.numberOfPages;
@@ -54,7 +59,7 @@ async function getPDFLink(e) {
 
   const endDate = document.querySelector('#endDate').value;
 
-  const response = await axios.get('http://localhost:3000/download', { headers: { Authorization: getToken() }, params: { start_date: startDate, end_date: endDate }});
+  const response = await axios.get(domain+'/download', { headers: { Authorization: getToken() }, params: { start_date: startDate, end_date: endDate }});
 
   if (response.status === 200) {
     const a = document.createElement('a');
@@ -78,12 +83,12 @@ async function logOutUser(e) {
 
 async function createPaymentRequest(e) {
   e.preventDefault();
-  const response = await axios.get('http://localhost:3000/purchase/createorder', { headers: { Authorization: getToken() }});
+  const response = await axios.get(domain+'/purchase/createorder', { headers: { Authorization: getToken() }});
   const options = {
     key: response.data.key_id,
     order_id: response.data.order.id,
     async handler (response) {
-      const transactionResponse = await axios.post('http://localhost:3000/purchase/updatetransactionstatus', { // !!!!!!
+      const transactionResponse = await axios.post(domain+'/purchase/updatetransactionstatus', { // !!!!!!
         order_id: options.order_id,
         payment_id: response.razorpay_payment_id,
         payment_status: 'SUCCESS',
@@ -99,7 +104,7 @@ async function createPaymentRequest(e) {
   e.preventDefault();
   rzpl.on('payment.failed', async function(response) {
     alert('Something went wrong');
-    await axios.post('http://localhost:3000/purchase/updatetransactionstatus', { // !!!!!!
+    await axios.post(domain+'/purchase/updatetransactionstatus', { // !!!!!!
       order_id: options.order_id,
       payment_id: response.razorpay_payment_id,
       payment_status: 'FAILURE',
@@ -164,7 +169,7 @@ async function editEntry(e) {
         price,
         category,
       };
-      const message = await axios.patch('http://localhost:3000/entry/' + id, entry, { headers: { Authorization: token }});
+      const message = await axios.patch(domain+'/entry/' + id, entry, { headers: { Authorization: token }});
       expenseName.value = '';
       expensePrice.value = '';
       expenseCategory.value = '0';
@@ -184,7 +189,7 @@ async function deleteEntry(e) {
       console.log(e.target.parentNode.parentNode);
       const row = e.target.parentNode.parentNode;
       const id = row.id;
-      const message = await axios.delete('http://localhost:3000/entry/' + id, { headers: { Authorization: token }});
+      const message = await axios.delete(domain+'/entry/' + id, { headers: { Authorization: token }});
       console.log(message);
       items.removeChild(row);
     }
@@ -225,7 +230,7 @@ async function addEntry(e) {
       token,
     };
     console.log(entry);
-    const message = await axios.post('http://localhost:3000/entry', entry, { headers: { Authorization: token }});
+    const message = await axios.post(domain+'/entry', entry, { headers: { Authorization: token }});
     console.log(message);
 
     // add value
@@ -355,7 +360,7 @@ function getToken() {
 async function refreshDisplay(expensesPerPage) {
   const token = getToken(); //token works. Have to set header.
 
-  const message = await axios.get('http://localhost:3000/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
+  const message = await axios.get(domain+'/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
 
   console.log(message);
 
