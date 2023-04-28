@@ -1,0 +1,10 @@
+table{
+    min-height: 300px;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+th{
+    padding-top: 20px;
+    height: 10px;
+}

@@ -1,5 +1,5 @@
 const scheme = 'http';
-const hostName = '3.25.252.124';
+const hostName = 'localhost';
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`;
 
@@ -34,8 +34,7 @@ async function changeExpensePage(e) {
   if (e.target.id === 'expensesBack' || e.target.id === 'expensesForward') {
     const targetPageNumber = parseInt(e.target.textContent);
 
-    const expensesPerPage = getItemsPerPage();
-    console.log(expensesPerPage);
+    const expensesPerPage = getNumberOfItemsPerPage();
 
     const response = await axios.get(domain + '/entries/' + targetPageNumber, { headers: { Authorization: getToken() }, params: { items: expensesPerPage }});
 
@@ -118,6 +117,7 @@ formSubmit.addEventListener('click', addEntry);
 
 window.addEventListener('DOMContentLoaded', onDOMContentLoad);
 
+const items = document.querySelector('#items')
 items.addEventListener('click', entryFunctions);
 
 premium.addEventListener('click', createPaymentRequest);
@@ -202,9 +202,7 @@ async function deleteEntry(e) {
 
 async function onDOMContentLoad(e) {
   try {
-    totalPrice = 0;
-
-    const expensesPerPage = getItemsPerPage();
+    const expensesPerPage = getNumberOfItemsPerPage();
 
     refreshDisplay(expensesPerPage);
   } catch (err) {
@@ -221,7 +219,6 @@ async function addEntry(e) {
     const price = expensePrice.value;
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
-    console.log(token);
     let id;
     const entry = {
       name,
@@ -229,9 +226,7 @@ async function addEntry(e) {
       category,
       token,
     };
-    console.log(entry);
     const message = await axios.post(domain + '/entry', entry, { headers: { Authorization: token }});
-    console.log(message);
 
     // add value
 
@@ -297,6 +292,8 @@ function displayEntriesFromArray(arrayOfExpenses) {
   arrayOfExpenses.forEach(element => {
     createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
   });
+
+  if (items.children.length == 0) createRow('-', '-', '-', '-', '-', items);
 }
 
 // create table row from name, price with id.
@@ -338,14 +335,14 @@ function createRow(date, name, price, category, id, parent) {
   row.appendChild(editTab);
   row.appendChild(deleteTab);
 
-  while (parent.childElementCount > (getItemsPerPage() - 1)) {
+  while (parent.childElementCount > (getNumberOfItemsPerPage() - 1)) {
     parent.removeChild(items.firstChild);
   }
 
   parent.appendChild(row);
 }
 
-function getItemsPerPage() {
+function getNumberOfItemsPerPage() {
   return localStorage.getItem('displayNumber') || document.querySelector('#expensesPerPageSelect').value;
 }
 
