@@ -1,5 +1,5 @@
 const scheme = "http";
-const hostName = "3.106.130.199"
+const hostName = "localhost"
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`
 
@@ -293,10 +293,9 @@ function configureButtons(numberOfPages, currentPage) {
 function displayEntriesFromArray(arrayOfExpenses) {
   const items = document.querySelector('#items');
   items.innerHTML = '';
-
-  arrayOfExpenses.forEach(element => {
-    createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
-  });
+    arrayOfExpenses.forEach(element => {
+      createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
+    });
 }
 
 // create table row from name, price with id.
@@ -362,8 +361,6 @@ async function refreshDisplay(expensesPerPage) {
 
   const message = await axios.get(domain+'/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
 
-  console.log(message);
-
   const arrayOfExpenses = message.data.currentPageExpenses;
 
   const numberOfPages = message.data.numberOfPages;
@@ -380,8 +377,71 @@ async function refreshDisplay(expensesPerPage) {
 }
 
 async function unlockPremium() {
+  changePremiumButton()
+  
+  const leaderboardButton = document.querySelector('#showLeaderboard'); 
+leaderboardButton.addEventListener('click',enableLeaderboard)
+
+}
+
+function changePremiumButton() {
   premium.classList.add('disabled', 'btn-warning');
   premium.classList.remove('btn-success');
   premium.textContent = 'You are a premium user!';
   premiumFeatures.toggleAttribute('hidden');
+}
+
+
+
+async function enableLeaderboard(){
+const leaderboardTableBody = document.querySelector('#leaderboard');
+const leaderboardTable = document.querySelector('#leaderboardTable');
+
+
+ const token = getToken();
+
+ leaderboardTable.toggleAttribute('hidden');
+
+ if(leaderboardTable.hasAttribute('hidden')){
+
+ document.querySelector('#showLeaderboard').value="Show Leaderboard";
+
+ document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
+
+ leaderboardTableBody.innerHTML="";
+
+ }
+
+ else{
+
+ document.querySelector('#showLeaderboard').value="Hide Leaderboard";
+
+ document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
+
+ const userLeaderBoardObject = await axios.get(domain+'/leaderboard',{ headers: { Authorization: token }});
+
+ console.log(userLeaderBoardObject.data);
+
+ Object.keys(userLeaderBoardObject.data).forEach(e => {
+
+ const row = document.createElement('tr');
+
+ const nameData = document.createElement('td');
+
+ const expenseData = document.createElement('td');
+
+ nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
+
+ expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
+
+ row.appendChild(nameData);
+
+ row.appendChild(expenseData);
+
+ leaderboardTableBody.appendChild(row);
+
+ })
+
+ }
+
 }

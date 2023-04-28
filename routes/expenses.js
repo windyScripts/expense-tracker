@@ -2,15 +2,15 @@ const express = require('express');
 
 const router = express.Router();
 
-const premiumController = require('../controllers/downloads-controller');
+const downloadsController = require('../controllers/downloads-controller');
 const expensesController = require('../controllers/expenses-controller');
 const auth = require('../middleware/auth');
 
 router.get('/entries', auth.authorization, expensesController.getButtonsAndLastPage);
 router.post('/entry', auth.authorization, expensesController.addExpense);
 router.delete('/entry/:eId', auth.authorization, expensesController.deleteExpense);
-router.get('/download', auth.authorization, premiumController.getPDFLink);
+router.get('/download', auth.authorization, downloadsController.getPDFLink);
 router.get('/entries/:pageNumber', auth.authorization, expensesController.getPageOfExpenses);
 router.patch('/entry/:eId', auth.authorization, expensesController.patchExpense);
-
+router.get('/leaderboard', auth.authorization,expensesController.showLeaderboards)
 module.exports = router;

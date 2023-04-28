@@ -1,0 +1,12 @@
+table{
+    min-height: 300px;
+    padding-top: 0;
+    margin-top: 0;
+}
+thead{
+    padding-top: 10px;
+}
+
+.tableDiv{
+    display: none;
+}

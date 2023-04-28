@@ -1,5 +1,5 @@
 const scheme = "http";
-const hostName = "3.106.130.199"
+const hostName = "localhost"
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`
 
