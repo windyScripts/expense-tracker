@@ -200,6 +200,7 @@ async function addEntry(e) {
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
     const id = formSubmit.getAttribute('data-id');
+    console.log(id);
     const entry = {
       id,
       name,

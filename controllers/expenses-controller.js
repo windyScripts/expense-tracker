@@ -61,7 +61,6 @@ exports.getButtonsAndLastPage = async (req, res) => {
     const promiseOne = Expenses.count({ where: { userId: req.user.id }});
 
     const expensesPerPage = parseInt(req.query.items);
-    console.log(expensesPerPage);
 
     const promiseTwo = Expenses.findAll({
       limit: expensesPerPage,
@@ -146,12 +145,11 @@ exports.deleteExpense = async (req, res) => {
 
 async function patchExpense(req, res) {
   const t = await sequelize.transaction();
-  console.log(req.body);
   if (req.body.name.length === 0 || !Number(req.body.price)) {
     res.status(400).json({ message: 'invalid data' });
   }
   try {
-    const id = req.params.eId;
+    const id = req.body.id;
     const expense = await Expenses.findOne({ where: { id, userId: req.user.id }});
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price) + Number(req.body.price);
     const userTotalExpenseUpdationPromise = User.update(req.user, {
