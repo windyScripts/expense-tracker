@@ -38,6 +38,13 @@ passwordRequest.belongsTo(User);
 
 User.hasMany(Purchases);
 Purchases.belongsTo(User);
+
+// allows authorization header from front-end
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization')
+  next()
+})
+
 if (environment === 'production') {
   const helmet = require('helmet');
   app.use(helmet());

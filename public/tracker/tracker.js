@@ -180,7 +180,7 @@ async function deleteEntry(e) {
 
 // display Products and total value.
 
-async function refreshEntries() {
+function refreshEntries(e) {
   try {
     const expensesPerPage = getNumberOfItemsPerPage();
 
