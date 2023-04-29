@@ -117,7 +117,7 @@ formSubmit.addEventListener('click', addEntry);
 
 window.addEventListener('DOMContentLoaded', refreshEntries);
 
-const items = document.querySelector('#items')
+const items = document.querySelector('#items');
 items.addEventListener('click', entryFunctions);
 
 premium.addEventListener('click', createPaymentRequest);
@@ -143,7 +143,7 @@ async function editEntry(e) {
     const price = row.children[2].innerText;
     const category = row.children[3].innerText;
     const id = row.id;
-    formSubmit.setAttribute('data-id',id);
+    formSubmit.setAttribute('data-id', id);
     let categoryValue = '0';
     categories.forEach(e => {
       if (e.innerText === category) {
@@ -199,7 +199,7 @@ async function addEntry(e) {
     const price = expensePrice.value;
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
-    let id = formSubmit.getAttribute('data-id');
+    const id = formSubmit.getAttribute('data-id');
     const entry = {
       id,
       name,
@@ -211,7 +211,7 @@ async function addEntry(e) {
 
     // add value
 
-  refreshEntries();
+    refreshEntries();
 
     // empty fields
 
@@ -265,7 +265,6 @@ function displayEntriesFromArray(arrayOfExpenses) {
   arrayOfExpenses.forEach(element => {
     createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
   });
-
 }
 
 // create table row from name, price with id.
@@ -347,11 +346,10 @@ async function refreshDisplay(expensesPerPage) {
 }
 
 async function unlockPremium() {
-  changePremiumButton()
-  
-  const leaderboardButton = document.querySelector('#showLeaderboard'); 
-leaderboardButton.addEventListener('click',enableLeaderboard)
+  changePremiumButton();
 
+  const leaderboardButton = document.querySelector('#showLeaderboard');
+  leaderboardButton.addEventListener('click', enableLeaderboard);
 }
 
 function changePremiumButton() {
@@ -361,57 +359,45 @@ function changePremiumButton() {
   premiumFeatures.toggleAttribute('hidden');
 }
 
+async function enableLeaderboard() {
+  const leaderboardTableBody = document.querySelector('#leaderboard');
+  const leaderboardTable = document.querySelector('#leaderboardTable');
 
+  const token = getToken();
 
-async function enableLeaderboard(){
-const leaderboardTableBody = document.querySelector('#leaderboard');
-const leaderboardTable = document.querySelector('#leaderboardTable');
+  leaderboardTable.toggleAttribute('hidden');
 
+  if (leaderboardTable.hasAttribute('hidden')) {
+    document.querySelector('#showLeaderboard').value = 'Show Leaderboard';
 
- const token = getToken();
+    document.querySelector('#showLeaderboard').innerText = 'Show Leaderboard';
 
- leaderboardTable.toggleAttribute('hidden');
+    leaderboardTableBody.innerHTML = '';
+  } else {
+    document.querySelector('#showLeaderboard').value = 'Hide Leaderboard';
 
- if(leaderboardTable.hasAttribute('hidden')){
+    document.querySelector('#showLeaderboard').innerText = 'Hide Leaderboard';
 
- document.querySelector('#showLeaderboard').value="Show Leaderboard";
+    const userLeaderBoardObject = await axios.get(domain + '/leaderboard', { headers: { Authorization: token }});
 
- document.querySelector('#showLeaderboard').innerText="Show Leaderboard";
+    console.log(userLeaderBoardObject.data);
 
- leaderboardTableBody.innerHTML="";
+    Object.keys(userLeaderBoardObject.data).forEach(e => {
+      const row = document.createElement('tr');
 
- }
+      const nameData = document.createElement('td');
 
- else{
+      const expenseData = document.createElement('td');
 
- document.querySelector('#showLeaderboard').value="Hide Leaderboard";
+      nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name));
 
- document.querySelector('#showLeaderboard').innerText="Hide Leaderboard";
+      expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense));
 
- const userLeaderBoardObject = await axios.get(domain+'/leaderboard',{ headers: { Authorization: token }});
+      row.appendChild(nameData);
 
- console.log(userLeaderBoardObject.data);
+      row.appendChild(expenseData);
 
- Object.keys(userLeaderBoardObject.data).forEach(e => {
-
- const row = document.createElement('tr');
-
- const nameData = document.createElement('td');
-
- const expenseData = document.createElement('td');
-
- nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name))
-
- expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense))
-
- row.appendChild(nameData);
-
- row.appendChild(expenseData);
-
- leaderboardTableBody.appendChild(row);
-
- })
-
- }
-
+      leaderboardTableBody.appendChild(row);
+    });
+  }
 }

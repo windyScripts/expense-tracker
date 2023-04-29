@@ -92,22 +92,19 @@ exports.getButtonsAndLastPage = async (req, res) => {
   }
 };
 
-exports.addOrUpdateExpense = async (req) => {
-  if(Number(req.body.id)) {
-    patchExpense(req)
-  }
-  else {
+exports.addOrUpdateExpense = async req => {
+  if (Number(req.body.id)) {
+    patchExpense(req);
+  } else {
     addExpense(req);
-}}
-
+  }
+};
 
 addExpense = async function(req, res) {
-  const t = await sequelize.transaction();
-
   if (req.body.name.length === 0 || !Number(req.body.price)) {
     res.status(400).json({ message: 'invalid data' });
   }
-
+  const t = await sequelize.transaction();
   try {
     const expenseCreationPromise = Expenses.create({
       name: req.body.name,
@@ -174,26 +171,18 @@ patchExpense = async function(req, res) {
   }
 };
 
-exports.showLeaderboards = async (req,res) => {
+exports.showLeaderboards = async (req, res) => {
+  try {
+    const userLeaderBoard = await User.findAll({
 
-   try{
-  
-      const userLeaderBoard = await User.findAll({
-  
-          attributes: ['name','totalExpense'],
-  
-          order: [['totalExpense','DESC']]
-  
-      });
-  
-      res.status(200).json(userLeaderBoard);
-  
+      attributes: ['name', 'totalExpense'],
+
+      order: [['totalExpense', 'DESC']],
+
+    });
+
+    res.status(200).json(userLeaderBoard);
+  } catch (err) {
+    console.log(err);
   }
-  
-   catch(err) {
-  
-      console.log(err);
-  
-   }
-  
-  }
+};
