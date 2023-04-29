@@ -92,15 +92,15 @@ exports.getButtonsAndLastPage = async (req, res) => {
   }
 };
 
-exports.addOrUpdateExpense = async req => {
+exports.addOrUpdateExpense = async (req, res) => {
   if (Number(req.body.id)) {
-    patchExpense(req);
+    patchExpense(req, res);
   } else {
-    addExpense(req);
+    addExpense(req, res);
   }
 };
 
-addExpense = async function(req, res) {
+async function addExpense(req, res) {
   if (req.body.name.length === 0 || !Number(req.body.price)) {
     res.status(400).json({ message: 'invalid data' });
   }
@@ -123,7 +123,7 @@ addExpense = async function(req, res) {
     console.log(err);
     await t.rollback();
   }
-};
+}
 
 exports.deleteExpense = async (req, res) => {
   const t = await sequelize.transaction();
@@ -144,7 +144,7 @@ exports.deleteExpense = async (req, res) => {
   }
 };
 
-patchExpense = async function(req, res) {
+async function patchExpense(req, res) {
   const t = await sequelize.transaction();
   console.log(req.body);
   if (req.body.name.length === 0 || !Number(req.body.price)) {
@@ -169,7 +169,7 @@ patchExpense = async function(req, res) {
     console.log(err);
     await t.rollback();
   }
-};
+}
 
 exports.showLeaderboards = async (req, res) => {
   try {
