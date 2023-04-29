@@ -261,7 +261,7 @@ function configureButtons(numberOfPages, currentPage) {
 
 function displayEntriesFromArray(arrayOfExpenses) {
   const items = document.querySelector('#items');
-  items.innerHTML = "<tr><td>&nbsp;</td></tr>";
+  items.innerHTML = '<tr><td>&nbsp;</td></tr>';
 
   arrayOfExpenses.forEach(element => {
     createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
