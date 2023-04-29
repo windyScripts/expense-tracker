@@ -261,7 +261,7 @@ function configureButtons(numberOfPages, currentPage) {
 
 function displayEntriesFromArray(arrayOfExpenses) {
   const items = document.querySelector('#items');
-  items.innerHTML = '';
+  items.innerHTML = "<tr><td>&nbsp;</td></tr>";
 
   arrayOfExpenses.forEach(element => {
     createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
@@ -330,7 +330,6 @@ async function refreshDisplay(expensesPerPage) {
   const token = getToken(); //token works. Have to set header.
 
   const message = await axios.get(domain + '/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
-
   const arrayOfExpenses = message.data.currentPageExpenses;
 
   const numberOfPages = message.data.numberOfPages;

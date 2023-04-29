@@ -12,7 +12,7 @@
     <header class="bg-primary text-light row">
         <h1>Enter your details</h1>
     </header>
-    <form novalidate id="form" class="row">
+    <form novalidate id="form" class="row container-fluid d-flex justify-content-center">
         <div class="form-floating col-4">
             <input required type="text" name="name" id="name" placeholder="Enter name here." class="form-control">
             <label for="name">Name</label>
@@ -32,14 +32,14 @@
             <div class="valid-feedback"></div>
         </div>
         <div>
-            <button class="btn btn-success col-4" type="submit">Sign up</button>
+            <button class="btn btn-success col-4 button" type="submit">Sign up</button>
             <div id="feedback"></div>
         </div>
         <div id="failMessage"></div>
         
     </form>
     <div>
-        Go <button class="btn btn-primary" id="toLogin">Back to Login</button>
+        Go <button class="btn btn-primary button" id="toLogin">Back to Login</button>
     </div>
     <script src="./main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
