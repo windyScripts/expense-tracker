@@ -357,7 +357,7 @@ function changePremiumButton() {
   premium.classList.add('disabled', 'btn-warning');
   premium.classList.remove('btn-success');
   premium.textContent = 'You are a premium user!';
-  premiumFeatures.toggleAttribute('hidden');
+  premiumFeatures.removeAttribute('hidden');
 }
 
 async function enableLeaderboard() {

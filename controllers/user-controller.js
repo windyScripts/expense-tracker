@@ -39,7 +39,7 @@ exports.addUser = async (req, res) => {
 // login
 
 exports.login = async (req, res) => {
-  try {//console.log(req.body);
+  try {
     const user = await User.findOne({ where: { email: req.body.email }});
     if (user !== null) {
       console.log(user);
