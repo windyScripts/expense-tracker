@@ -3,8 +3,6 @@ const hostName = "localhost"
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`
 
-const formSubmit = document.querySelector('#formSubmit');
-
 const expenseName = document.querySelector('#expenseName');
 const expensePrice = document.querySelector('#expensePrice');
 const expenseCategory = document.querySelector('#expenseCategory');
@@ -114,9 +112,16 @@ async function createPaymentRequest(e) {
 
 // Event listeners
 
+const formSubmit = document.querySelector('#formSubmit');
+let editEntry = false;
 formSubmit.addEventListener('click', addEntry);
 
-window.addEventListener('DOMContentLoaded', onDOMContentLoad);
+
+function addOrEdit(){
+
+}
+
+window.addEventListener('DOMContentLoaded', refreshEntries);
 
 items.addEventListener('click', entryFunctions);
 
@@ -143,6 +148,7 @@ async function editEntry(e) {
     const price = row.children[2].innerText;
     const category = row.children[3].innerText;
     const id = row.id;
+    formSubmit.setAttribute('data-id',id)
     let categoryValue = '0';
     categories.forEach(e => {
       if (e.innerText === category) {
@@ -150,36 +156,12 @@ async function editEntry(e) {
       }
     });
 
-    console.log(name, price, category, categoryValue, id);
-    expenseName.value = name;
-    expensePrice.value = price;
-    expenseCategory.value = categoryValue;
-    formSubmit.removeEventListener('click', addEntry);
-    formSubmit.addEventListener('click', patchExpense);
-    async function patchExpense(e) {
-      formSubmit.addEventListener('click', addEntry);
-      formSubmit.removeEventListener('click', patchExpense);
-      e.preventDefault();
-      const name = expenseName.value;
-      const price = expensePrice.value;
-      const category =  expenseCategory.options[expenseCategory.value].text;//
-      const token = getToken();
-      const entry = {
-        name,
-        price,
-        category,
-      };
-      const message = await axios.patch(domain+'/entry/' + id, entry, { headers: { Authorization: token }});
-      expenseName.value = '';
-      expensePrice.value = '';
-      expenseCategory.value = '0';
-    }
-
     items.removeChild(row);
   } catch (error) {
     console.log(error);
   }
 }
+
 
 // delete entry
 
@@ -200,10 +182,8 @@ async function deleteEntry(e) {
 
 // display Products and total value.
 
-async function onDOMContentLoad(e) {
+async function refreshEntries() {
   try {
-    totalPrice = 0;
-
     const expensesPerPage = getItemsPerPage();
 
     refreshDisplay(expensesPerPage);
@@ -216,36 +196,25 @@ async function onDOMContentLoad(e) {
 
 async function addEntry(e) {
   try {
+    
     e.preventDefault();
     const name = expenseName.value;
     const price = expensePrice.value;
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
-    console.log(token);
-    let id;
+    let id = formSubmit.getAttribute('data-id');
     const entry = {
+      id,
       name,
       price,
       category,
       token,
     };
-    console.log(entry);
-    const message = await axios.post(domain+'/entry', entry, { headers: { Authorization: token }});
-    console.log(message);
-
+    await axios.post(domain+'/entry', entry, { headers: { Authorization: token }});
+    formSubmit.setAttribute('data-id',null);
     // add value
 
-    id = message.data[0].id;
-    const date = new Date(message.data[0].date);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1);
-    if (month.length == 1) month = '0' + month;
-    const day = date.getDate();
-    const dateString = `${year}-${month}-${day}`;
-    const items = document.querySelector('#items');
-    createRow(dateString, name, price, category, id, items);
-
-    // empty fields
+    refreshEntries();
 
     expenseName.value = '';
     expensePrice.value = '';
@@ -357,7 +326,7 @@ function getToken() {
 }
 
 async function refreshDisplay(expensesPerPage) {
-  const token = getToken(); //token works. Have to set header.
+  const token = getToken();
 
   const message = await axios.get(domain+'/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
 

@@ -115,7 +115,7 @@ async function createPaymentRequest(e) {
 
 formSubmit.addEventListener('click', addEntry);
 
-window.addEventListener('DOMContentLoaded', onDOMContentLoad);
+window.addEventListener('DOMContentLoaded', refreshEntries);
 
 const items = document.querySelector('#items')
 items.addEventListener('click', entryFunctions);
@@ -143,6 +143,7 @@ async function editEntry(e) {
     const price = row.children[2].innerText;
     const category = row.children[3].innerText;
     const id = row.id;
+    formSubmit.setAttribute('data-id',id);
     let categoryValue = '0';
     categories.forEach(e => {
       if (e.innerText === category) {
@@ -150,30 +151,9 @@ async function editEntry(e) {
       }
     });
 
-    console.log(name, price, category, categoryValue, id);
     expenseName.value = name;
     expensePrice.value = price;
     expenseCategory.value = categoryValue;
-    formSubmit.removeEventListener('click', addEntry);
-    formSubmit.addEventListener('click', patchExpense);
-    async function patchExpense(e) {
-      formSubmit.addEventListener('click', addEntry);
-      formSubmit.removeEventListener('click', patchExpense);
-      e.preventDefault();
-      const name = expenseName.value;
-      const price = expensePrice.value;
-      const category =  expenseCategory.options[expenseCategory.value].text;//
-      const token = getToken();
-      const entry = {
-        name,
-        price,
-        category,
-      };
-      const message = await axios.patch(domain + '/entry/' + id, entry, { headers: { Authorization: token }});
-      expenseName.value = '';
-      expensePrice.value = '';
-      expenseCategory.value = '0';
-    }
 
     items.removeChild(row);
   } catch (error) {
@@ -200,7 +180,7 @@ async function deleteEntry(e) {
 
 // display Products and total value.
 
-async function onDOMContentLoad(e) {
+async function refreshEntries() {
   try {
     const expensesPerPage = getNumberOfItemsPerPage();
 
@@ -219,26 +199,19 @@ async function addEntry(e) {
     const price = expensePrice.value;
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
-    let id;
+    let id = formSubmit.getAttribute('data-id');
     const entry = {
+      id,
       name,
       price,
       category,
       token,
     };
-    const message = await axios.post(domain + '/entry', entry, { headers: { Authorization: token }});
+    await axios.post(domain + '/entry', entry, { headers: { Authorization: token }});
 
     // add value
 
-    id = message.data[0].id;
-    const date = new Date(message.data[0].date);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1);
-    if (month.length == 1) month = '0' + month;
-    const day = date.getDate();
-    const dateString = `${year}-${month}-${day}`;
-    const items = document.querySelector('#items');
-    createRow(dateString, name, price, category, id, items);
+  refreshEntries();
 
     // empty fields
 
@@ -358,8 +331,6 @@ async function refreshDisplay(expensesPerPage) {
   const token = getToken(); //token works. Have to set header.
 
   const message = await axios.get(domain + '/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
-
-  console.log(message);
 
   const arrayOfExpenses = message.data.currentPageExpenses;
 

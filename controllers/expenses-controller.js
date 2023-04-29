@@ -92,8 +92,22 @@ exports.getButtonsAndLastPage = async (req, res) => {
   }
 };
 
-exports.addExpense = async (req, res) => {
+exports.addOrUpdateExpense = async (req) => {
+  if(Number(req.body.id)) {
+    patchExpense(req)
+  }
+  else {
+    addExpense(req);
+}}
+
+
+addExpense = async function(req, res) {
   const t = await sequelize.transaction();
+
+  if (req.body.name.length === 0 || !Number(req.body.price)) {
+    res.status(400).json({ message: 'invalid data' });
+  }
+
   try {
     const expenseCreationPromise = Expenses.create({
       name: req.body.name,
@@ -133,13 +147,13 @@ exports.deleteExpense = async (req, res) => {
   }
 };
 
-exports.patchExpense = async function(req, res) {
+patchExpense = async function(req, res) {
   const t = await sequelize.transaction();
+  console.log(req.body);
+  if (req.body.name.length === 0 || !Number(req.body.price)) {
+    res.status(400).json({ message: 'invalid data' });
+  }
   try {
-    console.log(req.body);
-    if (req.body.name.length === 0 || !Number(req.body.price)) {
-      res.status(400).json({ message: 'invalid data' });
-    }
     const id = req.params.eId;
     const expense = await Expenses.findOne({ where: { id, userId: req.user.id }});
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price) + Number(req.body.price);
