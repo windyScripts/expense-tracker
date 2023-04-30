@@ -34,7 +34,7 @@ exports.count = async function(params) {
 
 exports.save = async function(expense, transaction = null) {
   try {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       expense.save({ transaction }).then(data => {
         resolve(data);
       });
@@ -47,7 +47,7 @@ exports.save = async function(expense, transaction = null) {
 
 exports.create = async function(params, transaction = null) {
   try {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       Expenses.create(params, { transaction }).then(data => {
         resolve(data);
       });
@@ -60,7 +60,7 @@ exports.create = async function(params, transaction = null) {
 
 exports.destroy = async function(params, transaction = null) {
   try {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       Expenses.destroy(params, { transaction }).then(data => {
         resolve(data);
       });

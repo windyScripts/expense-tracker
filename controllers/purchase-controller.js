@@ -11,7 +11,7 @@ function generateAccessToken(id) {
 exports.premium = async (req, res) => {
   try {
     const amount = 2500;
-    const response = await rzp.createOrder(amount);
+    const response = await rzp.createOrder(amount, req.user);
     return res.status(201).json(response);
   } catch (err) {
     console.log(err);

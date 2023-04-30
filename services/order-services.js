@@ -12,8 +12,8 @@ exports.findOne = async function(params) {
 
 exports.update = async function(order, params) {
   try {
-    return new Promise((resolve, reject) => {
-      order.update(params).then(_ => resolve());
+    return new Promise(resolve => {
+      order.update(params).then(() => resolve());
     });
   } catch (err) {
     return new Promise((resolve, reject) => reject(err));

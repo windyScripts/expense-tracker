@@ -10,7 +10,7 @@ exports.sendEmail = async function(sender, receiver, subject, textContent, htmlC
   const transactionalEmailApi = new Sib.TransactionalEmailsApi();
   try {
     return new Promise((resolve, reject) => {
-      const response = transactionalEmailApi.sendTransacEmail({
+      transactionalEmailApi.sendTransacEmail({
         sender,
         to: receiver,
         subject,

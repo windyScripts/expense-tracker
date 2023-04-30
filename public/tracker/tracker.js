@@ -80,18 +80,20 @@ async function logOutUser(e) {
   window.location.href = '../login/login.html';
 }
 
+premium.addEventListener('click', createPaymentRequest);
 async function createPaymentRequest(e) {
   e.preventDefault();
   const response = await axios.get(domain + '/purchase/createorder', { headers: { Authorization: getToken() }});
+  const token = getToken();
   const options = {
     key: response.data.key_id,
     order_id: response.data.order.id,
     async handler (response) {
-      const transactionResponse = await axios.post(domain + '/purchase/updatetransactionstatus', { // !!!!!!
+      const transactionResponse = await axios.post(domain + '/purchase/updatetransactionstatus', {
         order_id: options.order_id,
         payment_id: response.razorpay_payment_id,
         payment_status: 'SUCCESS',
-      }, { headers: { Authorization: getToken() }});
+      }, { headers: { Authorization: token }});
 
       localStorage.setItem('token', transactionResponse.data.token);
 
@@ -119,8 +121,6 @@ window.addEventListener('DOMContentLoaded', refreshEntries);
 
 const items = document.querySelector('#items');
 items.addEventListener('click', entryFunctions);
-
-premium.addEventListener('click', createPaymentRequest);
 
 function entryFunctions(e) {
   try {
@@ -166,9 +166,9 @@ async function editEntry(e) {
 async function deleteEntry(e) {
   try {
     if (confirm('Are you sure?')) {
-      console.log(e.target.parentNode.parentNode);
       const row = e.target.parentNode.parentNode;
       const id = row.id;
+      const token = getToken();
       await axios.delete(domain + '/entry/' + id, { headers: { Authorization: token }});
       refreshEntries();
     }
@@ -257,11 +257,14 @@ function configureButtons(numberOfPages, currentPage) {
 
 function displayEntriesFromArray(arrayOfExpenses) {
   const items = document.querySelector('#items');
-  items.innerHTML = '<tr><td>&nbsp;</td></tr>';
-
+  items.innerHTML = '';
   arrayOfExpenses.forEach(element => {
     createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
   });
+
+  if (arrayOfExpenses.length === 0) {
+    items.innerHTML = '<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>';
+  }
 }
 
 // create table row from name, price with id.
@@ -316,7 +319,8 @@ function getNumberOfItemsPerPage() {
 
 function getToken() {
   try {
-    return token = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    return token;
   } catch (err) {
     console.log(err);
   }
@@ -365,30 +369,24 @@ async function enableLeaderboard() {
 
   if (leaderboardTable.hasAttribute('hidden')) {
     document.querySelector('#showLeaderboard').value = 'Show Leaderboard';
-
     document.querySelector('#showLeaderboard').innerText = 'Show Leaderboard';
 
     leaderboardTableBody.innerHTML = '';
   } else {
     document.querySelector('#showLeaderboard').value = 'Hide Leaderboard';
-
     document.querySelector('#showLeaderboard').innerText = 'Hide Leaderboard';
 
     const userLeaderBoardObject = await axios.get(domain + '/leaderboard', { headers: { Authorization: token }});
 
     Object.keys(userLeaderBoardObject.data).forEach(e => {
       const row = document.createElement('tr');
-
       const nameData = document.createElement('td');
-
       const expenseData = document.createElement('td');
 
       nameData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].name));
-
       expenseData.appendChild(document.createTextNode(userLeaderBoardObject.data[e].totalExpense));
 
       row.appendChild(nameData);
-
       row.appendChild(expenseData);
 
       leaderboardTableBody.appendChild(row);

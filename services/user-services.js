@@ -24,7 +24,7 @@ exports.findAll = async function(params) {
 
 exports.update = async function(user, params, transaction = null) {
   try {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       user.update(params, { transaction }).then(data => {
         resolve(data);
       });

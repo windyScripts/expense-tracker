@@ -76,7 +76,7 @@ exports.setPassword = async (req, res) => {
       bcrypt.hash(newpassword, 10, (err, hash) => {
         const p1 = User.update(user, { password: hash });
         const p2 = PasswordRequests.update(passwordRequest, { isActive: false });
-        Promise.all([p1, p2]).then(_ => {
+        Promise.all([p1, p2]).then(() => {
           res.status(201).json({ message: 'Successfully updated new password' });
         });
       });
