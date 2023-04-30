@@ -11,7 +11,6 @@ function generateAccessToken(id) {
 
 function invalid(...params) {
   for (let i = 0; i < params.length; i++) {
-    console.log(params[i]);
     if (params[i].length < 1 || params[i] == undefined) return true;
   }
   return false;
@@ -21,14 +20,17 @@ function invalid(...params) {
 
 exports.addUser = async (req, res) => {
   try {
-    const check = invalid(req.body.userName, req.body.email, req.body.password);
-    if (check) {
-      return res.status(401).json({ message: 'Missing details.' });
+    const checkInvalid = invalid(req.body.userName, req.body.email, req.body.password);
+    const existingUser = Boolean(await User.findOne({where:{email:req.body.email}}))
+    if (checkInvalid===true) {
+      return res.status(401).json({ message: 'Invalid details.' });
+    }
+    else if(existingUser===true){
+      return res.status(401).json({ message: 'User already exists.' });
     }
     const saltRounds = 10;
     bcrypt.hash(req.body.password, saltRounds, async (err, hash) => {
       const response = await User.create({ name: req.body.userName, email: req.body.email, password: hash });
-      console.log(response);
       return res.status(200).json(response);
     });
   } catch (err) {
@@ -42,7 +44,6 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email: req.body.email }});
     if (user !== null) {
-      console.log(user);
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (result === true) {
           res.status(200).json({ message: 'Login successful', token: generateAccessToken(user.id) });
