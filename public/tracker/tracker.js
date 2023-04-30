@@ -340,9 +340,8 @@ async function refreshDisplay(expensesPerPage) {
   const premiumStatus = message.data.premiumStatus;
   if (premiumStatus === true) {
     unlockPremium();
-
-    displayEntriesFromArray(arrayOfExpenses);
   }
+  displayEntriesFromArray(arrayOfExpenses);
 }
 
 async function unlockPremium() {
