@@ -1,5 +1,5 @@
 const scheme = 'http';
-const hostName = '3.26.24.156';
+const hostName = 'localhost';
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`;
 
@@ -36,7 +36,6 @@ async function validateAndSubmitForm(e) {
         password: passwordField.value,
         email: emailField.value,
       };
-      //console.log(entry);
       await axios.post(domain + '/auth/new', entry);
       userNameField.value = '';
       passwordField.value = '';
@@ -45,5 +44,6 @@ async function validateAndSubmitForm(e) {
     }
   } catch (err) {
     console.log(err);
+    feedback.textContent = err.response.data.message;
   }
 }
