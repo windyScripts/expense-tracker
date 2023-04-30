@@ -18,7 +18,8 @@ module.exports = {
     axios: 'readonly',
     window: 'readonly',
     localStorage: 'readonly',
-    alert: 'readonly'
+    alert: 'readonly',
+    confirm: 'readonly'
   },
   rules: {
     // Basic rules
@@ -26,7 +27,6 @@ module.exports = {
       SwitchCase: 1,
       flatTernaryExpressions: false,
     }],
-    'max-len': ['warn', 120],
     'no-unused-vars': 'error',
     'prefer-const': 'error',
     semi: 'error',
