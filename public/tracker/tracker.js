@@ -1,5 +1,5 @@
 const scheme = 'http';
-const hostName = '3.27.117.207';
+const hostName = '3.26.24.156';
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`;
 
@@ -169,9 +169,8 @@ async function deleteEntry(e) {
       console.log(e.target.parentNode.parentNode);
       const row = e.target.parentNode.parentNode;
       const id = row.id;
-      const message = await axios.delete(domain + '/entry/' + id, { headers: { Authorization: token }});
-      console.log(message);
-      items.removeChild(row);
+      await axios.delete(domain + '/entry/' + id, { headers: { Authorization: token }});
+      refreshEntries();
     }
   } catch (err) {
     console.log(err);
@@ -200,7 +199,6 @@ async function addEntry(e) {
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
     const id = formSubmit.getAttribute('data-id');
-    console.log(id);
     const entry = {
       id,
       name,
@@ -209,8 +207,6 @@ async function addEntry(e) {
       token,
     };
     await axios.post(domain + '/entry', entry, { headers: { Authorization: token }});
-
-    // add value
 
     refreshEntries();
 
@@ -379,8 +375,6 @@ async function enableLeaderboard() {
     document.querySelector('#showLeaderboard').innerText = 'Hide Leaderboard';
 
     const userLeaderBoardObject = await axios.get(domain + '/leaderboard', { headers: { Authorization: token }});
-
-    console.log(userLeaderBoardObject.data);
 
     Object.keys(userLeaderBoardObject.data).forEach(e => {
       const row = document.createElement('tr');
