@@ -14,7 +14,7 @@ require('dotenv').config();
 const Expense = require('./models/expenses-model');
 const passwordRequest = require('./models/password-requests-model');
 const Order = require('./models/purchases-model');
-const Purchases = require('./models/purchases-model');
+const Purchase = require('./models/purchases-model');
 const User = require('./models/user-model');
 const expensesRoutes = require('./routes/expenses');
 const passwordRoutes = require('./routes/password');
@@ -28,16 +28,12 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 );
 
 User.hasMany(Expense);
-Expense.belongsTo(User);
 
 User.hasMany(Order);
-Order.belongsTo(User);
 
 User.hasMany(passwordRequest);
-passwordRequest.belongsTo(User);
 
-User.hasMany(Purchases);
-Purchases.belongsTo(User);
+User.hasMany(Purchase);
 
 // allows authorization header from front-end
 app.use((req, res, next) => {
@@ -53,7 +49,10 @@ if (environment === 'production') {
   app.use(compression());
 } else if (environment === 'development') {
   const cors = require('cors');
-  app.use(cors());
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+  }));
 }
 
 app.use(morgan('combined', { stream: accessLogStream }));

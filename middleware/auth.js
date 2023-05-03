@@ -8,8 +8,7 @@ exports.authorization = async(req, res, next) => {
   }
   try {
     const token = req.header('Authorization');
-    console.log(token, '12345');
-    const id = Number(jwt.verify(token, '12345').userId);
+    const id = Number(jwt.verify(token, process.env.JWT_SIGN).userId);
     const user = await User.findByPk(id);
     if (user === null) {
       return res.status(401).json({ message: 'Unauthorized' });

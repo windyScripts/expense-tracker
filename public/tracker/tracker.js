@@ -227,28 +227,23 @@ function configureButtons(numberOfPages, currentPage) {
 
   if (currentPage >= numberOfPages) {
     nextPageButton.setAttribute('disabled', '');
-
     nextPageButton.innerText = '-';
   } else {
     nextPageButton.innerText = currentPage + 1;
-
     nextPageButton.disabled = false;
   }
 
   const currentPageButton = document.querySelector('#currentExpenses');
   currentPageButton.setAttribute('disabled', '');
-
   currentPageButton.innerText = currentPage;
 
   const previousPageButton = document.querySelector('#expensesBack');
 
   if (numberOfPages < 2 || currentPage === 1) {
     previousPageButton.setAttribute('disabled', '');
-
     previousPageButton.innerText = '-';
   } else {
     previousPageButton.innerText = currentPage - 1;
-
     previousPageButton.disabled = false;
   }
 }
