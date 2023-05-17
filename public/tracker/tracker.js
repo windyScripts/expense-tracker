@@ -355,6 +355,10 @@ function changePremiumButton() {
   premiumFeatures.removeAttribute('hidden');
 }
 
+function setMinAndMaxForDownloads(){
+  // set dates to have a minimum and maximum.
+}
+
 async function enableLeaderboard() {
   const leaderboardTableBody = document.querySelector('#leaderboard');
   const leaderboardTable = document.querySelector('#leaderboardTable');

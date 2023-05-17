@@ -28,7 +28,7 @@ exports.getPDFLink = async (req, res) => {
     const stringifiedExpenses = JSON.stringify(tableData);
     const userId = req.user.id;
     const timeStamp = new Date();
-    const fileName = `${userId}/${timeStamp}`;
+    const fileName = `${userId}/${timeStamp}.txt`;
     const fileUrl = await S3.uploadtoS3(stringifiedExpenses, fileName);
     await Downloads.create({
       url: fileUrl,

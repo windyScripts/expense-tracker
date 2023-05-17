@@ -18,3 +18,17 @@ form{
     max-width: 800px;
     margin: 0 auto;
 }
+
+.absolute.logout{
+    position: absolute;
+    right:20px;
+    top:5px;
+}
+
+h1{
+    width: 100%;
+}
+
+.block{
+    padding: 20 auto;
+}
