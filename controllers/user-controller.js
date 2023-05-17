@@ -6,7 +6,7 @@ const User = require('../services/user-services');
 
 function generateAccessToken(id) {
   const iat = new Date;
-  return jwt.sign({ userId: id, date: iat.getTime() }, '12345');
+  return jwt.sign({ userId: id, date: iat.getTime() }, process.env.JWT_SIGN);
 }
 
 function invalid(...params) {
@@ -21,10 +21,11 @@ function invalid(...params) {
 exports.addUser = async (req, res) => {
   try {
     const checkInvalid = invalid(req.body.userName, req.body.email, req.body.password);
-    const existingUser = Boolean(await User.findOne({ where: { email: req.body.email }}));
-    if (checkInvalid === true) {
+    const existingUser = Boolean(await User.findOne({where:{email:req.body.email}}))
+    if (checkInvalid===true) {
       return res.status(401).json({ message: 'Invalid details.' });
-    } else if (existingUser === true) {
+    }
+    else if(existingUser===true){
       return res.status(401).json({ message: 'User already exists.' });
     }
     const saltRounds = 10;

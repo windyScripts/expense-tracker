@@ -1,7 +1,8 @@
-const scheme = 'http';
+/* const scheme = 'http';
 const hostName = '3.26.180.199';
 const port = 3000;
-const domain = `${scheme}://${hostName}:${port}`;
+const domain = `${scheme}://${hostName}:${port}`; */
+const domain = 'http://localhost:3000'
 
 const formSubmit = document.querySelector('#formSubmit');
 
@@ -347,8 +348,9 @@ async function unlockPremium() {
 }
 
 function changePremiumButton() {
-  premium.classList.add('disabled', 'btn-warning');
-  premium.classList.remove('btn-success');
+  premium.classList.add('disabled'/* , 'btn-warning' */);
+  /* premium.classList.remove('btn-success'); */
+  premium.style.visibility = 'hidden';
   premium.textContent = 'You are a premium user!';
   premiumFeatures.removeAttribute('hidden');
 }

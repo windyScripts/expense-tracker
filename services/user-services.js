@@ -20,8 +20,6 @@ exports.findAll = async function(params) {
   }
 };
 
-// add user as an argument.
-
 exports.update = async function(user, params, transaction = null) {
   try {
     return new Promise(resolve => {
