@@ -185,25 +185,25 @@ exports.showLeaderboards = async (req, res) => {
   }
 };
 
-exports.getOldestAndNewestExpenseDates = async function(req,res){
-try{
-const p1 = Expenses.findOne({
-  where: {
-    userId: req.user.id,
-  },
-  order: [['createdAt', 'DESC']],
-attributes: ['createdAt']
-})
-const p2 = Expenses.findOne({
-    where: {
-      userId: req.user.id,
-    },
-    order: [['createdAt', 'ASC']],
-    attributes: ['createdAt']
-  })
-  const [beforeDate,afterDate] = await Promise.all([p1,p2])
-  return res.status(200).json({beforeDate,afterDate})
-}catch(err){
-  console.log(err);
-}
-}
+exports.getOldestAndNewestExpenseDates = async function(req, res) {
+  try {
+    const p1 = Expenses.findOne({
+      where: {
+        userId: req.user.id,
+      },
+      order: [['createdAt', 'DESC']],
+      attributes: ['createdAt'],
+    });
+    const p2 = Expenses.findOne({
+      where: {
+        userId: req.user.id,
+      },
+      order: [['createdAt', 'ASC']],
+      attributes: ['createdAt'],
+    });
+    const [beforeDate, afterDate] = await Promise.all([p1, p2]);
+    return res.status(200).json({ beforeDate, afterDate });
+  } catch (err) {
+    console.log(err);
+  }
+};

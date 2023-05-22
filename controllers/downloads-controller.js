@@ -19,7 +19,7 @@ exports.getPDFLink = async (req, res) => {
           [Op.between]: [startDate, endDate],
         },
       },
-      attributes: ['date','category','name','price']
+      attributes: ['date', 'category', 'name', 'price'],
     });
     const p2 = Expenses.findAll({ // ????????????????????????????????
       where: {
@@ -31,30 +31,30 @@ exports.getPDFLink = async (req, res) => {
       attributes: [
         [
           Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-01'),
-          'month'
+          'month',
         ],
         [
           Sequelize.fn('SUM', Sequelize.col('price')),
-          'totalExpense'
+          'totalExpense',
         ],
-        'createdAt' // Include the non-aggregated column in the attributes
+        'createdAt', // Include the non-aggregated column in the attributes
       ],
       group: [
         Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-01'),
-        'createdAt' // Include the non-aggregated column in the GROUP BY clause
-      ]
+        'createdAt', // Include the non-aggregated column in the GROUP BY clause
+      ],
     }); // ????????????????????????????????
-const [expenseData,expenseSummary] = await Promise.all([p1,p2])
-console.log(expenseData,"#####",expenseSummary)
+    const [expenseData, expenseSummary] = await Promise.all([p1, p2]);
+    console.log(expenseData, '#####', expenseSummary);
     const tableData = [];
     tableData.push(['Date', 'Category', 'Expense Name', 'Amount']);
     let summaryRow = 0;
-    expenseData.forEach((e,i) => {
-      if(expenseData[i+1].date.startsWith('01')&&summaryRow<expenseSummary.length){
-        tableData.push(...expenseSummary[summaryRow])
-        summaryRow+=1;
+    expenseData.forEach((e, i) => {
+      if (expenseData[i + 1].date.startsWith('01') && summaryRow < expenseSummary.length) {
+        tableData.push(...expenseSummary[summaryRow]);
+        summaryRow += 1;
       }
-      tableData.push([e.date,e.category,e.name,e.price]);
+      tableData.push([e.date, e.category, e.name, e.price]);
     });
     const stringifiedExpenses = JSON.stringify(tableData);
     const userId = req.user.id;

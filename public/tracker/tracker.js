@@ -2,7 +2,7 @@
 const hostName = '3.26.180.199';
 const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`; */
-const domain = 'http://localhost:3000'
+const domain = 'http://localhost:3000';
 
 const formSubmit = document.querySelector('#formSubmit');
 
@@ -342,7 +342,7 @@ async function refreshDisplay(expensesPerPage) {
 
 async function unlockPremium() {
   changePremiumButton();
-  setMinAndMaxForDownloads()
+  setMinAndMaxForDownloads();
   const leaderboardButton = document.querySelector('#showLeaderboard');
   leaderboardButton.addEventListener('click', enableLeaderboard);
 }
@@ -356,17 +356,17 @@ function changePremiumButton() {
 }
 
 // set dates to have a minimum and maximum.
-async function setMinAndMaxForDownloads(){
+async function setMinAndMaxForDownloads() {
   const token = getToken();
-  const response = await axios.get(domain+'/dates',{headers: { Authorization: token }})
-  const max = response.data.beforeDate.createdAt.slice(0,10);
-  const min = response.data.afterDate.createdAt.slice(0,10);
-  const startDateField = document.getElementById('startDate')
-  const endDateField = document.getElementById('endDate')
-  startDateField.setAttribute('min',min)
-  startDateField.setAttribute('max',max)
-  endDateField.setAttribute('max',max)
-  endDateField.setAttribute('min',min)
+  const response = await axios.get(domain + '/dates', { headers: { Authorization: token }});
+  const max = response.data.beforeDate.createdAt.slice(0, 10);
+  const min = response.data.afterDate.createdAt.slice(0, 10);
+  const startDateField = document.getElementById('startDate');
+  const endDateField = document.getElementById('endDate');
+  startDateField.setAttribute('min', min);
+  startDateField.setAttribute('max', max);
+  endDateField.setAttribute('max', max);
+  endDateField.setAttribute('min', min);
 }
 
 async function enableLeaderboard() {
