@@ -323,7 +323,7 @@ function getToken() {
 }
 
 async function refreshDisplay(expensesPerPage) {
-  const token = getToken(); //token works. Have to set header.
+  const token = getToken();
 
   const message = await axios.get(domain + '/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?
   const arrayOfExpenses = message.data.currentPageExpenses;
@@ -342,7 +342,7 @@ async function refreshDisplay(expensesPerPage) {
 
 async function unlockPremium() {
   changePremiumButton();
-
+  setMinAndMaxForDownloads()
   const leaderboardButton = document.querySelector('#showLeaderboard');
   leaderboardButton.addEventListener('click', enableLeaderboard);
 }
@@ -355,8 +355,18 @@ function changePremiumButton() {
   premiumFeatures.removeAttribute('hidden');
 }
 
-function setMinAndMaxForDownloads(){
-  // set dates to have a minimum and maximum.
+// set dates to have a minimum and maximum.
+async function setMinAndMaxForDownloads(){
+  const token = getToken();
+  const response = await axios.get(domain+'/dates',{headers: { Authorization: token }})
+  const max = response.data.beforeDate.createdAt.slice(0,10);
+  const min = response.data.afterDate.createdAt.slice(0,10);
+  const startDateField = document.getElementById('startDate')
+  const endDateField = document.getElementById('endDate')
+  startDateField.setAttribute('min',min)
+  startDateField.setAttribute('max',max)
+  endDateField.setAttribute('max',max)
+  endDateField.setAttribute('min',min)
 }
 
 async function enableLeaderboard() {

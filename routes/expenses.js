@@ -12,4 +12,5 @@ router.delete('/entry/:eId', auth.authorization, expensesController.deleteExpens
 router.get('/download', auth.authorization, downloadsController.getPDFLink);
 router.get('/entries/:pageNumber', auth.authorization, expensesController.getPageOfExpenses);
 router.get('/leaderboard', auth.authorization, expensesController.showLeaderboards);
+router.get('/dates',auth.authorization, expensesController.getOldestAndNewestExpenseDates)
 module.exports = router;
