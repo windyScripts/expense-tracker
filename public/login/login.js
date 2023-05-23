@@ -43,7 +43,7 @@ async function validateLogin(e) {
 signUpButton.addEventListener('click', signUpRedirect);
 
 function signUpRedirect() {
-  window.location.href = '../signup/main.html';
+  window.location.href = '../signup/signup.html';
 }
 
 forgotPasswordButton.addEventListener('click', forgotPasswordRedirect);
