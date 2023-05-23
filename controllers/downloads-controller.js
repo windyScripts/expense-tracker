@@ -7,8 +7,8 @@ const Op = Sequelize.Op;
 
 const S3 = require('../services/S3-services');
 
-const puppeteer = require('puppeteer-core');
-const {executablePath} = require('puppeteer-core')
+const PdfPrinter = require('pdfmake');
+
 
 exports.getPDFLink = async (req, res) => {
   try {
@@ -49,41 +49,92 @@ exports.getPDFLink = async (req, res) => {
       , 'ASC']]
     }); 
     const [expenseData, expenseSummary] = await Promise.all([p1, p2]);
+    console.log(expenseData[0].dataValues.date,expenseData[0].dataValues.date.slice(5,7))
     const tableData = [];
     tableData.push(['Date', 'Category', 'Expense Name', 'Amount']);
     let summaryRow = 0;
     expenseData.forEach((e, i) => {
-      if (i<expenseData.length-1 && expenseData[i + 1].dataValues.date.startsWith('01') && summaryRow < expenseSummary.length) {
-        tableData.push(...expenseSummary[summaryRow]);
+      tableData.push([e.date, e.category, e.name, e.price]);
+      let len = expenseData.length
+      if (((i<len-1 && ((expenseData[i + 1].dataValues.date[6]>expenseData[i].dataValues.date[6])||expenseData[i + 1].dataValues.date.slice(5,7)=='12'&&expenseData[i].dataValues.date.slice(5,7)=='01'))||(i===len-1)) && summaryRow < expenseSummary.length) {
+        tableData.push(['Monthly summary:','','','']);
+        tableData.push(['Month: ',expenseSummary[summaryRow].dataValues.Month,'Amount: ',expenseSummary[summaryRow].dataValues.totalExpense]);
         summaryRow += 1;
       }
-      tableData.push([e.date, e.category, e.name, e.price]);
     });
-  const content = tableData;
-  const browser = await puppeteer.launch({ headless: true })
-  const page = await browser.newPage()
-  await page.setContent(content)
-  const buffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-          left: '0px',
-          top: '0px',
-          right: '0px',
-          bottom: '0px'
-      },
-  })
-          await browser.close()
+  
+  
+  var fonts = {
+    Courier: {
+      normal: 'Courier',
+      bold: 'Courier-Bold',
+      italics: 'Courier-Oblique',
+      bolditalics: 'Courier-BoldOblique'
+    },
+    Helvetica: {
+      normal: 'Helvetica',
+      bold: 'Helvetica-Bold',
+      italics: 'Helvetica-Oblique',
+      bolditalics: 'Helvetica-BoldOblique'
+    },
+    Times: {
+      normal: 'Times-Roman',
+      bold: 'Times-Bold',
+      italics: 'Times-Italic',
+      bolditalics: 'Times-BoldItalic'
+    },
+    Symbol: {
+      normal: 'Symbol'
+    },
+    ZapfDingbats: {
+      normal: 'ZapfDingbats'
+    }
+  };
+  
+  const printer = new PdfPrinter(fonts);
+  //var fs = require('fs');
+  
+  const docDefinition = {
+    content: [
+      {
+        layout: 'lightHorizontalLines', // optional
+        table: {
+          // headers are automatically repeated if the table spans over multiple pages
+          // you can declare how many rows should be treated as headers
+          headerRows: 1,
+          widths: [ '*', 'auto', 100, '*' ],
+  
+          body: tableData
+        }
+      }
+    ],
+    defaultStyle: {
+      font: 'Helvetica'
+    }
+  };
+  
+  const pdfMake = printer.createPdfKitDocument(docDefinition);
+  
+  let chunks = [];
 
-    const stringifiedExpenses = JSON.stringify(tableData);
-    const userId = req.user.id;
+pdfMake.on("data", chunk => {
+  chunks.push(chunk);
+});
+
+pdfMake.on("end",async () => {
+  const result = Buffer.concat(chunks);
+  const userId = req.user.id;
     const timeStamp = new Date();
     const fileName = `${userId}/${timeStamp}.pdf`;
-    const fileUrl = await S3.uploadtoS3(buffer, fileName);
+    const fileUrl = await S3.uploadtoS3(result, fileName);
     await Downloads.create({
       url: fileUrl,
     });
     res.status(200).json({ fileUrl, success: true });
+});
+
+pdfMake.end();
+
   } catch (err) {
     res.status(500).json({ fileUrl: '', success: false, message: err });
     console.log(err);
