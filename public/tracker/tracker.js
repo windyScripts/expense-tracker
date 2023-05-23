@@ -4,28 +4,28 @@ const port = 3000;
 const domain = `${scheme}://${hostName}:${port}`; */
 const domain = 'http://localhost:3000';
 
-const formSubmit = document.querySelector('#formSubmit');
+const formSubmit = document.getElementById('formSubmit');
 
-const expenseName = document.querySelector('#expenseName');
-const expensePrice = document.querySelector('#expensePrice');
-const expenseCategory = document.querySelector('#expenseCategory');
-const categories = document.querySelectorAll('.expenseCategory');
-const premium = document.querySelector('#premium');
+const expenseName = document.getElementById('expenseName');
+const expensePrice = document.getElementById('expensePrice');
+const expenseCategory = document.getElementById('expenseCategory');
+const categories = document.getElementsByClassName('expenseCategory');
+const premium = document.getElementById('premium');
 
-const logOutButton = document.querySelector('#logout');
+const logOutButton = document.getElementById('logout');
 
-const premiumFeatures = document.querySelector('#premiumFeature');
-const pdfButton = document.querySelector('#pdfDownload');
-const paginationButtons = document.querySelector('#pagination');
+const premiumFeatures = document.getElementById('premiumFeature');
+const pdfButton = document.getElementById('pdfDownload');
+const paginationButtons = document.getElementById('pagination');
 paginationButtons.addEventListener('click', changeExpensePage);
-const expensesPerPageForm = document.querySelector('#expensesPerPageForm');
+const expensesPerPageForm = document.getElementById('expensesPerPageForm');
 
 expensesPerPageForm.addEventListener('submit', changeDisplayNumber);
 
 async function changeDisplayNumber(e) {
   e.preventDefault();
 
-  const newDisplayNumber = document.querySelector('#expensesPerPageSelect').value;
+  const newDisplayNumber = document.getElementById('expensesPerPageSelect').value;
   console.log(newDisplayNumber);
   localStorage.setItem('displayNumber', newDisplayNumber);
   refreshDisplay(newDisplayNumber);
@@ -55,9 +55,9 @@ pdfButton.addEventListener('click', getPDFLink);
 async function getPDFLink(e) {
   e.preventDefault();
 
-  const startDate = document.querySelector('#startDate').value;
+  const startDate = document.getElementById('startDate').value;
 
-  const endDate = document.querySelector('#endDate').value;
+  const endDate = document.getElementById('endDate').value;
 
   const response = await axios.get(domain + '/download', { headers: { Authorization: getToken() }, params: { start_date: startDate, end_date: endDate }});
 
@@ -120,7 +120,7 @@ formSubmit.addEventListener('click', addEntry);
 
 window.addEventListener('DOMContentLoaded', refreshEntries);
 
-const items = document.querySelector('#items');
+const items = document.getElementById('items');
 items.addEventListener('click', entryFunctions);
 
 function entryFunctions(e) {
@@ -146,11 +146,12 @@ async function editEntry(e) {
     const id = row.id;
     formSubmit.setAttribute('data-id', id);
     let categoryValue = '0';
-    categories.forEach(e => {
-      if (e.innerText === category) {
-        categoryValue = e.value;
+    for(let i = 0; i < categories.length; i++){
+
+      if (categories[i].innerText === category) {
+        categoryValue = categories[i].value;
       }
-    });
+    };
 
     expenseName.value = name;
     expensePrice.value = price;
@@ -208,7 +209,7 @@ async function addEntry(e) {
       token,
     };
     await axios.post(domain + '/entry', entry, { headers: { Authorization: token }});
-
+    formSubmit.setAttribute('data-id', undefined);
     refreshEntries();
 
     // empty fields
@@ -224,7 +225,7 @@ async function addEntry(e) {
 // configure pagination buttons
 
 function configureButtons(numberOfPages, currentPage) {
-  const nextPageButton = document.querySelector('#expensesForward');
+  const nextPageButton = document.getElementById('expensesForward');
 
   if (currentPage >= numberOfPages) {
     nextPageButton.setAttribute('disabled', '');
@@ -234,11 +235,11 @@ function configureButtons(numberOfPages, currentPage) {
     nextPageButton.disabled = false;
   }
 
-  const currentPageButton = document.querySelector('#currentExpenses');
+  const currentPageButton = document.getElementById('currentExpenses');
   currentPageButton.setAttribute('disabled', '');
   currentPageButton.innerText = currentPage;
 
-  const previousPageButton = document.querySelector('#expensesBack');
+  const previousPageButton = document.getElementById('expensesBack');
 
   if (numberOfPages < 2 || currentPage === 1) {
     previousPageButton.setAttribute('disabled', '');
@@ -252,7 +253,7 @@ function configureButtons(numberOfPages, currentPage) {
 // create rows of data from an array
 
 function displayEntriesFromArray(arrayOfExpenses) {
-  const items = document.querySelector('#items');
+  const items = document.getElementById('items');
   items.innerHTML = '';
   arrayOfExpenses.forEach(element => {
     createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
@@ -310,7 +311,7 @@ function createRow(date, name, price, category, id, parent) {
 }
 
 function getNumberOfItemsPerPage() {
-  return localStorage.getItem('displayNumber') || document.querySelector('#expensesPerPageSelect').value;
+  return localStorage.getItem('displayNumber') || document.getElementById('expensesPerPageSelect').value;
 }
 
 function getToken() {
@@ -343,7 +344,7 @@ async function refreshDisplay(expensesPerPage) {
 async function unlockPremium() {
   changePremiumButton();
   setMinAndMaxForDownloads();
-  const leaderboardButton = document.querySelector('#showLeaderboard');
+  const leaderboardButton = document.getElementById('showLeaderboard');
   leaderboardButton.addEventListener('click', enableLeaderboard);
 }
 
@@ -370,21 +371,21 @@ async function setMinAndMaxForDownloads() {
 }
 
 async function enableLeaderboard() {
-  const leaderboardTableBody = document.querySelector('#leaderboard');
-  const leaderboardTable = document.querySelector('#leaderboardTable');
+  const leaderboardTableBody = document.getElementById('leaderboard');
+  const leaderboardTable = document.getElementById('leaderboardTable');
 
   const token = getToken();
 
   leaderboardTable.toggleAttribute('hidden');
 
   if (leaderboardTable.hasAttribute('hidden')) {
-    document.querySelector('#showLeaderboard').value = 'Show Leaderboard';
-    document.querySelector('#showLeaderboard').innerText = 'Show Leaderboard';
+    document.getElementById('showLeaderboard').value = 'Show Leaderboard';
+    document.getElementById('showLeaderboard').innerText = 'Show Leaderboard';
 
     leaderboardTableBody.innerHTML = '';
   } else {
-    document.querySelector('#showLeaderboard').value = 'Hide Leaderboard';
-    document.querySelector('#showLeaderboard').innerText = 'Hide Leaderboard';
+    document.getElementById('showLeaderboard').value = 'Hide Leaderboard';
+    document.getElementById('showLeaderboard').innerText = 'Hide Leaderboard';
 
     const userLeaderBoardObject = await axios.get(domain + '/leaderboard', { headers: { Authorization: token }});
 

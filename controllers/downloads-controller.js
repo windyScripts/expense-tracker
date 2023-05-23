@@ -7,6 +7,9 @@ const Op = Sequelize.Op;
 
 const S3 = require('../services/S3-services');
 
+const puppeteer = require('puppeteer-core');
+const {executablePath} = require('puppeteer-core')
+
 exports.getPDFLink = async (req, res) => {
   try {
     const startDate = req.query.start_date;
@@ -20,8 +23,9 @@ exports.getPDFLink = async (req, res) => {
         },
       },
       attributes: ['date', 'category', 'name', 'price'],
+      order: [['date', 'ASC']]
     });
-    const p2 = Expenses.findAll({ // ????????????????????????????????
+    const p2 = Expenses.findAll({
       where: {
         userid: req.user.id,
         date: {
@@ -30,37 +34,52 @@ exports.getPDFLink = async (req, res) => {
       },
       attributes: [
         [
-          Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-01'),
-          'month',
+          Sequelize.fn('MONTH', Sequelize.col('createdAt')), 'Month'
         ],
         [
           Sequelize.fn('SUM', Sequelize.col('price')),
           'totalExpense',
         ],
-        'createdAt', // Include the non-aggregated column in the attributes
       ],
       group: [
-        Sequelize.fn('DATE_FORMAT', Sequelize.col('createdAt'), '%Y-%m-01'),
-        'createdAt', // Include the non-aggregated column in the GROUP BY clause
+        Sequelize.fn('MONTH', Sequelize.col('createdAt'))
       ],
-    }); // ????????????????????????????????
+      order:[[
+        Sequelize.fn('MONTH', Sequelize.col('createdAt'))
+      , 'ASC']]
+    }); 
     const [expenseData, expenseSummary] = await Promise.all([p1, p2]);
-    console.log(expenseData, '#####', expenseSummary);
     const tableData = [];
     tableData.push(['Date', 'Category', 'Expense Name', 'Amount']);
     let summaryRow = 0;
     expenseData.forEach((e, i) => {
-      if (expenseData[i + 1].date.startsWith('01') && summaryRow < expenseSummary.length) {
+      if (i<expenseData.length-1 && expenseData[i + 1].dataValues.date.startsWith('01') && summaryRow < expenseSummary.length) {
         tableData.push(...expenseSummary[summaryRow]);
         summaryRow += 1;
       }
       tableData.push([e.date, e.category, e.name, e.price]);
     });
+  const content = tableData;
+  const browser = await puppeteer.launch({ headless: true })
+  const page = await browser.newPage()
+  await page.setContent(content)
+  const buffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+          left: '0px',
+          top: '0px',
+          right: '0px',
+          bottom: '0px'
+      },
+  })
+          await browser.close()
+
     const stringifiedExpenses = JSON.stringify(tableData);
     const userId = req.user.id;
     const timeStamp = new Date();
-    const fileName = `${userId}/${timeStamp}.csv`;
-    const fileUrl = await S3.uploadtoS3(stringifiedExpenses, fileName);
+    const fileName = `${userId}/${timeStamp}.pdf`;
+    const fileUrl = await S3.uploadtoS3(buffer, fileName);
     await Downloads.create({
       url: fileUrl,
     });
