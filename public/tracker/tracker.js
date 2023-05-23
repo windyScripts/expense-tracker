@@ -345,6 +345,8 @@ async function unlockPremium() {
   setMinAndMaxForDownloads();
   const leaderboardButton = document.getElementById('showLeaderboard');
   leaderboardButton.addEventListener('click', enableLeaderboard);
+  const fileUrlButton = document.getElementById('showFileUrls');
+  fileUrlButton.addEventListener('click', enableDownloadLinks);
 }
 
 function changePremiumButton() {
@@ -400,6 +402,43 @@ async function enableLeaderboard() {
       row.appendChild(expenseData);
 
       leaderboardTableBody.appendChild(row);
+    });
+  }
+}
+
+async function enableDownloadLinks() {
+  const fileUrlTableBody = document.getElementById('fileUrlBody');
+  const fileUrlTable = document.getElementById('fileUrlTable');
+
+  const token = getToken();
+
+  fileUrlTable.toggleAttribute('hidden');
+
+  if (fileUrlTable.hasAttribute('hidden')) {
+    document.getElementById('showFileUrls').value = 'Show File Urls';
+    document.getElementById('showFileUrls').innerText = 'Show File Urls';
+
+    fileUrlTableBody.innerHTML = '';
+  } else {
+    document.getElementById('showFileUrls').value = 'Hide File Urls';
+    document.getElementById('showFileUrls').innerText = 'Hide File Urls';
+
+    const userFileUrlObject = await axios.get(domain + '/fileUrls', { headers: { Authorization: token }});
+    Object.keys(userFileUrlObject.data.fileUrls).forEach(e => {
+      const row = document.createElement('tr');
+      const dateData = document.createElement('td');
+      const urlData = document.createElement('td');
+      const urlLink = document.createElement('a');
+
+      dateData.appendChild(document.createTextNode(userFileUrlObject.data.fileUrls[e].createdAt.slice(0, 10) + ' : ' + userFileUrlObject.data.fileUrls[e].createdAt.slice(11, 16)));
+      urlLink.appendChild(document.createTextNode(userFileUrlObject.data.fileUrls[e].createdAt.slice(0, 10) + ' : ' + userFileUrlObject.data.fileUrls[e].createdAt.slice(11, 16)));
+      urlLink.setAttribute('href', userFileUrlObject.data.fileUrls[e].url);
+      urlData.appendChild(urlLink);
+
+      row.appendChild(dateData);
+      row.appendChild(urlData);
+
+      fileUrlTableBody.appendChild(row);
     });
   }
 }

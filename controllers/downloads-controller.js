@@ -1,13 +1,11 @@
+const PdfPrinter = require('pdfmake');
 const Sequelize = require('sequelize');
 
 const Downloads = require('../services/downloads-services');
 const Expenses = require('../services/expense-services');
-
-const Op = Sequelize.Op;
-
 const S3 = require('../services/S3-services');
 
-const PdfPrinter = require('pdfmake');
+const Op = Sequelize.Op;
 
 exports.getPDFLink = async (req, res) => {
   try {
@@ -101,7 +99,7 @@ exports.getPDFLink = async (req, res) => {
           // headers are automatically repeated if the table spans over multiple pages
           // you can declare how many rows should be treated as headers
             headerRows: 1,
-            widths: ['*', 'auto', 100, '*'],
+            widths: ['auto', 'auto', 'auto', 'auto'],
 
             body: tableData,
           },
@@ -128,6 +126,7 @@ exports.getPDFLink = async (req, res) => {
       const fileUrl = await S3.uploadtoS3(result, fileName);
       await Downloads.create({
         url: fileUrl,
+        userId: req.user.id,
       });
       res.status(200).json({ fileUrl, success: true });
     });
@@ -136,5 +135,19 @@ exports.getPDFLink = async (req, res) => {
   } catch (err) {
     res.status(500).json({ fileUrl: '', success: false, message: err });
     console.log(err);
+  }
+};
+
+exports.getDownloadLinks = async (req, res) => {
+  try {
+    const fileUrls = await Downloads.findAll({
+        where: { userId: req.user.id },
+        attributes: ['url', 'createdAt'],
+        order: [['createdAt', 'DESC']],
+        limit: 5,
+      });
+    res.status(200).json({ fileUrls, success: true });
+  } catch (err) {
+    res.status(500).json({ fileUrls: '', success: false, message: err });
   }
 };

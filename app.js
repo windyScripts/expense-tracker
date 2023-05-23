@@ -11,6 +11,7 @@ const morgan = require('morgan');
 
 require('dotenv').config();
 
+const Download = require('./models/downloads-model');
 const Expense = require('./models/expenses-model');
 const passwordRequest = require('./models/password-requests-model');
 const Order = require('./models/purchases-model');
@@ -34,6 +35,8 @@ User.hasMany(Order);
 User.hasMany(passwordRequest);
 
 User.hasMany(Purchase);
+
+User.hasMany(Download);
 
 // allows authorization header from front-end
 app.use((req, res, next) => {
