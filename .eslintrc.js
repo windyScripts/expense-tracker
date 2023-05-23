@@ -19,7 +19,8 @@ module.exports = {
     window: 'readonly',
     localStorage: 'readonly',
     alert: 'readonly',
-    confirm: 'readonly'
+    confirm: 'readonly',
+    Razorpay: 'readonly'
   },
   rules: {
     // Basic rules

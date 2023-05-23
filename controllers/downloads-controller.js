@@ -9,7 +9,6 @@ const S3 = require('../services/S3-services');
 
 const PdfPrinter = require('pdfmake');
 
-
 exports.getPDFLink = async (req, res) => {
   try {
     const startDate = req.query.start_date;
@@ -23,7 +22,7 @@ exports.getPDFLink = async (req, res) => {
         },
       },
       attributes: ['date', 'category', 'name', 'price'],
-      order: [['date', 'ASC']]
+      order: [['date', 'ASC']],
     });
     const p2 = Expenses.findAll({
       where: {
@@ -34,7 +33,7 @@ exports.getPDFLink = async (req, res) => {
       },
       attributes: [
         [
-          Sequelize.fn('MONTH', Sequelize.col('createdAt')), 'Month'
+          Sequelize.fn('MONTH', Sequelize.col('createdAt')), 'Month',
         ],
         [
           Sequelize.fn('SUM', Sequelize.col('price')),
@@ -42,99 +41,98 @@ exports.getPDFLink = async (req, res) => {
         ],
       ],
       group: [
-        Sequelize.fn('MONTH', Sequelize.col('createdAt'))
+        Sequelize.fn('MONTH', Sequelize.col('createdAt')),
       ],
-      order:[[
-        Sequelize.fn('MONTH', Sequelize.col('createdAt'))
-      , 'ASC']]
-    }); 
+      order: [[
+        Sequelize.fn('MONTH', Sequelize.col('createdAt')),
+        'ASC',
+      ]],
+    });
     const [expenseData, expenseSummary] = await Promise.all([p1, p2]);
-    console.log(expenseData[0].dataValues.date,expenseData[0].dataValues.date.slice(5,7))
+    console.log(expenseData[0].dataValues.date, expenseData[0].dataValues.date.slice(5, 7));
     const tableData = [];
     tableData.push(['Date', 'Category', 'Expense Name', 'Amount']);
     let summaryRow = 0;
     expenseData.forEach((e, i) => {
       tableData.push([e.date, e.category, e.name, e.price]);
-      let len = expenseData.length
-      if (((i<len-1 && ((expenseData[i + 1].dataValues.date[6]>expenseData[i].dataValues.date[6])||expenseData[i + 1].dataValues.date.slice(5,7)=='12'&&expenseData[i].dataValues.date.slice(5,7)=='01'))||(i===len-1)) && summaryRow < expenseSummary.length) {
-        tableData.push(['Monthly summary:','','','']);
-        tableData.push(['Month: ',expenseSummary[summaryRow].dataValues.Month,'Amount: ',expenseSummary[summaryRow].dataValues.totalExpense]);
+      const len = expenseData.length;
+      if (((i < len - 1 && ((expenseData[i + 1].dataValues.date[6] > expenseData[i].dataValues.date[6]) || expenseData[i + 1].dataValues.date.slice(5, 7) == '12' && expenseData[i].dataValues.date.slice(5, 7) == '01')) || (i === len - 1)) && summaryRow < expenseSummary.length) {
+        tableData.push(['Monthly summary:', '', '', '']);
+        tableData.push(['Month: ', expenseSummary[summaryRow].dataValues.Month, 'Amount: ', expenseSummary[summaryRow].dataValues.totalExpense]);
         summaryRow += 1;
       }
     });
-  
-  
-  var fonts = {
-    Courier: {
-      normal: 'Courier',
-      bold: 'Courier-Bold',
-      italics: 'Courier-Oblique',
-      bolditalics: 'Courier-BoldOblique'
-    },
-    Helvetica: {
-      normal: 'Helvetica',
-      bold: 'Helvetica-Bold',
-      italics: 'Helvetica-Oblique',
-      bolditalics: 'Helvetica-BoldOblique'
-    },
-    Times: {
-      normal: 'Times-Roman',
-      bold: 'Times-Bold',
-      italics: 'Times-Italic',
-      bolditalics: 'Times-BoldItalic'
-    },
-    Symbol: {
-      normal: 'Symbol'
-    },
-    ZapfDingbats: {
-      normal: 'ZapfDingbats'
-    }
-  };
-  
-  const printer = new PdfPrinter(fonts);
-  //var fs = require('fs');
-  
-  const docDefinition = {
-    content: [
-      {
-        layout: 'lightHorizontalLines', // optional
-        table: {
+
+    var fonts = {
+      Courier: {
+        normal: 'Courier',
+        bold: 'Courier-Bold',
+        italics: 'Courier-Oblique',
+        bolditalics: 'Courier-BoldOblique',
+      },
+      Helvetica: {
+        normal: 'Helvetica',
+        bold: 'Helvetica-Bold',
+        italics: 'Helvetica-Oblique',
+        bolditalics: 'Helvetica-BoldOblique',
+      },
+      Times: {
+        normal: 'Times-Roman',
+        bold: 'Times-Bold',
+        italics: 'Times-Italic',
+        bolditalics: 'Times-BoldItalic',
+      },
+      Symbol: {
+        normal: 'Symbol',
+      },
+      ZapfDingbats: {
+        normal: 'ZapfDingbats',
+      },
+    };
+
+    const printer = new PdfPrinter(fonts);
+    //var fs = require('fs');
+
+    const docDefinition = {
+      content: [
+        {
+          layout: 'lightHorizontalLines', // optional
+          table: {
           // headers are automatically repeated if the table spans over multiple pages
           // you can declare how many rows should be treated as headers
-          headerRows: 1,
-          widths: [ '*', 'auto', 100, '*' ],
-  
-          body: tableData
-        }
-      }
-    ],
-    defaultStyle: {
-      font: 'Helvetica'
-    }
-  };
-  
-  const pdfMake = printer.createPdfKitDocument(docDefinition);
-  
-  let chunks = [];
+            headerRows: 1,
+            widths: ['*', 'auto', 100, '*'],
 
-pdfMake.on("data", chunk => {
-  chunks.push(chunk);
-});
+            body: tableData,
+          },
+        },
+      ],
+      defaultStyle: {
+        font: 'Helvetica',
+      },
+    };
 
-pdfMake.on("end",async () => {
-  const result = Buffer.concat(chunks);
-  const userId = req.user.id;
-    const timeStamp = new Date();
-    const fileName = `${userId}/${timeStamp}.pdf`;
-    const fileUrl = await S3.uploadtoS3(result, fileName);
-    await Downloads.create({
-      url: fileUrl,
+    const pdfMake = printer.createPdfKitDocument(docDefinition);
+
+    const chunks = [];
+
+    pdfMake.on('data', chunk => {
+      chunks.push(chunk);
     });
-    res.status(200).json({ fileUrl, success: true });
-});
 
-pdfMake.end();
+    pdfMake.on('end', async () => {
+      const result = Buffer.concat(chunks);
+      const userId = req.user.id;
+      const timeStamp = new Date();
+      const fileName = `${userId}/${timeStamp}.pdf`;
+      const fileUrl = await S3.uploadtoS3(result, fileName);
+      await Downloads.create({
+        url: fileUrl,
+      });
+      res.status(200).json({ fileUrl, success: true });
+    });
 
+    pdfMake.end();
   } catch (err) {
     res.status(500).json({ fileUrl: '', success: false, message: err });
     console.log(err);

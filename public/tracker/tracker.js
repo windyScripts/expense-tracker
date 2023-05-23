@@ -146,12 +146,11 @@ async function editEntry(e) {
     const id = row.id;
     formSubmit.setAttribute('data-id', id);
     let categoryValue = '0';
-    for(let i = 0; i < categories.length; i++){
-
+    for (let i = 0; i < categories.length; i++) {
       if (categories[i].innerText === category) {
         categoryValue = categories[i].value;
       }
-    };
+    }
 
     expenseName.value = name;
     expensePrice.value = price;
