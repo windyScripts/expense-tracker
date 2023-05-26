@@ -14,10 +14,11 @@ const expenseSchema = new Schema({
         type: String,
         required: true,
       },
-/*       date: {
-        type: Date,
-        default: Sequelize.NOW,
-      } */
+      userId:{
+        type: String,
+        required: true
+      },
+      date:  {type: Date, default: Date.now},
 })
 
 module.exports = new mongoose.model('Expense',expenseSchema);

@@ -88,7 +88,7 @@ async function createPaymentRequest(e) {
   const token = getToken();
   const options = {
     key: response.data.key_id,
-    order_id: response.data.order.id,
+    order_id: response.data.order._id,
     async handler (response) {
       const transactionResponse = await axios.post(domain + '/purchase/updatetransactionstatus', {
         order_id: options.order_id,
@@ -199,9 +199,9 @@ async function addEntry(e) {
     const price = expensePrice.value;
     const category =  expenseCategory.options[expenseCategory.value].text;//
     const token = getToken();
-    const id = formSubmit.getAttribute('data-id');
+    const _id = formSubmit.getAttribute('data-id');
     const entry = {
-      id,
+      _id,
       name,
       price,
       category,
@@ -255,7 +255,7 @@ function displayEntriesFromArray(arrayOfExpenses) {
   const items = document.getElementById('items');
   items.innerHTML = '';
   arrayOfExpenses.forEach(element => {
-    createRow(element['date'], element['name'], element['price'], element['category'], element['id'], items);
+    createRow(element['date'], element['name'], element['price'], element['category'], element['_id'], items);
   });
 
   if (arrayOfExpenses.length === 0) {

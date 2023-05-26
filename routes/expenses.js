@@ -7,7 +7,7 @@ const expensesController = require('../controllers/expenses-controller');
 const auth = require('../middleware/auth');
 
  router.get('/entries', auth.authorization, expensesController.getButtonsAndLastPage);
-// router.post('/entry', auth.authorization, expensesController.addOrUpdateExpense);
+ router.post('/entry', auth.authorization, expensesController.addOrUpdateExpense);
 // router.delete('/entry/:eId', auth.authorization, expensesController.deleteExpense);
 // router.get('/download', auth.authorization, downloadsController.getPDFLink);
 // router.get('/entries/:pageNumber', auth.authorization, expensesController.getPageOfExpenses);
