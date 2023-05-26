@@ -22,5 +22,5 @@ exports.create = async function(params, session = null) {
 };
 
 exports.destroy = async function(params, session = null) {
-  return   Expenses.destroy(params, { session });
+  return   Expenses.deleteOne(params, { session });
 };

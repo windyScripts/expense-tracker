@@ -123,11 +123,10 @@ exports.deleteExpense = async (req, res) => {
     const _id = req.params.eId;
     const expense = await Expenses.findOne({ _id, userId: req.user.id });
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price);
-    const userTotalExpenseUpdationPromise = User.update(req.user, {
-      totalExpense: updatedExpense,
-    }, session);
-    const expenseDeletionPromise = Expenses.destroy({  id, userId: req.user.id }, session);
-    const message = await Promise.all([userTotalExpenseUpdationPromise, expenseDeletionPromise]);
+    req.user.totalExpense = updatedExpense;
+    const userSavePromise = User.save(req.user, session);
+    const expenseDeletionPromise = Expenses.destroy({  _id, userId: req.user.id }, session);
+    const message = await Promise.all([userSavePromise, expenseDeletionPromise]);
     await session.commitTransaction();
     res.status(200).json(message);
   } catch (err) {
