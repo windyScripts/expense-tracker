@@ -41,7 +41,7 @@ exports.addUser = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const user = await User.findOne({ where: { email: req.body.email }});
+    const user = await User.findOne({ email: req.body.email });
     if (user !== null) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (result === true) {
