@@ -58,20 +58,15 @@ exports.getPageOfExpenses = async (req, res) => {
 
 exports.getButtonsAndLastPage = async (req, res) => {
   try {
-    const promiseOne = Expenses.count({ where: { userId: req.user.id }});
+    const promiseOne = Expenses.count({ userId: req.user.id });
 
     const expensesPerPage = parseInt(req.query.items);
 
-    const promiseTwo = Expenses.findAll({
-      limit: expensesPerPage,
-      where: {
-        userId: req.user.id,
-      },
-      order: [['id', 'DESC']],
+    const promiseTwo = Expenses.findMany({
+      userId: req.user.id,
+    },{'id': -1},expensesPerPage);
 
-    });
-
-    const promiseThree = User.findOne({ where: { id: req.user.id }});
+    const promiseThree = User.findOne({  _id: req.user.id });
 
     const [numberOfExpenses, currentPageExpensesReversed, user] = await Promise.all([promiseOne, promiseTwo, promiseThree]);
 
@@ -92,7 +87,7 @@ exports.getButtonsAndLastPage = async (req, res) => {
 };
 
 exports.addOrUpdateExpense = async (req, res) => {
-  if (Number(req.body.id)) {
+  if (Number(req.body._id)) {
     patchExpense(req, res);
   } else {
     addExpense(req, res);
@@ -109,7 +104,7 @@ async function addExpense(req, res) {
       name: req.body.name,
       price: req.body.price,
       category: req.body.category,
-      userId: req.user.id,
+      userId: req.user._id,
     }, t);
     const updatedExpense = Number(req.user.totalExpense) + Number(req.body.price);
     const userTotalExpenseUpdationPromise = User.update(req.user, {

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/user-model');
+const User = require('../services/user-services');
 
 exports.authorization = async(req, res, next) => {
   if (req.header('Authorization') === undefined) {
@@ -8,8 +8,8 @@ exports.authorization = async(req, res, next) => {
   }
   try {
     const token = req.header('Authorization');
-    const id = Number(jwt.verify(token, process.env.JWT_SIGN).userId);
-    const user = await User.findByPk(id);
+    const id = jwt.verify(token, process.env.JWT_SIGN).userId;
+    const user = await User.findOne({_id:id});
     if (user === null) {
       return res.status(401).json({ message: 'Unauthorized' });
     }

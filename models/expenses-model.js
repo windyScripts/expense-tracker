@@ -1,6 +1,27 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const expenseSchema = new Schema({
+  name: {
+        type: String,
+        required: true,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+      category: {
+        type: String,
+        required: true,
+      },
+/*       date: {
+        type: Date,
+        default: Sequelize.NOW,
+      } */
+})
+
+module.exports = new mongoose.model('Expense',expenseSchema);
+
 // const Sequelize = require('sequelize');
 
 // const sequelize = require('../util/database');

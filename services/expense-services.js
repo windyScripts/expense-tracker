@@ -4,12 +4,12 @@ exports.findOne = async function(params) {
   return   Expenses.findOne(params);
 };
 
-exports.findAll = async function(params) {
-  return   Expenses.findAll(params);
+exports.findMany = async function(findParams,sortParams,limit) {
+  return   Expenses.find(findParams).sort(sortParams).limit(limit);
 };
 
 exports.count = async function(params) {
-  return   Expenses.count(params);
+  return   Expenses.countDocuments(params);
 };
 
 exports.save = async function(expense, transaction = null) {
