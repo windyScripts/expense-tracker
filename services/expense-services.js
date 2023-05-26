@@ -21,6 +21,6 @@ exports.create = async function(params, session = null) {
   await expense.save({ session })
 };
 
-exports.destroy = async function(params, transaction = null) {
-  return   Expenses.destroy(params, { transaction });
+exports.destroy = async function(params, session = null) {
+  return   Expenses.destroy(params, { session });
 };

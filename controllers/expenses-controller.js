@@ -104,10 +104,9 @@ async function addExpense(req, res) {
       userId: req.user._id,
     }, session);
     const updatedExpense = Number(req.user.totalExpense) + Number(req.body.price);
-    const userTotalExpenseUpdationPromise = User.update(req.user, {
-      totalExpense: updatedExpense,
-    }, session);
-    const message = await Promise.all([expenseCreationPromise, userTotalExpenseUpdationPromise]);
+    req.user.totalExpense = updatedExpense;
+    const userSavePromise = User.save(req.user, session);
+    const message = await Promise.all([expenseCreationPromise, userSavePromise]);
     console.log(message);
     await session.commitTransaction();
     res.status(200).json(message);
@@ -117,24 +116,25 @@ async function addExpense(req, res) {
   }
 }
 
-// exports.deleteExpense = async (req, res) => {
-//   const t = await sequelize.transaction();
-//   try {
-//     const id = req.params.eId;
-//     const expense = await Expenses.findOne({ where: { id, userId: req.user.id }});
-//     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price);
-//     const userTotalExpenseUpdationPromise = User.update(req.user, {
-//       totalExpense: updatedExpense,
-//     }, t);
-//     const expenseDeletionPromise = Expenses.destroy({ where: { id, userId: req.user.id }}, t);
-//     const message = await Promise.all([userTotalExpenseUpdationPromise, expenseDeletionPromise]);
-//     await t.commit();
-//     res.status(200).json(message);
-//   } catch (err) {
-//     console.log(err);
-//     await t.rollback();
-//   }
-// };
+exports.deleteExpense = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction()
+  try {
+    const _id = req.params.eId;
+    const expense = await Expenses.findOne({ _id, userId: req.user.id });
+    const updatedExpense = Number(req.user.totalExpense) - Number(expense.price);
+    const userTotalExpenseUpdationPromise = User.update(req.user, {
+      totalExpense: updatedExpense,
+    }, session);
+    const expenseDeletionPromise = Expenses.destroy({  id, userId: req.user.id }, session);
+    const message = await Promise.all([userTotalExpenseUpdationPromise, expenseDeletionPromise]);
+    await session.commitTransaction();
+    res.status(200).json(message);
+  } catch (err) {
+    console.log(err);
+    await session.abortTransaction();
+  }
+};
 
 async function patchExpense(req, res) {
   const session = await mongoose.startSession();
@@ -146,16 +146,14 @@ async function patchExpense(req, res) {
     const _id = req.body._id;
     const expense = await Expenses.findOne( {'_id':_id, 'userId': req.user.id });
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price) + Number(req.body.price);
-    const userTotalExpenseUpdationPromise = User.update(req.user, {
-      totalExpense: updatedExpense,
-    }, session,
-    );
+    req.user.totalExpense = updatedExpense;
+    const userSavePromise = User.save(req.user, session);
     expense.category = req.body.category;
     expense.price = parseInt(req.body.price);
     expense.name = req.body.name;
     console.log(expense);
     const expenseChangePromise = Expenses.save(expense, session);
-    const message = await Promise.all([expenseChangePromise, userTotalExpenseUpdationPromise]);
+    const message = await Promise.all([expenseChangePromise, userSavePromise]);
     await session.commitTransaction();
     res.status(200).json(message);
   } catch (err) {
