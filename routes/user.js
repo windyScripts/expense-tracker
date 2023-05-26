@@ -9,6 +9,6 @@ router.post('/new', userRoutes.addUser);
 
 // user login
 
-router.post('/login', userRoutes.login);
+// router.post('/login', userRoutes.login);
 
 module.exports = router;

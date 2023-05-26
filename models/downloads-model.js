@@ -1,18 +1,21 @@
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const sequelize = require('../util/database');
+// const Sequelize = require('sequelize');
 
-const Files = sequelize.define('download', {
-  url: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  id: {
-    type: Sequelize.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-    allowNull: false,
-  },
-});
+// const sequelize = require('../util/database');
 
-module.exports = Files;
+// const Files = sequelize.define('download', {
+//   url: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//   },
+//   id: {
+//     type: Sequelize.INTEGER,
+//     primaryKey: true,
+//     autoIncrement: true,
+//     allowNull: false,
+//   },
+// });
+
+// module.exports = Files;

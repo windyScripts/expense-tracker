@@ -1,14 +1,17 @@
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const sequelize = require('../util/database');
+// const Sequelize = require('sequelize');
 
-const PasswordRequest = sequelize.define('forgotpasswordrequest', {
-  id: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    primaryKey: true,
-  },
-  isActive: Sequelize.BOOLEAN,
-});
+// const sequelize = require('../util/database');
 
-module.exports = PasswordRequest;
+// const PasswordRequest = sequelize.define('forgotpasswordrequest', {
+//   id: {
+//     type: Sequelize.STRING,
+//     allowNull: false,
+//     primaryKey: true,
+//   },
+//   isActive: Sequelize.BOOLEAN,
+// });
+
+// module.exports = PasswordRequest;
