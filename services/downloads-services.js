@@ -1,13 +1,13 @@
 const Downloads = require('../models/downloads-model');
 
-exports.create = async function(params) {
+exports.create = function(params) {
   return  Downloads.create(params);
 };
 
-exports.findOne = async function(params) {
+exports.findOne = function(params) {
   return   Downloads.findOne(params);
 };
 
-exports.findAll = async function(params) {
+exports.findAll = function(params) {
   return   Downloads.findAll(params);
 };

@@ -4,10 +4,10 @@ exports.findOne = async function(params) {
   return   PasswordRequests.findOne(params);
 };
 
-exports.create = async function(params) {
+exports.create = function(params) {
   return   PasswordRequests.create(params);
 };
 
-exports.update = async function(password, params) {
+exports.update = function(password, params) {
   return   password.update(params);
 };
