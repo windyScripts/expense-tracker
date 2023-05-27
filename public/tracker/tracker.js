@@ -334,6 +334,8 @@ function getToken() {
 }
 
 async function refreshDisplay(expensesPerPage) {
+  document.getElementById('expensesPerPageSelect').value = expensesPerPage;
+
   const token = getToken();
 
   const message = await axios.get(domain + '/entries', { headers: { Authorization: token }, params: { items: expensesPerPage }}); // ?

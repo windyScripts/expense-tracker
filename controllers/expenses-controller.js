@@ -18,7 +18,6 @@ exports.getPageOfExpenses = async (req, res) => {
     let order;
     let dateParams;
 
-    console.log(targetDate, relativePagePosition);
     if (relativePagePosition === 'expensesBack') {
       order = { date: -1 }; // DESC
       dateParams = {
