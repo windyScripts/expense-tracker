@@ -16,13 +16,13 @@ exports.forgotPassword = async (req, res) => {
     const receiver = [{ email: req.body.email }];
 
     const reqId = uuidv4();
-    const user = await User.findOne({ where: { email: req.body.email }});
+    const user = await User.findOne({  email: req.body.email });
 
     if (user) {
-      await PasswordRequests.create({ userId: user.id, isActive: true, id: reqId });
+      await PasswordRequests.create({ userId: user._id, date: new Date() });
 
-      const subject = 'Sending with SendGrid is Fun';
-      const textContent = 'and easy to do anywhere, even with Node.js';
+      const subject = 'Expense Tracker: Password reset response';
+      const textContent = 'Here is the link to reset your password:';
       const htmlContent = '<a href="{{params.passwordURL}}">Reset password</a>';
       const params = {
         passwordURL: 'http://localhost:3000/password/resetpassword/' + reqId,
@@ -30,7 +30,9 @@ exports.forgotPassword = async (req, res) => {
 
       await Sib.sendEmail(sender, receiver, subject, textContent, htmlContent, params);
       return res.status(200).json({ message: 'Email sent successfully' });
-    } else throw new Error('That email does not exist in records');
+    } else {
+      return res.status(400).json({message:'That email does not exist in records'})
+    };
   } catch (err) {
     console.log(err);
   }

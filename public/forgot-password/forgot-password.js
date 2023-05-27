@@ -1,7 +1,8 @@
-const scheme = 'http';
+/* const scheme = 'http';
 const hostName = '3.26.180.199';
 const port = 3000;
-const domain = `${scheme}://${hostName}:${port}`;
+const domain = `${scheme}://${hostName}:${port}`; */
+const domain = 'http://localhost:3000'
 
 const form = document.querySelector('#form');
 const emailField = document.querySelector('#email');
@@ -21,6 +22,7 @@ async function onEmailSubmit(e) {
     if (response.status === 200) {
       const emailValidFeedback = document.querySelector('#feedback');
       emailValidFeedback.textContent = 'Request submitted.';
+      emailField.value='';
     }
   }
 }
