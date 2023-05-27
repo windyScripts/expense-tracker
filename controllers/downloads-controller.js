@@ -1,5 +1,4 @@
 const PdfPrinter = require('pdfmake');
-const mongoose = require('mongoose');
 
 const Downloads = require('../services/downloads-services');
 const Expenses = require('../services/expense-services');

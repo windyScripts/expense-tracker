@@ -4,17 +4,9 @@ exports.findOne = function(params) {
   return   User.findOne(params);
 };
 
-// exports.findAll = async function(params) {
-//   return User.find(params);
-// };
-
-// exports.update = function(user, params, session = null) {
-//   return User.updateOne({'userId':user._id},params,{session})
-//   //user.update(params, { session });
-//   /* user = {...user,...params}
-//   console.log(user);
-//   return user.save(); */
-// };
+exports.findAll = async function(params,sortParams=null) {
+  return User.find(params).sort(sortParams);
+};
 
 exports.create = function(params) {
   const user = new User(params);

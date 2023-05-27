@@ -159,21 +159,16 @@ async function patchExpense(req, res) {
   }
 }
 
-// exports.showLeaderboards = async (req, res) => {
-//   try {
-//     const userLeaderBoard = await User.findAll({
+exports.showLeaderboards = async (req, res) => {
+  try {
+    const userLeaderBoard = await User.findAll(
+      {},{'totalExpense':1});
 
-//       attributes: ['name', 'totalExpense'],
-
-//       order: [['totalExpense', 'DESC']],
-
-//     });
-
-//     res.status(200).json(userLeaderBoard);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    res.status(200).json(userLeaderBoard);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 exports.getOldestAndNewestExpenseDates = async function(req, res) {
   try {
