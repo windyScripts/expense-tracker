@@ -107,10 +107,12 @@ async function addExpense(req, res) {
     const message = await Promise.all([expenseCreationPromise, userSavePromise]);
     console.log(message);
     await session.commitTransaction();
+    await session.endSession();
     res.status(200).json(message);
   } catch (err) {
     console.log(err);
     await session.abortTransaction();
+    await session.endSession();
   }
 }
 
@@ -126,10 +128,12 @@ exports.deleteExpense = async (req, res) => {
     const expenseDeletionPromise = Expenses.destroy({  _id, userId: req.user.id }, session);
     const message = await Promise.all([userSavePromise, expenseDeletionPromise]);
     await session.commitTransaction();
+    await session.endSession();
     res.status(200).json(message);
   } catch (err) {
     console.log(err);
     await session.abortTransaction();
+    await session.endSession();
   }
 };
 
@@ -152,10 +156,12 @@ async function patchExpense(req, res) {
     const expenseChangePromise = Expenses.save(expense, session);
     const message = await Promise.all([expenseChangePromise, userSavePromise]);
     await session.commitTransaction();
+    await session.endSession();
     res.status(200).json(message);
   } catch (err) {
     console.log(err);
     await session.abortTransaction();
+    await session.endSession();
   }
 }
 
