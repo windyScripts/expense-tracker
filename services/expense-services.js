@@ -1,7 +1,7 @@
 const Expenses = require('../models/expenses-model');
 
 exports.findOne = function(params) {
-  return   Expenses.findOne(params);
+  return   Expenses.findOne(params).exec();
 };
 
 exports.findMany = function(findParams,sortParams,limit) {

@@ -3,55 +3,53 @@ const mongoose = require('mongoose');
 const Expenses = require('../services/expense-services');
 const User = require('../services/user-services');
 
-// exports.getPageOfExpenses = async (req, res) => {
-//   try {
-//     const relativePagePosition = req.query.relativePagePosition;
+exports.getPageOfExpenses = async (req, res) => {
+  try {
+    const relativePagePosition = req.query.relativePagePosition;
+    const numberOfExpenses = await Expenses.count( { userId: req.user.id });
 
-//     const numberOfExpenses = await Expenses.count({ where: { userId: req.user.id }});
+    const expensesPerPage = parseInt(req.query.items);
 
-//     const expensesPerPage = parseInt(req.query.items);
+    const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
+    const targetId = req.query.id;;
+    const target = await Expenses.findOne({_id:targetId})
+    const targetDate = target.date;
 
-//     const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
+    let order;
+    let dateParams;
 
-//     let id;
+    console.log(targetDate, relativePagePosition);
+    if (relativePagePosition === 'expensesBack') {
+      order = {'date': -1}; // DESC
+      dateParams = {
+        '$lt':targetDate
+      }
+    } else if (relativePagePosition === 'expensesForward') {
+      order = {'date': -1}; //ASC
+      dateParams = {
+        '$gt':targetDate
+      }
+    } else {
+      return res.status(400).json({ message: 'invalid request' });
+    }
 
-//     let order;
-
-//     if (relativePagePosition === 'expensesBack') {
-//       id = {
-//         [Op.lt]: req.query.id,
-//       };
-
-//       order = [['id', 'DESC']];
-//     } else if (relativePagePosition === 'expensesForward') {
-//       id = {
-//         [Op.gt]: req.query.id,
-//       };
-
-//       order = [['id', 'ASC']];
-//     } else {
-//       return res.status(400).json({ message: 'invalid id' });
-//     }
-
-//     const unsortedCurrentPageExpenses = await Expenses.findAll({
-//       limit: expensesPerPage,
-//       where: {
-//         userId: req.user.id,
-//         id,
-//       },
-
-//       order,
-
-//     });
-//     const currentPageExpenses = (relativePagePosition === 'expensesBack') ? unsortedCurrentPageExpenses.reverse() : unsortedCurrentPageExpenses;
-//     res.status(200).json({
-//       currentPageExpenses,
-//       numberOfPages,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+    const currentPageExpenses = await Expenses.findMany(
+      {
+        'userId': req.user.id,
+        'date': dateParams
+      },
+      order,
+      expensesPerPage,
+      targetDate
+    );
+    res.status(200).json({
+      currentPageExpenses,
+      numberOfPages,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 exports.getButtonsAndLastPage = async (req, res) => {
   try {
@@ -61,7 +59,7 @@ exports.getButtonsAndLastPage = async (req, res) => {
 
     const promiseTwo = Expenses.findMany({
       'userId': req.user.id,
-    },{'id': -1},expensesPerPage);
+    },{'date': -1},expensesPerPage);
 
     const promiseThree = User.findById(req.user.id );
 
@@ -71,7 +69,7 @@ exports.getButtonsAndLastPage = async (req, res) => {
 
     const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
 
-    const currentPageExpenses = currentPageExpensesReversed.reverse();
+    const currentPageExpenses = currentPageExpensesReversed;
     res.status(200).json({
       premiumStatus,
       currentPageExpenses,

@@ -138,7 +138,7 @@ exports.getPDFLink = async (req, res) => {
   }
 };
 
-exports.getDownloadLinks = async (req, res) => {
+/* exports.getDownloadLinks = async (req, res) => {
   try {
     const fileUrls = await Downloads.findAll({
         where: { userId: req.user.id },
@@ -151,3 +151,4 @@ exports.getDownloadLinks = async (req, res) => {
     res.status(500).json({ fileUrls: '', success: false, message: err });
   }
 };
+ */

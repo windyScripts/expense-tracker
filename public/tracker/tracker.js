@@ -34,10 +34,18 @@ async function changeDisplayNumber(e) {
 async function changeExpensePage(e) {
   if (e.target.id === 'expensesBack' || e.target.id === 'expensesForward') {
     const targetPageNumber = parseInt(e.target.textContent);
-
+    const relativePagePosition = e.target.id;
     const expensesPerPage = getNumberOfItemsPerPage();
+    let id;
+    const items = document.getElementById('items')
+    if(e.target.id==='expensesBack'){
+      id= items.lastElementChild.id;
+    }
+else {
+  id= items.firstElementChild.id;
+}
 
-    const response = await axios.get(domain + '/entries/' + targetPageNumber, { headers: { Authorization: getToken() }, params: { items: expensesPerPage }});
+    const response = await axios.get(domain + '/entries/' + targetPageNumber, { headers: { Authorization: getToken() }, params: { items: expensesPerPage, relativePagePosition, id }});
 
     const currentPageExpenses = response.data.currentPageExpenses;
     const numberOfPages = response.data.numberOfPages;
@@ -208,7 +216,7 @@ async function addEntry(e) {
       token,
     };
     await axios.post(domain + '/entry', entry, { headers: { Authorization: token }});
-    formSubmit.setAttribute('data-id', undefined);
+    formSubmit.setAttribute('data-id', '');
     refreshEntries();
 
     // empty fields
@@ -310,7 +318,11 @@ function createRow(date, name, price, category, id, parent) {
 }
 
 function getNumberOfItemsPerPage() {
-  return localStorage.getItem('displayNumber') || document.getElementById('expensesPerPageSelect').value;
+  let expensesPerPage = localStorage.getItem('displayNumber');
+  if(expensesPerPage) return expensesPerPage;
+  else {
+    return document.getElementById('expensesPerPageSelect').value;
+  }
 }
 
 function getToken() {
