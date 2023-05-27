@@ -436,15 +436,16 @@ async function enableDownloadLinks() {
     document.getElementById('showFileUrls').innerText = 'Hide File Urls';
 
     const userFileUrlObject = await axios.get(domain + '/fileUrls', { headers: { Authorization: token }});
-    Object.keys(userFileUrlObject.data.fileUrls).forEach(e => {
+    console.log(userFileUrlObject);
+    userFileUrlObject.data.fileUrls.forEach(e => {
       const row = document.createElement('tr');
       const dateData = document.createElement('td');
       const urlData = document.createElement('td');
       const urlLink = document.createElement('a');
 
-      dateData.appendChild(document.createTextNode(userFileUrlObject.data.fileUrls[e].createdAt.slice(0, 10) + ' : ' + userFileUrlObject.data.fileUrls[e].createdAt.slice(11, 16)));
-      urlLink.appendChild(document.createTextNode(userFileUrlObject.data.fileUrls[e].createdAt.slice(0, 10) + ' : ' + userFileUrlObject.data.fileUrls[e].createdAt.slice(11, 16)));
-      urlLink.setAttribute('href', userFileUrlObject.data.fileUrls[e].url);
+      dateData.appendChild(document.createTextNode(e.date.toLocaleString() + ' : ' /* + userFileUrlObject.data.fileUrls[e].url */));
+      urlLink.appendChild(document.createTextNode(e.url));
+      urlLink.setAttribute('href', e.url);
       urlData.appendChild(urlLink);
 
       row.appendChild(dateData);

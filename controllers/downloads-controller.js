@@ -9,7 +9,6 @@ exports.getPDFLink = async (req, res) => {
   try {
     const startDate = req.query.start_date+'T00:00:00Z';
     const endDate = req.query.end_date+'T23:59:59Z';
-    console.log(startDate,endDate);
     if (!startDate || !endDate || endDate < startDate) return res.status(400).json({ message: 'Bad dates' });
 
 const expenseData = await Expenses.findMany({
@@ -96,7 +95,8 @@ const expenseData = await Expenses.findMany({
       const fileUrl = await S3.uploadtoS3(result, fileName);
       await Downloads.create({
         url: fileUrl,
-        userId: req.user.id,
+        userId: req.user._id,
+        date: new Date()
       });
       res.status(200).json({ fileUrl, success: true });
     });
@@ -108,17 +108,16 @@ const expenseData = await Expenses.findMany({
   }
 };
 
-/* exports.getDownloadLinks = async (req, res) => {
+ exports.getDownloadLinks = async (req, res) => {
+  const numberOfUrls = 5;
   try {
-    const fileUrls = await Downloads.findAll({
-        where: { userId: req.user.id },
-        attributes: ['url', 'createdAt'],
-        order: [['createdAt', 'DESC']],
-        limit: 5,
-      });
+    const fileUrls = await Downloads.findMany(
+        { 'userId': req.user._id },
+        {'date':1},
+        numberOfUrls
+        );
     res.status(200).json({ fileUrls, success: true });
   } catch (err) {
     res.status(500).json({ fileUrls: '', success: false, message: err });
   }
 };
- */

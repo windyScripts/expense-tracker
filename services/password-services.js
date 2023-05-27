@@ -5,9 +5,9 @@ exports.findOne = async function(params) {
 };
 
 exports.create = function(params) {
-  return   PasswordRequests.create(params);
+  return   PasswordRequests.create(params)
 };
 
 exports.update = function(password, params) {
-  return   password.update(params);
+  return   password.update(params)
 };

@@ -13,5 +13,5 @@ const auth = require('../middleware/auth');
  router.get('/entries/:pageNumber', auth.authorization, expensesController.getPageOfExpenses);
 // router.get('/leaderboard', auth.authorization, expensesController.showLeaderboards);
  router.get('/dates', auth.authorization, expensesController.getOldestAndNewestExpenseDates);
-// router.get('/fileUrls', auth.authorization, downloadsController.getDownloadLinks);
+ router.get('/fileUrls', auth.authorization, downloadsController.getDownloadLinks);
 module.exports = router;

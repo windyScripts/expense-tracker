@@ -9,7 +9,9 @@ const downloadSchema = new Schema({
     userId:{
         type:String,
         required:true
-    }
+    },
+    date:{type: Date,
+        default: Date.now}
 })
 
 module.exports = mongoose.model('Download',downloadSchema)

@@ -32,3 +32,7 @@ h1{
 .block{
     padding: 20 auto;
 }
+
+a{
+    word-wrap:break-word;
+}
