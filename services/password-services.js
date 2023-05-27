@@ -11,3 +11,7 @@ exports.create = function(params) {
 exports.update = function(password, params) {
   return   password.update(params)
 };
+
+exports.save = function(passwordRequest){
+  return passwordRequest.save();
+}
