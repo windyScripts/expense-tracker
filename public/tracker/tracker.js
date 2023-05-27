@@ -277,7 +277,7 @@ function createRow(date, name, price, category, id, parent) {
   row.className = 'item';
 
   const dateData = document.createElement('td');
-  dateData.appendChild(document.createTextNode(date));
+  dateData.appendChild(document.createTextNode(date.slice(0,10)));
 
   const nameData = document.createElement('td');
   nameData.appendChild(document.createTextNode(name));
