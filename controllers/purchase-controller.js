@@ -21,15 +21,20 @@ exports.premium = async (req, res) => {
 exports.updateTransactionStatus = async (req, res) => {
   try {
     const { payment_id, order_id, payment_status } = req.body;
-    const order = await Order.findOne({ where: { orderid: order_id }});
+    const order = await Order.findOne({ orderid: order_id });
     if (payment_status === 'SUCCESS') {
-      const p1 = order.update({ paymentid: payment_id, status: 'SUCCESS' });
-      const p2 = req.user.update({ ispremiumuser: true });
+      order.paymentid = payment_id;
+      order.status = 'SUCCESS';
+      req.user.ispremiumuser = true;
+      const p1 = Order.save(order);
+      const p2 = User.save(req.user);
       await Promise.all([p1, p2]);
       const token = generateAccessToken(req.user.id);
       return res.status(202).json({ success: true, message: 'Transaction Successful', token });
     } else if (payment_status === 'FAILURE') {
-      await order.update({ paymentid: payment_id, status: 'FAILED' });
+        order.paymentid = payment_id;
+        order.status = 'FAILED';
+      await Order.save(order);
       return res.status(403).json({ success: false, message: 'Transaction Failed' });
     }
   } catch (err) {

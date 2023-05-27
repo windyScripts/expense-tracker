@@ -1,6 +1,20 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+ordersSchema = new Schema({
+userId:{
+    type: String,
+    required: true
+},
+paymentId: String,
+orderId: String,
+status: {
+    type: String,
+    required: true
+}
+})
+
+module.exports = mongoose.model('Order',ordersSchema)
 // const Sequelize = require('sequelize');
 
 // const sequelize = require('../util/database');

@@ -7,3 +7,7 @@ exports.findOne = function(params) {
 exports.update = function(order, params) {
   return   order.update(params)
 };
+
+exports.save = function(order){
+  return order.save(params);
+}
