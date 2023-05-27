@@ -1,10 +1,10 @@
 const Expenses = require('../models/expenses-model');
 
-exports.findOne = function(params) {
-  return   Expenses.findOne(params).exec();
+exports.findOne = function(params,values=null,sortParams=null) {
+  return   Expenses.findOne(params,values,sortParams).exec();
 };
 
-exports.findMany = function(findParams,sortParams,limit) {
+exports.findMany = function(findParams,sortParams=null,limit=null) {
   return   Expenses.find(findParams).sort(sortParams).limit(limit).exec();
 };
 

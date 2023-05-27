@@ -373,8 +373,8 @@ function changePremiumButton() {
 async function setMinAndMaxForDownloads() {
   const token = getToken();
   const response = await axios.get(domain + '/dates', { headers: { Authorization: token }});
-  const max = response.data.beforeDate.createdAt.slice(0, 10);
-  const min = response.data.afterDate.createdAt.slice(0, 10);
+  const max = response.data.beforeDate.date.slice(0, 10);
+  const min = response.data.afterDate.date.slice(0, 10);
   const startDateField = document.getElementById('startDate');
   const endDateField = document.getElementById('endDate');
   startDateField.setAttribute('min', min);
