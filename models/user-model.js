@@ -1,30 +1,31 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 userSchema = new Schema({
-name:{
-  type: String,
-  required: true
-},
-email:{
-  type: String,
-  required: true
-},
-password:{
-  type: String,
-  required: true
-},
-isPremiumUser:{
-  type: Boolean,
-  default: false
-},
-totalExpense:{
-  type: Number,
-  default: 0
-}
-})
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  isPremiumUser: {
+    type: Boolean,
+    default: false,
+  },
+  totalExpense: {
+    type: Number,
+    default: 0,
+  },
+});
 
-module.exports = mongoose.model('User',userSchema);
+module.exports = mongoose.model('User', userSchema);
 
 // const Sequelize = require('sequelize');
 
@@ -56,5 +57,4 @@ module.exports = mongoose.model('User',userSchema);
 //     defaultValue: 0,
 //   },
 // });
-
 

@@ -21,7 +21,7 @@ function invalid(...params) {
 exports.addUser = async (req, res) => {
   try {
     const checkInvalid = invalid(req.body.userName, req.body.email, req.body.password);
-    const existingUser = Boolean(await User.findOne( { email: req.body.email }));
+    const existingUser = Boolean(await User.findOne({ email: req.body.email }));
     if (checkInvalid === true) {
       return res.status(401).json({ message: 'Invalid details.' });
     } else if (existingUser === true) {

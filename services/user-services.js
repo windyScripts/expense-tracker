@@ -4,7 +4,7 @@ exports.findOne = function(params) {
   return   User.findOne(params);
 };
 
-exports.findAll = async function(params,sortParams=null) {
+exports.findAll = async function(params, sortParams = null) {
   return User.find(params).sort(sortParams);
 };
 
@@ -17,6 +17,6 @@ exports.findById = function(_id) {
   return User.findById(_id).exec();
 };
 
-exports.save= function(user, session = null){
-  return user.save({session});
-}
+exports.save = function(user, session = null) {
+  return user.save({ session });
+};

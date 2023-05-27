@@ -6,13 +6,13 @@ const User = require('../services/user-services');
 exports.getPageOfExpenses = async (req, res) => {
   try {
     const relativePagePosition = req.query.relativePagePosition;
-    const numberOfExpenses = await Expenses.count( { userId: req.user.id });
+    const numberOfExpenses = await Expenses.count({ userId: req.user.id });
 
     const expensesPerPage = parseInt(req.query.items);
 
     const numberOfPages = Math.ceil(numberOfExpenses / expensesPerPage);
-    const targetId = req.query.id;;
-    const target = await Expenses.findOne({_id:targetId})
+    const targetId = req.query.id;
+    const target = await Expenses.findOne({ _id: targetId });
     const targetDate = target.date;
 
     let order;
@@ -20,27 +20,27 @@ exports.getPageOfExpenses = async (req, res) => {
 
     console.log(targetDate, relativePagePosition);
     if (relativePagePosition === 'expensesBack') {
-      order = {'date': -1}; // DESC
+      order = { date: -1 }; // DESC
       dateParams = {
-        '$lt':targetDate
-      }
+        $lt: targetDate,
+      };
     } else if (relativePagePosition === 'expensesForward') {
-      order = {'date': -1}; //ASC
+      order = { date: -1 }; //ASC
       dateParams = {
-        '$gt':targetDate
-      }
+        $gt: targetDate,
+      };
     } else {
       return res.status(400).json({ message: 'invalid request' });
     }
 
     const currentPageExpenses = await Expenses.findMany(
       {
-        'userId': req.user.id,
-        'date': dateParams
+        userId: req.user.id,
+        date: dateParams,
       },
       order,
       expensesPerPage,
-      targetDate
+      targetDate,
     );
     res.status(200).json({
       currentPageExpenses,
@@ -53,15 +53,15 @@ exports.getPageOfExpenses = async (req, res) => {
 
 exports.getButtonsAndLastPage = async (req, res) => {
   try {
-    const promiseOne = Expenses.count({ 'userId': req.user.id });
+    const promiseOne = Expenses.count({ userId: req.user.id });
 
     const expensesPerPage = parseInt(req.query.items);
 
     const promiseTwo = Expenses.findMany({
-      'userId': req.user.id,
-    },{'date': -1},expensesPerPage);
+      userId: req.user.id,
+    }, { date: -1 }, expensesPerPage);
 
-    const promiseThree = User.findById(req.user.id );
+    const promiseThree = User.findById(req.user.id);
 
     const [numberOfExpenses, currentPageExpensesReversed, user] = await Promise.all([promiseOne, promiseTwo, promiseThree]);
 
@@ -93,7 +93,7 @@ async function addExpense(req, res) {
     res.status(400).json({ message: 'invalid data' });
   }
   const session = await mongoose.startSession();
-  session.startTransaction()
+  session.startTransaction();
   try {
     const expenseCreationPromise = Expenses.create({
       name: req.body.name,
@@ -118,7 +118,7 @@ async function addExpense(req, res) {
 
 exports.deleteExpense = async (req, res) => {
   const session = await mongoose.startSession();
-  session.startTransaction()
+  session.startTransaction();
   try {
     const _id = req.params.eId;
     const expense = await Expenses.findOne({ _id, userId: req.user.id });
@@ -139,13 +139,13 @@ exports.deleteExpense = async (req, res) => {
 
 async function patchExpense(req, res) {
   const session = await mongoose.startSession();
-  session.startTransaction()
+  session.startTransaction();
   if (req.body.name.length === 0 || !Number(req.body.price)) {
     res.status(400).json({ message: 'invalid data' });
   }
   try {
     const _id = req.body._id;
-    const expense = await Expenses.findOne( {'_id':_id, 'userId': req.user.id });
+    const expense = await Expenses.findOne({ _id, userId: req.user.id });
     const updatedExpense = Number(req.user.totalExpense) - Number(expense.price) + Number(req.body.price);
     req.user.totalExpense = updatedExpense;
     const userSavePromise = User.save(req.user, session);
@@ -168,7 +168,7 @@ async function patchExpense(req, res) {
 exports.showLeaderboards = async (req, res) => {
   try {
     const userLeaderBoard = await User.findAll(
-      {},{'totalExpense':1});
+      {}, { totalExpense: 1 });
 
     res.status(200).json(userLeaderBoard);
   } catch (err) {
@@ -179,15 +179,15 @@ exports.showLeaderboards = async (req, res) => {
 exports.getOldestAndNewestExpenseDates = async function(req, res) {
   try {
     const p1 = Expenses.findOne({
-      
-        userId: req.user.id,
-  
-    },'date',{sort:{'date':1}});
-    const p2 = Expenses.findOne({
-      
+
       userId: req.user.id,
 
-  },'date',{sort:{'date':-1}});
+    }, 'date', { sort: { date: 1 }});
+    const p2 = Expenses.findOne({
+
+      userId: req.user.id,
+
+    }, 'date', { sort: { date: -1 }});
     const [beforeDate, afterDate] = await Promise.all([p1, p2]);
     return res.status(200).json({ beforeDate, afterDate });
   } catch (err) {

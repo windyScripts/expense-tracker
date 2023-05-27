@@ -37,13 +37,12 @@ async function changeExpensePage(e) {
     const relativePagePosition = e.target.id;
     const expensesPerPage = getNumberOfItemsPerPage();
     let id;
-    const items = document.getElementById('items')
-    if(e.target.id==='expensesBack'){
-      id= items.lastElementChild.id;
+    const items = document.getElementById('items');
+    if (e.target.id === 'expensesBack') {
+      id = items.lastElementChild.id;
+    } else {
+      id = items.firstElementChild.id;
     }
-else {
-  id= items.firstElementChild.id;
-}
 
     const response = await axios.get(domain + '/entries/' + targetPageNumber, { headers: { Authorization: getToken() }, params: { items: expensesPerPage, relativePagePosition, id }});
 
@@ -318,8 +317,8 @@ function createRow(date, name, price, category, id, parent) {
 }
 
 function getNumberOfItemsPerPage() {
-  let expensesPerPage = localStorage.getItem('displayNumber');
-  if(expensesPerPage) return expensesPerPage;
+  const expensesPerPage = localStorage.getItem('displayNumber');
+  if (expensesPerPage) return expensesPerPage;
   else {
     return document.getElementById('expensesPerPageSelect').value;
   }

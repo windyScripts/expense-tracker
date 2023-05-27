@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 const Order = require('../services/order-services');
+const User = require('../models/user-model')
 const rzp = require('../services/Rzp-services');
 
 function generateAccessToken(id) {
@@ -32,12 +33,12 @@ exports.updateTransactionStatus = async (req, res) => {
       const token = generateAccessToken(req.user.id);
       return res.status(202).json({ success: true, message: 'Transaction Successful', token });
     } else if (payment_status === 'FAILURE') {
-        order.paymentid = payment_id;
-        order.status = 'FAILED';
+      order.paymentid = payment_id;
+      order.status = 'FAILED';
       await Order.save(order);
       return res.status(403).json({ success: false, message: 'Transaction Failed' });
     }
   } catch (err) {
-    console.log('!AC', err);
+    console.log(err);
   }
 };

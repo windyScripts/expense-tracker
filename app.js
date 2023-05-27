@@ -7,21 +7,15 @@ const express = require('express');
 
 const app = express();
 
+const mongoose = require('mongoose');
 const morgan = require('morgan');
 
 require('dotenv').config();
 
-// const Download = require('./models/downloads-model');
-// const Expense = require('./models/expenses-model');
-// const passwordRequest = require('./models/password-requests-model');
-// const Order = require('./models/purchases-model');
-// const Purchase = require('./models/purchases-model');
-const User = require('./models/user-model');
 const expensesRoutes = require('./routes/expenses');
 const passwordRoutes = require('./routes/password');
 const purchaseRoutes = require('./routes/purchase');
 const authRoutes = require('./routes/user');
-const mongoose = require('mongoose')
 
 const environment = process.env.NODE_ENV;
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
@@ -63,7 +57,7 @@ app.use((req, res) => {
 });
 
 async function start() {
-  await mongoose.connect('mongodb+srv://arvnd2life:eShop@eshop.vsuv89b.mongodb.net/expenseTracker?retryWrites=true&w=majority')
+  await mongoose.connect('mongodb+srv://arvnd2life:eShop@eshop.vsuv89b.mongodb.net/expenseTracker?retryWrites=true&w=majority');
   console.log('Database connected. :)');
   app.listen(process.env.PORT || 3000);
 }

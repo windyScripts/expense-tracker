@@ -6,24 +6,24 @@ const S3 = require('../services/S3-services');
 
 exports.getPDFLink = async (req, res) => {
   try {
-    const startDate = req.query.start_date+'T00:00:00Z';
-    const endDate = req.query.end_date+'T23:59:59Z';
+    const startDate = req.query.start_date + 'T00:00:00Z';
+    const endDate = req.query.end_date + 'T23:59:59Z';
     if (!startDate || !endDate || endDate < startDate) return res.status(400).json({ message: 'Bad dates' });
 
-const expenseData = await Expenses.findMany({
-  'userId': req.user._id,
-  'date':{
-    '$gte':startDate,
-    '$lte':endDate
-  }
-},{'date':-1})
+    const expenseData = await Expenses.findMany({
+      userId: req.user._id,
+      date: {
+        $gte: startDate,
+        $lte: endDate,
+      },
+    }, { date: -1 });
 
     const tableData = [];
     tableData.push(['Date', 'Category', 'Expense Name', 'Amount']);
     let totalExpense = 0;
     expenseData.forEach((e, i) => {
       tableData.push([e.date.toLocaleString(), e.category, e.name, e.price]);
-      totalExpense+=e.price;
+      totalExpense += e.price;
       const len = expenseData.length;
       if (((i < len - 1 && ((expenseData[i + 1].date[6] > expenseData[i].date[6]) || expenseData[i + 1].date.getMonth() == 12 && expenseData[i].date.getMonth() == 1)) || (i === len - 1))) {
         tableData.push(['Monthly summary:', '', '', '']);
@@ -95,7 +95,7 @@ const expenseData = await Expenses.findMany({
       await Downloads.create({
         url: fileUrl,
         userId: req.user._id,
-        date: new Date()
+        date: new Date(),
       });
       res.status(200).json({ fileUrl, success: true });
     });
@@ -107,14 +107,14 @@ const expenseData = await Expenses.findMany({
   }
 };
 
- exports.getDownloadLinks = async (req, res) => {
+exports.getDownloadLinks = async (req, res) => {
   const numberOfUrls = 5;
   try {
     const fileUrls = await Downloads.findMany(
-        { 'userId': req.user._id },
-        {'date':1},
-        numberOfUrls
-        );
+      { userId: req.user._id },
+      { date: 1 },
+      numberOfUrls,
+    );
     res.status(200).json({ fileUrls, success: true });
   } catch (err) {
     res.status(500).json({ fileUrls: '', success: false, message: err });

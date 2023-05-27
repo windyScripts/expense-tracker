@@ -1,5 +1,6 @@
 const Razorpay = require('razorpay');
-const Order = require('../models/purchases-model')
+
+const Order = require('../models/purchases-model');
 
 exports.createOrder = function(amount, user) {
   if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
@@ -15,8 +16,8 @@ exports.createOrder = function(amount, user) {
         if (err) {
           throw new Error(JSON.stringify(err));
         }
-        Order.create({orderid: order.id, status: 'PENDING',userId:user._id}).then(() => {
-          resolve({ order, key_id: rzp.key_id })
+        Order.create({ orderid: order.id, status: 'PENDING', userId: user._id }).then(() => {
+          resolve({ order, key_id: rzp.key_id });
         /* user.createOrder({ orderid: order.id, status: 'PENDING' }).then(() => {
           resolve({ order, key_id: rzp.key_id }); */
         });

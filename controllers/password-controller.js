@@ -15,11 +15,11 @@ exports.forgotPassword = async (req, res) => {
 
     const receiver = [{ email: req.body.email }];
 
-     const reqId = uuidv4(); 
+    const reqId = uuidv4();
     const user = await User.findOne({  email: req.body.email });
 
     if (user) {
-      await PasswordRequests.create({ userId: user._id, date: new Date(), id:reqId });
+      await PasswordRequests.create({ userId: user._id, date: new Date(), id: reqId });
       const subject = 'Expense Tracker: Password reset response';
       const textContent = 'Here is the link to reset your password:';
       const htmlContent = '<a href="{{params.passwordURL}}">Reset password</a>';
@@ -30,8 +30,8 @@ exports.forgotPassword = async (req, res) => {
       await Sib.sendEmail(sender, receiver, subject, textContent, htmlContent, params);
       return res.status(200).json({ message: 'Email sent successfully' });
     } else {
-      return res.status(400).json({message:'That email does not exist in records'})
-    };
+      return res.status(400).json({ message: 'That email does not exist in records' });
+    }
   } catch (err) {
     console.log(err);
   }
@@ -40,7 +40,7 @@ exports.forgotPassword = async (req, res) => {
 exports.getPasswordUpdateForm = async (req, res) => {
   try {
     const id = req.params.reqId;
-    const passwordRequest = await PasswordRequests.findOne( { id });
+    const passwordRequest = await PasswordRequests.findOne({ id });
     if (passwordRequest && passwordRequest.isActive) {
       return res.status(200).send(`<html>
         <script>
@@ -67,18 +67,18 @@ exports.setPassword = async (req, res) => {
     // store password, make isActive for request false.
     const { newpassword } = req.query;
     const { resetpasswordid } = req.params;
-    const passwordRequest = await PasswordRequests.findOne({ 
+    const passwordRequest = await PasswordRequests.findOne({
       id: resetpasswordid,
     });
-    const user = await User.findOne({ 
+    const user = await User.findOne({
       _id: passwordRequest.userId,
     });
-    console.log(resetpasswordid, passwordRequest)
+    console.log(resetpasswordid, passwordRequest);
     if (user) {
       const saltRounds = 10;
       bcrypt.hash(newpassword, saltRounds, (err, hash) => {
-        if(err){
-          res.status(500).json({message:"Something went wrong"})
+        if (err) {
+          res.status(500).json({ message: 'Something went wrong' });
         }
         user.password = hash;
         passwordRequest.isActive = false;
