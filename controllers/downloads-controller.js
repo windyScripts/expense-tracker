@@ -95,7 +95,6 @@ exports.getPDFLink = async (req, res) => {
       await Downloads.create({
         url: fileUrl,
         userId: req.user._id,
-        date: new Date(),
       });
       res.status(200).json({ fileUrl, success: true });
     });
@@ -112,9 +111,10 @@ exports.getDownloadLinks = async (req, res) => {
   try {
     const fileUrls = await Downloads.findMany(
       { userId: req.user._id },
-      { date: 1 },
+      { date: -1 },
       numberOfUrls,
     );
+    console.log(fileUrls);
     res.status(200).json({ fileUrls, success: true });
   } catch (err) {
     res.status(500).json({ fileUrls: '', success: false, message: err });

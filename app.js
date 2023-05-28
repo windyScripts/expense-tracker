@@ -57,7 +57,7 @@ app.use((req, res) => {
 });
 
 async function start() {
-  await mongoose.connect('mongodb+srv://arvnd2life:eShop@eshop.vsuv89b.mongodb.net/expenseTracker?retryWrites=true&w=majority');
+  await mongoose.connect(process.env.DB_STRING);
   console.log('Database connected. :)');
   app.listen(process.env.PORT || 3000);
 }

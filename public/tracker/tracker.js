@@ -444,8 +444,8 @@ async function enableDownloadLinks() {
       const urlData = document.createElement('td');
       const urlLink = document.createElement('a');
 
-      dateData.appendChild(document.createTextNode(e.date.toLocaleString() + ' : ' /* + userFileUrlObject.data.fileUrls[e].url */));
-      urlLink.appendChild(document.createTextNode(e.url));
+      dateData.appendChild(document.createTextNode(e.date.slice(0,10) + ' : ' /* + userFileUrlObject.data.fileUrls[e].url */));
+      urlLink.appendChild(document.createTextNode(e.date.slice(11,19)));
       urlLink.setAttribute('href', e.url);
       urlData.appendChild(urlLink);
 
