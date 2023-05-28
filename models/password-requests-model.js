@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-passwordRequestSchema = new Schema({
+const passwordRequestSchema = new Schema({
   isActive: {
     type: Boolean,
     default: true,
