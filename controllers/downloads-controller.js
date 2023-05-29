@@ -109,7 +109,7 @@ exports.getPDFLink = async (req, res) => {
 exports.getDownloadLinks = async (req, res) => {
   const numberOfUrls = 5;
   try {
-    const fileUrls = await Downloads.findMany(
+    const fileUrls = await Downloads.findAll(
       { userId: req.user._id },
       { date: -1 },
       numberOfUrls,

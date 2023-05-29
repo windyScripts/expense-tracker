@@ -4,7 +4,7 @@ exports.findOne = function(params, values = null, sortParams = null) {
   return   Expenses.findOne(params, values, sortParams);
 };
 
-exports.findMany = function(findParams, sortParams = null, limit = null) {
+exports.findAll = function(findParams, sortParams = null, limit = null) {
   return   Expenses.find(findParams).sort(sortParams).limit(limit);
 };
 

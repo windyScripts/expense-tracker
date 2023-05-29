@@ -32,7 +32,7 @@ exports.getPageOfExpenses = async (req, res) => {
       return res.status(400).json({ message: 'invalid request' });
     }
 
-    const currentPageExpenses = await Expenses.findMany(
+    const currentPageExpenses = await Expenses.findAll(
       {
         userId: req.user.id,
         date: dateParams,
@@ -56,7 +56,7 @@ exports.getButtonsAndLastPage = async (req, res) => {
 
     const expensesPerPage = parseInt(req.query.items);
 
-    const promiseTwo = Expenses.findMany({
+    const promiseTwo = Expenses.findAll({
       userId: req.user.id,
     }, { date: -1 }, expensesPerPage);
 
