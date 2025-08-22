@@ -35,14 +35,14 @@ app.use((req, res, next) => {
 if (environment === 'production') {
   app.use(helmet());
   app.use(compression());
-/* } else if (environment === 'development') {
+}/* } else if (environment === 'development') {
 
 } */
 
-  app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'DELETE'],
-  }));
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'DELETE'],
+}));
 
 app.use(morgan('combined', { stream: accessLogStream }));
 
