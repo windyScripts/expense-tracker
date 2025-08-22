@@ -14,7 +14,7 @@ RUN npm install --omit=dev
 COPY . .
 
 # Expose the port your app uses
-EXPOSE 8081
+EXPOSE 8080
 
 # Start the app
 CMD ["node", "app.js"]
