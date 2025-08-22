@@ -19,7 +19,7 @@ const toLoginButton = document.querySelector('#toLogin');
 toLoginButton.addEventListener('click', loginRedirect);
 
 function loginRedirect() {
-  window.location.href = `${window.location.origin}/login/index.html`;
+  window.location.href = `${domain}/login/index.html`;
 }
 
 // frontend validation and handling response

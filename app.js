@@ -53,6 +53,22 @@ app.use(expensesRoutes);
 app.use('/purchase', purchaseRoutes);
 app.use('/password', passwordRoutes);
 
+// Serve static assets (CSS, JS, images, etc.)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Explicit routes
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login', 'index.html'));
+});
+
+app.get('/tracker', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'tracker', 'index.html'));
+});
+
+app.get('/forgot-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'forgot-password', 'index.html'));
+});
+
 // ✅ Health check route
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
