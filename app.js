@@ -67,7 +67,7 @@ app.use((req, res, next) => {
   }
 
   // Otherwise, serve the main HTML page
-  res.sendFile(path.join(__dirname, 'public', 'signup', 'signup.html'), err => {
+  res.sendFile(path.join(__dirname, 'public', 'signup', 'index.html'), err => {
     if (err) {
       // Fallback error handling
       console.error('Error sending index.html:', err);
