@@ -28,5 +28,5 @@ async function onEmailSubmit(e) {
 }
 
 function loginRedirect() {
-  window.location.href = '../login/index.html';
+  window.location.href = `${window.location.origin}/login/index.html`;
 }

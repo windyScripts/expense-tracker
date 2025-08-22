@@ -33,7 +33,7 @@ async function validateLogin(e) {
       const token = response.data.token;
       localStorage.setItem('token', token);
       //console.log(localStorage.getItem('token'));
-      window.location.href = '../tracker/tracker.html';
+      window.location.href = `${window.location.origin}/tracker/index.html`;
     } catch (err) {
       feedback.textContent = 'Login failed!';
     }
@@ -43,11 +43,11 @@ async function validateLogin(e) {
 signUpButton.addEventListener('click', signUpRedirect);
 
 function signUpRedirect() {
-  window.location.href = '../signup/index.html';
+  window.location.href = `${window.location.origin}/signup/index.html`;
 }
 
 forgotPasswordButton.addEventListener('click', forgotPasswordRedirect);
 
 function forgotPasswordRedirect() {
-  window.location.href = '../forgot-password/forgot-password.html';
+  window.location.href = `${window.location.origin}/forgot-password/index.html`;
 }

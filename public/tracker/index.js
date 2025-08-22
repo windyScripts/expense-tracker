@@ -85,7 +85,7 @@ async function logOutUser(e) {
   e.preventDefault();
   localStorage.removeItem('token');
   console.log('token removed!');
-  window.location.href = '../login/login.html';
+  window.location.href = '../login/index.html';
 }
 
 premium.addEventListener('click', createPaymentRequest);
@@ -277,7 +277,7 @@ function createRow(date, name, price, category, id, parent) {
   row.className = 'item';
 
   const dateData = document.createElement('td');
-  dateData.appendChild(document.createTextNode(date.slice(0,10)));
+  dateData.appendChild(document.createTextNode(date.slice(0, 10)));
 
   const nameData = document.createElement('td');
   nameData.appendChild(document.createTextNode(name));
@@ -444,8 +444,8 @@ async function enableDownloadLinks() {
       const urlData = document.createElement('td');
       const urlLink = document.createElement('a');
 
-      dateData.appendChild(document.createTextNode(e.date.slice(0,10) + ' : ' /* + userFileUrlObject.data.fileUrls[e].url */));
-      urlLink.appendChild(document.createTextNode(e.date.slice(11,19)));
+      dateData.appendChild(document.createTextNode(e.date.slice(0, 10) + ' : ' /* + userFileUrlObject.data.fileUrls[e].url */));
+      urlLink.appendChild(document.createTextNode(e.date.slice(11, 19)));
       urlLink.setAttribute('href', e.url);
       urlData.appendChild(urlLink);
 

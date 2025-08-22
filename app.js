@@ -5,7 +5,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const express = require('express');
-
 const helmet = require('helmet');
 const compression = require('compression');
 
@@ -35,7 +34,7 @@ app.use((req, res, next) => {
 if (environment === 'production') {
   app.use(helmet());
   app.use(compression());
-}/* } else if (environment === 'development') {
+}/* else if (environment === 'development') {
 
 } */
 
