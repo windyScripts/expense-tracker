@@ -3,7 +3,11 @@ const fs = require('fs');
 const path = require('path');
 
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const express = require('express');
+
+const helmet = require('helmet');
+const compression = require('compression');
 
 const app = express();
 
@@ -29,18 +33,16 @@ app.use((req, res, next) => {
 });
 
 if (environment === 'production') {
-  const helmet = require('helmet');
   app.use(helmet());
-
-  const compression = require('compression');
   app.use(compression());
-} else if (environment === 'development') {
-  const cors = require('cors');
+/* } else if (environment === 'development') {
+
+} */
+
   app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'DELETE'],
   }));
-}
 
 app.use(morgan('combined', { stream: accessLogStream }));
 
