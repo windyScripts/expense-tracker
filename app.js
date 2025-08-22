@@ -94,9 +94,21 @@ app.use((req, res, next) => {
 });
 
 async function start() {
-  await mongoose.connect(process.env.DB_STRING);
-  console.log('Database connected. :)');
-  app.listen(process.env.PORT || 3000);
+  try {
+    await mongoose.connect(process.env.DB_STRING, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Database connected. :)');
+
+    const port = process.env.PORT || 3000;
+    app.listen(port, '0.0.0.0', () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1); // Exit with failure if DB can't connect
+  }
 }
 
 start();
